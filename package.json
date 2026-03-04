@@ -9,9 +9,15 @@
     "lint": "eslint"
   },
   "dependencies": {
+    "@fontsource/oxanium": "^5.2.8",
+    "@google/generative-ai": "^0.24.1",
+    "clsx": "^2.1.1",
+    "lucide-react": "^0.577.0",
     "next": "16.1.6",
     "react": "19.2.3",
-    "react-dom": "19.2.3"
+    "react-dom": "19.2.3",
+    "react-live": "^4.1.8",
+    "tailwind-merge": "^3.5.0"
   },
   "devDependencies": {
     "@tailwindcss/postcss": "^4",

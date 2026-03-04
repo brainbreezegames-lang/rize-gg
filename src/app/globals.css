@@ -1,26 +1,87 @@
 @import "tailwindcss";
 
-:root {
-  --background: #ffffff;
-  --foreground: #171717;
-}
-
 @theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
-}
+  /* Background */
+  --color-bg-primary: #0B1211;
+  --color-bg-secondary: #121415;
+  --color-bg-surface: #1A1F2E;
+  --color-bg-surface-hover: #222838;
+  --color-bg-card: #121415;
+  --color-bg-card-hover: #181C20;
+  --color-bg-input: #121415;
+  --color-bg-elevated: #20272A;
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+  /* Brand / Accent */
+  --color-accent: #99F9EA;
+  --color-accent-hover: #7EECD8;
+  --color-accent-muted: rgba(153, 249, 234, 0.12);
+  --color-accent-subtle: rgba(153, 249, 234, 0.04);
+  --color-accent-foreground: #0B1211;
+
+  /* Text */
+  --color-text-primary: #FFFFFF;
+  --color-text-secondary: #A2B4B1;
+  --color-text-tertiary: #5A6577;
+  --color-text-accent: #99F9EA;
+  --color-text-card-foreground: #E1E7EF;
+
+  /* Border */
+  --color-border-default: #273139;
+  --color-border-subtle: #1E2535;
+  --color-border-accent: #99F9EA;
+
+  /* Status */
+  --color-status-success: #16A249;
+  --color-status-error: #FF5252;
+  --color-status-warning: #FBBD23;
+  --color-status-info: #4DA6FF;
+  --color-status-online: #44DD77;
+  --color-status-offline: #5A6577;
+
+  /* Destructive */
+  --color-destructive: #A83A3A;
+  --color-destructive-hover: #923232;
+  --color-destructive-foreground: #F8FAFC;
+
+  /* Discord */
+  --color-discord: #5865F2;
+
+  /* Rank Colors */
+  --color-rank-gold: #FFD700;
+  --color-rank-silver: #C0C0C0;
+  --color-rank-bronze: #CD7F32;
+  --color-rank-diamond: #B9F2FF;
+
+  /* Typography */
+  --font-oxanium: "Oxanium", ui-sans-serif, system-ui, sans-serif;
+
+  /* Radius */
+  --radius-sm: 6px;
+  --radius-md: 8px;
+  --radius-lg: 12px;
+  --radius-xl: 16px;
+  --radius-full: 9999px;
 }
 
 body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  background: var(--color-bg-primary);
+  color: var(--color-text-primary);
+  font-family: var(--font-oxanium);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* Scrollbar */
+::-webkit-scrollbar {
+  width: 6px;
+}
+::-webkit-scrollbar-track {
+  background: var(--color-bg-secondary);
+}
+::-webkit-scrollbar-thumb {
+  background: var(--color-border-default);
+  border-radius: 3px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: var(--color-text-tertiary);
 }

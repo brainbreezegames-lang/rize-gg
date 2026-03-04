@@ -1,0 +1,868 @@
+{
+  "$schema": "Rize.gg Component Registry — maps every design system component to its code path, props, and Figma source.",
+  "version": "1.0.0",
+  "components": {
+    "Button": {
+      "path": "@/components/buttons/Button",
+      "figmaNodeIds": [],
+      "props": {
+        "variant": {
+          "type": "'primary' | 'secondary' | 'outline' | 'destructive' | 'ghost' | 'discord'",
+          "default": "primary"
+        },
+        "size": {
+          "type": "'sm' | 'md' | 'lg' | 'icon'",
+          "default": "md"
+        },
+        "leftIcon": { "type": "ReactNode", "optional": true },
+        "rightIcon": { "type": "ReactNode", "optional": true },
+        "loading": { "type": "boolean", "optional": true },
+        "disabled": { "type": "boolean", "optional": true }
+      },
+      "usage": [
+        "<Button>Join now</Button>",
+        "<Button variant=\"secondary\">Session details</Button>",
+        "<Button variant=\"outline\">Team Details</Button>",
+        "<Button variant=\"destructive\">Delete account</Button>",
+        "<Button variant=\"ghost\">Browse all</Button>",
+        "<Button variant=\"discord\">Join us on Discord</Button>",
+        "<Button size=\"icon\"><Star size={16} /></Button>",
+        "<Button size=\"lg\">Find your team →</Button>",
+        "<Button loading>Processing...</Button>"
+      ],
+      "designNotes": "Primary buttons use mint/teal bg (#99F9EA) with dark text. Always use rounded-[var(--radius-sm)] for sm/md, rounded-[var(--radius-md)] for lg."
+    },
+    "SocialAuthButton": {
+      "path": "@/components/buttons/SocialAuthButton",
+      "figmaNodeIds": [],
+      "props": {
+        "icon": { "type": "ReactNode", "required": true },
+        "provider": { "type": "string", "required": true }
+      },
+      "usage": [
+        "<SocialAuthButton icon={<GoogleIcon />} provider=\"Google\" />",
+        "<SocialAuthButton icon={<TwitchIcon />} provider=\"Twitch\" />",
+        "<SocialAuthButton icon={<SteamIcon />} provider=\"Steam\" />"
+      ],
+      "designNotes": "Full-width dark surface button with icon + 'Continue with {provider}'. Used on auth pages."
+    },
+    "FilterChip": {
+      "path": "@/components/buttons/FilterChip",
+      "figmaNodeIds": [],
+      "props": {
+        "active": { "type": "boolean", "default": false },
+        "icon": { "type": "ReactNode", "optional": true }
+      },
+      "usage": [
+        "<FilterChip active icon={<GameIcon />}>Valorant</FilterChip>",
+        "<FilterChip icon={<GameIcon />}>CS2</FilterChip>"
+      ],
+      "designNotes": "Pill-shaped. Active state: accent border + accent bg subtle + checkmark. Horizontal scrollable row."
+    },
+    "Sidebar": {
+      "path": "@/components/navigation/Sidebar",
+      "figmaNodeIds": ["2917:4230", "6851:702888"],
+      "props": {
+        "collapsed": { "type": "boolean", "optional": true },
+        "onToggle": { "type": "() => void", "optional": true },
+        "sections": { "type": "NavSection[]", "optional": true },
+        "footer": { "type": "ReactNode", "optional": true }
+      },
+      "usage": [
+        "<Sidebar />",
+        "<Sidebar collapsed />",
+        "<Sidebar sections={customSections} />"
+      ],
+      "designNotes": "240px expanded, 60px collapsed. Border-right. Sections: Main (Home/Games/Team finder), Competitive (Rize LFG/Scrims/Tournaments/Calendar), Social (Federations/Clubs/Players/Leaderboard/Missions). Footer: Discord/Settings/Help/Profile."
+    },
+    "TopBar": {
+      "path": "@/components/navigation/TopBar",
+      "figmaNodeIds": [],
+      "props": {
+        "breadcrumb": { "type": "ReactNode", "optional": true },
+        "actions": { "type": "ReactNode", "optional": true }
+      },
+      "usage": [
+        "<TopBar breadcrumb={<Breadcrumbs items={[...]} />} />"
+      ],
+      "designNotes": "56px height. Breadcrumb left, action icons right (messages, notifications, theme). Border-bottom."
+    },
+    "Breadcrumbs": {
+      "path": "@/components/navigation/Breadcrumbs",
+      "figmaNodeIds": [],
+      "props": {
+        "items": { "type": "{ label: string; href?: string }[]", "required": true }
+      },
+      "usage": [
+        "<Breadcrumbs items={[{ label: 'Rize.gg', href: '/' }, { label: 'Tournaments' }]} />"
+      ],
+      "designNotes": "ChevronRight separator. Last item is white text, others are secondary text with hover."
+    },
+    "LandingNav": {
+      "path": "@/components/navigation/LandingNav",
+      "figmaNodeIds": [],
+      "props": {
+        "logo": { "type": "ReactNode", "optional": true },
+        "links": { "type": "NavLink[]", "optional": true }
+      },
+      "usage": [
+        "<LandingNav />"
+      ],
+      "designNotes": "Logo left, links center (Find a Team/Tournaments/Rize LFG/Scrims/Explore Games/Top Players), Sign Up button right. Backdrop blur."
+    },
+    "SessionCard": {
+      "path": "@/components/cards/SessionCard",
+      "figmaNodeIds": ["9031:206928"],
+      "props": {
+        "gameIcon": { "type": "ReactNode", "optional": true },
+        "teamName": { "type": "string", "required": true },
+        "owner": { "type": "string", "required": true },
+        "game": { "type": "string", "required": true },
+        "slotsUsed": { "type": "number", "required": true },
+        "slotsTotal": { "type": "number", "required": true },
+        "availability": { "type": "string", "optional": true },
+        "time": { "type": "string", "optional": true },
+        "skillRequirement": { "type": "string", "optional": true },
+        "onDetails": { "type": "() => void", "optional": true },
+        "onJoin": { "type": "() => void", "optional": true }
+      },
+      "usage": [
+        "<SessionCard gameIcon={<Gamepad2 />} teamName=\"Just4fun\" owner=\"TenZ\" game=\"Valorant\" slotsUsed={3} slotsTotal={5} skillRequirement=\"Gold+\" />"
+      ],
+      "designNotes": "Game icon + team/owner/game header. Slots + availability + time row. Skill requirement. Two buttons: 'Session details' (outline) + 'Join' (primary)."
+    },
+    "TournamentCard": {
+      "path": "@/components/cards/TournamentCard",
+      "figmaNodeIds": ["8536:208963"],
+      "props": {
+        "heroImage": { "type": "string", "optional": true },
+        "prize": { "type": "string", "optional": true },
+        "prizeIcon": { "type": "ReactNode", "optional": true },
+        "status": { "type": "string", "optional": true },
+        "statusColor": { "type": "string", "default": "bg-status-success" },
+        "location": { "type": "string", "optional": true },
+        "capacity": { "type": "string", "optional": true },
+        "rankRequirement": { "type": "string", "optional": true },
+        "gameIcon": { "type": "string", "optional": true, "description": "Game icon image URL" },
+        "gameIconNode": { "type": "ReactNode", "optional": true, "description": "Game icon as ReactNode" },
+        "title": { "type": "string", "required": true },
+        "description": { "type": "string", "optional": true },
+        "countdown": { "type": "{ days: string; hours: string; minutes: string }", "optional": true },
+        "organizerAvatar": { "type": "string", "optional": true },
+        "organizerName": { "type": "string", "optional": true }
+      },
+      "usage": [
+        "<TournamentCard heroImage=\"/hero.jpg\" title=\"Valorant Champions TOUR\" prize=\"$30,000\" status=\"Registration open\" location=\"Saudi Arabia\" capacity=\"08/10\" rankRequirement=\"Gold +\" countdown={{ days: '01', hours: '18', minutes: '03' }} organizerName=\"Fatima Saeed\" />"
+      ],
+      "designNotes": "372px width. 166px hero image with prize badge (bg-status-warning backdrop-blur) + status pill (rounded-[88px]). Meta row: MapPin/Users/ChevronDown icons with vertical dividers. 56px game icon + title 18px semibold + description. Countdown: 3 segments bg-accent-subtle. Organizer: 32px avatar + name."
+    },
+    "ClubCard": {
+      "path": "@/components/cards/ClubCard",
+      "figmaNodeIds": ["4645:73826"],
+      "props": {
+        "avatar": { "type": "string", "optional": true },
+        "name": { "type": "string", "required": true },
+        "countryFlag": { "type": "string", "optional": true },
+        "status": { "type": "string", "optional": true },
+        "statusIcon": { "type": "ReactNode", "optional": true },
+        "owner": { "type": "string", "optional": true },
+        "timezone": { "type": "string", "optional": true },
+        "memberCount": { "type": "number", "optional": true },
+        "memberMax": { "type": "number", "optional": true },
+        "activeGames": { "type": "{ icon?: ReactNode; label?: string }[]", "optional": true },
+        "onOpen": { "type": "() => void", "optional": true }
+      },
+      "usage": [
+        "<ClubCard avatar=\"/club.jpg\" name=\"Shadow Core\" status=\"Recruiting\" owner=\"MohTarek\" timezone=\"UTC/GMT +2\" memberCount={2} memberMax={10} activeGames={[{ label: 'Valorant' }, { label: 'CS2' }]} />"
+      ],
+      "designNotes": "Accent border + gradient bg. 52px rounded-[4px] avatar. Name 18px semibold + country flag + status pill (bg-[#161D22]). Owner in accent + timezone + member count with vertical dividers. Active Games section with 60x32px rounded-full game pills. 'Open Club' button with accent border."
+    },
+    "MissionCard": {
+      "path": "@/components/cards/MissionCard",
+      "figmaNodeIds": [],
+      "props": {
+        "icon": { "type": "ReactNode", "optional": true },
+        "title": { "type": "string", "required": true },
+        "description": { "type": "string", "optional": true },
+        "rank": { "type": "string", "optional": true },
+        "progress": { "type": "number", "default": 0 },
+        "maxProgress": { "type": "number", "default": 100 },
+        "badgeRanks": { "type": "{ label: string; active: boolean }[]", "optional": true },
+        "status": { "type": "'locked' | 'in_progress' | 'completed'", "default": "in_progress" }
+      },
+      "usage": [
+        "<MissionCard icon={<Trophy />} title=\"Win 10 Matches\" rank=\"Gold\" progress={7} maxProgress={10} badgeRanks={[{ label: 'Bronze', active: true }, { label: 'Gold', active: true }, { label: 'Diamond', active: false }]} />"
+      ],
+      "designNotes": "Badge icon + title/description. Rank label + progress bar. Badge rank pills. Locked state dims card."
+    },
+    "FederationCard": {
+      "path": "@/components/cards/FederationCard",
+      "figmaNodeIds": ["4915:103872"],
+      "props": {
+        "flag": { "type": "string", "optional": true, "description": "Flag image URL" },
+        "flagEmoji": { "type": "string", "optional": true, "description": "Flag emoji fallback" },
+        "country": { "type": "string", "required": true },
+        "memberCount": { "type": "number | string", "required": true },
+        "badge": { "type": "string", "optional": true },
+        "onClick": { "type": "() => void", "optional": true }
+      },
+      "usage": [
+        "<FederationCard flagEmoji=\"🇸🇦\" country=\"Saudi Arabia\" memberCount={2475} />",
+        "<FederationCard flag=\"/flags/sa.png\" country=\"Saudi Arabia\" memberCount={2475} />"
+      ],
+      "designNotes": "276x72px card. 52px rounded-[6px] flag area. Country name 16px semibold. Users icon + member count 14px. Optional badge pill."
+    },
+    "PlayerCard": {
+      "path": "@/components/cards/PlayerCard",
+      "figmaNodeIds": ["4967:173691"],
+      "props": {
+        "avatar": { "type": "string", "optional": true },
+        "name": { "type": "string", "required": true },
+        "countryFlag": { "type": "string", "optional": true },
+        "country": { "type": "string", "optional": true },
+        "games": { "type": "{ icon?: ReactNode; bgColor?: string }[]", "optional": true },
+        "badges": { "type": "ReactNode[]", "optional": true },
+        "rating": { "type": "number", "optional": true },
+        "totalRatings": { "type": "number", "optional": true },
+        "isFriend": { "type": "boolean", "default": false },
+        "onAddFriend": { "type": "() => void", "optional": true },
+        "onMessage": { "type": "() => void", "optional": true },
+        "onMore": { "type": "() => void", "optional": true }
+      },
+      "usage": [
+        "<PlayerCard name=\"TenZ\" country=\"Canada\" rating={5.6} totalRatings={82} />",
+        "<PlayerCard avatar=\"/player.jpg\" name=\"Aspas\" country=\"Brazil\" games={[{ bgColor: 'bg-status-error' }]} rating={4.8} totalRatings={120} isFriend />"
+      ],
+      "designNotes": "324px width, 20px padding. 56px avatar with ring. Name 24px semibold tracking-[-0.14px]. Country flag 20x14px. Main Games + Badges sections with dividers. Star rating in #FDDF49. Action buttons: Add friend (accent), Message, More."
+    },
+    "StatCard": {
+      "path": "@/components/cards/StatCard",
+      "figmaNodeIds": [],
+      "props": {
+        "title": { "type": "string", "required": true },
+        "icon": { "type": "ReactNode", "optional": true },
+        "value": { "type": "string | number", "required": true },
+        "unit": { "type": "string", "optional": true },
+        "cta": { "type": "ReactNode", "optional": true }
+      },
+      "usage": [
+        "<StatCard title=\"Active Players\" value=\"12,450\" icon={<Users size={16} />} />"
+      ],
+      "designNotes": "Title + icon header. Large value number + optional unit. Optional CTA link."
+    },
+    "ArticleCard": {
+      "path": "@/components/cards/ArticleCard",
+      "figmaNodeIds": [],
+      "props": {
+        "image": { "type": "string", "optional": true },
+        "badge": { "type": "string", "optional": true },
+        "title": { "type": "string", "required": true },
+        "description": { "type": "string", "optional": true },
+        "date": { "type": "string", "optional": true }
+      },
+      "usage": [
+        "<ArticleCard image=\"/hero.jpg\" badge=\"Fresh Article\" title=\"VCT 2025 Preview\" date=\"Mar 4, 2025\" />"
+      ],
+      "designNotes": "Hero image with badge overlay. Title + description + date below."
+    },
+    "GameTabCard": {
+      "path": "@/components/cards/GameTabCard",
+      "figmaNodeIds": ["9031:206928", "9031:206936"],
+      "props": {
+        "icon": { "type": "ReactNode", "optional": true },
+        "gameName": { "type": "string", "required": true },
+        "currentRank": { "type": "string", "optional": true },
+        "description": { "type": "string", "optional": true },
+        "backgroundImage": { "type": "string", "optional": true },
+        "active": { "type": "boolean", "default": false },
+        "onClick": { "type": "() => void", "optional": true }
+      },
+      "usage": [
+        "<GameTabCard gameName=\"Valorant\" currentRank=\"Gold 3\" active />",
+        "<GameTabCard gameName=\"CS2\" description=\"Counter-Strike 2\" backgroundImage=\"/cs2-bg.jpg\" />"
+      ],
+      "designNotes": "Border-default, rounded-[8px], pl-7 pr-[26px] py-3. Gradient bg from accent 2% to 8%. Optional background image with dark overlay. 48px icon. Title 20px semibold tracking-[-0.1px]. Active: accent border."
+    },
+    "TextInput": {
+      "path": "@/components/forms/TextInput",
+      "figmaNodeIds": ["3032:25127"],
+      "props": {
+        "label": { "type": "string", "optional": true },
+        "error": { "type": "string", "optional": true },
+        "hint": { "type": "string", "optional": true },
+        "leftIcon": { "type": "ReactNode", "optional": true },
+        "rightIcon": { "type": "ReactNode", "optional": true }
+      },
+      "usage": [
+        "<TextInput label=\"Username\" placeholder=\"Enter username\" />",
+        "<TextInput label=\"Email\" error=\"Invalid email\" />"
+      ],
+      "designNotes": "Dark bg (#121415), subtle border, white text, gray placeholder. Error state: red border. Focus: accent border."
+    },
+    "SearchInput": {
+      "path": "@/components/forms/SearchInput",
+      "figmaNodeIds": ["6231:186508"],
+      "props": {
+        "onClear": { "type": "() => void", "optional": true },
+        "value": { "type": "string", "optional": true }
+      },
+      "usage": [
+        "<SearchInput placeholder=\"Search players...\" value={search} onChange={e => setSearch(e.target.value)} onClear={() => setSearch('')} />"
+      ],
+      "designNotes": "Leading search icon. Clear X button when value exists."
+    },
+    "Select": {
+      "path": "@/components/forms/Select",
+      "figmaNodeIds": [],
+      "props": {
+        "label": { "type": "string", "optional": true },
+        "error": { "type": "string", "optional": true },
+        "options": { "type": "{ value: string; label: string }[]", "required": true },
+        "placeholder": { "type": "string", "optional": true }
+      },
+      "usage": [
+        "<Select label=\"Region\" placeholder=\"Select region\" options={[{ value: 'eu', label: 'Europe' }]} />"
+      ],
+      "designNotes": "Dark bg + chevron. Same styling as TextInput."
+    },
+    "Toggle": {
+      "path": "@/components/forms/Toggle",
+      "figmaNodeIds": [],
+      "props": {
+        "checked": { "type": "boolean", "default": false },
+        "onChange": { "type": "(checked: boolean) => void", "optional": true },
+        "label": { "type": "string", "optional": true },
+        "disabled": { "type": "boolean", "optional": true }
+      },
+      "usage": [
+        "<Toggle checked={on} onChange={setOn} label=\"Notifications\" />"
+      ],
+      "designNotes": "Pill toggle. On: accent bg. Off: border-default bg. White thumb."
+    },
+    "PasswordInput": {
+      "path": "@/components/forms/PasswordInput",
+      "figmaNodeIds": [],
+      "props": {
+        "label": { "type": "string", "optional": true },
+        "error": { "type": "string", "optional": true }
+      },
+      "usage": [
+        "<PasswordInput label=\"Password\" placeholder=\"Enter password\" />"
+      ],
+      "designNotes": "Lock icon left, eye/eye-off toggle right. Same base styling as TextInput."
+    },
+    "ChatInput": {
+      "path": "@/components/forms/ChatInput",
+      "figmaNodeIds": [],
+      "props": {
+        "onAttach": { "type": "() => void", "optional": true },
+        "onEmoji": { "type": "() => void", "optional": true },
+        "onSticker": { "type": "() => void", "optional": true }
+      },
+      "usage": [
+        "<ChatInput onAttach={handleAttach} onEmoji={handleEmoji} onSticker={handleSticker} />"
+      ],
+      "designNotes": "'+' attachment button left. Emoji + sticker icons right. Taller (48px) than regular inputs."
+    },
+    "DataTable": {
+      "path": "@/components/data/DataTable",
+      "figmaNodeIds": [],
+      "props": {
+        "columns": { "type": "Column<T>[]", "required": true },
+        "data": { "type": "T[]", "required": true },
+        "sortKey": { "type": "string", "optional": true },
+        "sortDir": { "type": "'asc' | 'desc'", "optional": true },
+        "onSort": { "type": "(key: string) => void", "optional": true },
+        "onRowClick": { "type": "(row: T, index: number) => void", "optional": true }
+      },
+      "usage": [
+        "<DataTable columns={[{ key: 'name', header: 'Name', sortable: true }]} data={players} />"
+      ],
+      "designNotes": "Sortable columns with chevron icons. Hover row highlight. Border container."
+    },
+    "LeaderboardRow": {
+      "path": "@/components/data/LeaderboardRow",
+      "figmaNodeIds": ["4716:98051"],
+      "props": {
+        "rank": { "type": "number", "required": true },
+        "avatar": { "type": "string", "optional": true },
+        "name": { "type": "string", "required": true },
+        "countryFlag": { "type": "string", "optional": true },
+        "country": { "type": "string", "optional": true },
+        "rankTier": { "type": "string", "optional": true },
+        "score": { "type": "number", "optional": true },
+        "maxScore": { "type": "number", "optional": true },
+        "actions": { "type": "ReactNode", "optional": true },
+        "onMore": { "type": "() => void", "optional": true }
+      },
+      "usage": [
+        "<LeaderboardRow rank={1} name=\"TenZ\" countryFlag=\"🇨🇦\" rankTier=\"Diamond\" score={2450} maxScore={3000} />"
+      ],
+      "designNotes": "Rank 1-3: trophy icon with gold/silver/bronze color + accent subtle bg. Rank 4+: number. Avatar + name + flag + stats."
+    },
+    "StatusPill": {
+      "path": "@/components/data/StatusPill",
+      "figmaNodeIds": ["8106:168026"],
+      "props": {
+        "variant": { "type": "'registration_open' | 'live' | 'finished' | 'playing' | 'idle' | 'recruiting' | 'online' | 'offline'", "required": true },
+        "label": { "type": "string", "optional": true }
+      },
+      "usage": [
+        "<StatusPill variant=\"registration_open\" />",
+        "<StatusPill variant=\"live\" />",
+        "<StatusPill variant=\"playing\" label=\"In Game\" />"
+      ],
+      "designNotes": "Rounded-full pill. Each variant has its own bg color. registration_open=green, live=red, finished=gray, playing=green, idle=yellow, recruiting=green."
+    },
+    "Badge": {
+      "path": "@/components/data/Badge",
+      "figmaNodeIds": ["2956:120472"],
+      "props": {
+        "variant": { "type": "'default' | 'accent' | 'gold' | 'silver' | 'bronze' | 'diamond'", "default": "default" },
+        "icon": { "type": "ReactNode", "optional": true },
+        "label": { "type": "string", "optional": true }
+      },
+      "usage": [
+        "<Badge variant=\"gold\" label=\"1st Place\" />",
+        "<Badge variant=\"accent\" label=\"Gold\" />"
+      ],
+      "designNotes": "Rounded-full with border. Colored border + text + subtle bg per variant."
+    },
+    "ProgressBar": {
+      "path": "@/components/data/ProgressBar",
+      "figmaNodeIds": ["4709:108884"],
+      "props": {
+        "value": { "type": "number", "required": true },
+        "max": { "type": "number", "default": 100 },
+        "label": { "type": "string", "optional": true },
+        "showCount": { "type": "boolean", "default": false },
+        "size": { "type": "'sm' | 'md'", "default": "sm" }
+      },
+      "usage": [
+        "<ProgressBar value={65} max={100} label=\"Gold\" showCount />"
+      ],
+      "designNotes": "Accent-colored bar on surface bg. Label in accent color. Count in secondary color."
+    },
+    "CountdownTimer": {
+      "path": "@/components/data/CountdownTimer",
+      "figmaNodeIds": [],
+      "props": {
+        "days": { "type": "string | number", "required": true },
+        "hours": { "type": "string | number", "required": true },
+        "minutes": { "type": "string | number", "required": true }
+      },
+      "usage": [
+        "<CountdownTimer days=\"01\" hours=\"18\" minutes=\"03\" />"
+      ],
+      "designNotes": "3 segments side-by-side. Each: accent-subtle bg + large number + unit label. Rounded-[var(--radius-md)]."
+    },
+    "ChatMessage": {
+      "path": "@/components/chat/ChatMessage",
+      "figmaNodeIds": ["3161:37706"],
+      "props": {
+        "avatar": { "type": "string", "optional": true },
+        "username": { "type": "string", "required": true },
+        "roleBadge": { "type": "string", "optional": true },
+        "timestamp": { "type": "string", "optional": true },
+        "message": { "type": "string", "required": true },
+        "replyTo": { "type": "{ username: string; text: string }", "optional": true },
+        "reactions": { "type": "ReactNode", "optional": true }
+      },
+      "usage": [
+        "<ChatMessage username=\"TenZ\" timestamp=\"12:18\" message=\"Hey team, let's run some scrims tonight.\" />",
+        "<ChatMessage username=\"Aspas\" roleBadge=\"Leader\" timestamp=\"2:32 PM\" message=\"I'm down!\" replyTo={{ username: 'TenZ', text: 'Let's run some scrims' }} />"
+      ],
+      "designNotes": "58px avatar. 16px gap. Username 18px semibold white. Timestamp 12px secondary. Message 16px regular white leading-7. Reply: left border + truncated text. Hover: surface-hover/50."
+    },
+    "ChatListItem": {
+      "path": "@/components/chat/ChatListItem",
+      "figmaNodeIds": [],
+      "props": {
+        "avatar": { "type": "string", "optional": true },
+        "name": { "type": "string", "required": true },
+        "status": { "type": "string", "optional": true },
+        "unreadCount": { "type": "number", "optional": true },
+        "memberCount": { "type": "number", "optional": true },
+        "active": { "type": "boolean", "default": false },
+        "onClick": { "type": "() => void", "optional": true }
+      },
+      "usage": [
+        "<ChatListItem name=\"Shadow Core\" status=\"5 online\" unreadCount={3} active />"
+      ],
+      "designNotes": "Avatar + name + status. Unread badge (accent). Active: surface bg. Member count small text."
+    },
+    "PageHeader": {
+      "path": "@/components/layout/PageHeader",
+      "figmaNodeIds": [],
+      "props": {
+        "title": { "type": "string", "required": true },
+        "subtitle": { "type": "string", "optional": true },
+        "timestamp": { "type": "string", "optional": true },
+        "actions": { "type": "ReactNode", "optional": true }
+      },
+      "usage": [
+        "<PageHeader title=\"Tournaments\" subtitle=\"Find and join competitive tournaments\" actions={<Button>Create</Button>} />"
+      ],
+      "designNotes": "Title (24px semibold) left. Actions right. Optional subtitle + timestamp."
+    },
+    "SectionHeader": {
+      "path": "@/components/layout/SectionHeader",
+      "figmaNodeIds": [],
+      "props": {
+        "title": { "type": "string", "required": true },
+        "action": { "type": "ReactNode", "optional": true },
+        "actionLabel": { "type": "string", "default": "Browse all" },
+        "onAction": { "type": "() => void", "optional": true }
+      },
+      "usage": [
+        "<SectionHeader title=\"Upcoming Tournaments\" onAction={handleBrowse} />",
+        "<SectionHeader title=\"Featured\" actionLabel=\"View details\" onAction={handleView} />"
+      ],
+      "designNotes": "Title left + action link right. Action link in accent color with underline on hover."
+    },
+    "HeroBanner": {
+      "path": "@/components/layout/HeroBanner",
+      "figmaNodeIds": ["7986:160639"],
+      "props": {
+        "backgroundImage": { "type": "string", "optional": true },
+        "title": { "type": "string", "required": true },
+        "subtitle": { "type": "string", "optional": true },
+        "ctaLabel": { "type": "string", "optional": true },
+        "onCta": { "type": "() => void", "optional": true },
+        "overlay": { "type": "boolean", "default": true }
+      },
+      "usage": [
+        "<HeroBanner backgroundImage=\"/hero.jpg\" title=\"Find Your Team\" subtitle=\"Compete and Rise\" ctaLabel=\"Get Started\" />"
+      ],
+      "designNotes": "Full-width with bg image. Gradient overlay from bottom. Title + subtitle + CTA at bottom-left. Min height 240px. Rounded-[var(--radius-lg)]."
+    },
+    "SettingsSidebar": {
+      "path": "@/components/layout/SettingsSidebar",
+      "figmaNodeIds": ["3691:70141"],
+      "props": {
+        "sections": { "type": "{ title: string; items: { label: string; href?: string; active?: boolean }[] }[]", "optional": true }
+      },
+      "usage": [
+        "<SettingsSidebar />",
+        "<SettingsSidebar sections={[{ title: 'User Settings', items: [{ label: 'My Account', active: true }, { label: 'Profile' }] }]} />"
+      ],
+      "designNotes": "210px wide, border-r, pt-[68px]. Search input at top with border-[#343D3C]. Section titles: uppercase text-sm text-[#323A3E]. Active item: accent gradient bg + accent text. Default: text-text-secondary px-3.5 py-2.5. Default sections: USER SETTINGS + PLATFORM SETTINGS."
+    },
+    "Modal": {
+      "path": "@/components/overlays/Modal",
+      "figmaNodeIds": ["8106:162949"],
+      "props": {
+        "open": { "type": "boolean", "required": true },
+        "onClose": { "type": "() => void", "required": true },
+        "title": { "type": "string", "optional": true },
+        "children": { "type": "ReactNode", "required": true },
+        "footer": { "type": "ReactNode", "optional": true },
+        "size": { "type": "'sm' | 'md' | 'lg'", "default": "md" }
+      },
+      "usage": [
+        "<Modal open={isOpen} onClose={close} title=\"Create Tournament\" footer={<><Button variant=\"ghost\">Cancel</Button><Button>Create</Button></>}>...</Modal>"
+      ],
+      "designNotes": "Dark elevated bg. Blur backdrop. Title + close X header. Scrollable body. Footer buttons (Cancel ghost + Apply primary)."
+    },
+    "FilterDrawer": {
+      "path": "@/components/overlays/FilterDrawer",
+      "figmaNodeIds": [],
+      "props": {
+        "open": { "type": "boolean", "required": true },
+        "onClose": { "type": "() => void", "required": true },
+        "title": { "type": "string", "default": "Filters" },
+        "children": { "type": "ReactNode", "required": true },
+        "onApply": { "type": "() => void", "optional": true },
+        "onReset": { "type": "() => void", "optional": true }
+      },
+      "usage": [
+        "<FilterDrawer open={isOpen} onClose={close} onApply={apply} onReset={reset}>...</FilterDrawer>"
+      ],
+      "designNotes": "Slides from right. Full height. Filter form content. Footer: Reset (ghost) + Apply (primary)."
+    },
+    "Avatar": {
+      "path": "@/components/micro/Avatar",
+      "figmaNodeIds": ["4609:85404"],
+      "props": {
+        "src": { "type": "string", "optional": true },
+        "alt": { "type": "string", "optional": true },
+        "size": { "type": "'xs' | 'sm' | 'md' | 'lg' | 'xl' | '2xl'", "default": "md" },
+        "online": { "type": "boolean", "optional": true }
+      },
+      "usage": [
+        "<Avatar src=\"/user.jpg\" size=\"lg\" online />",
+        "<Avatar size=\"md\" />"
+      ],
+      "designNotes": "Sizes: xs=24px, sm=32px, md=40px, lg=58px, xl=80px, 2xl=120px. Fallback: surface bg with user icon. Online indicator: green dot bottom-right."
+    },
+    "AvatarGroup": {
+      "path": "@/components/micro/Avatar",
+      "figmaNodeIds": [],
+      "props": {
+        "avatars": { "type": "{ src?: string; alt?: string }[]", "required": true },
+        "max": { "type": "number", "default": 4 },
+        "size": { "type": "AvatarSize", "default": "sm" }
+      },
+      "usage": [
+        "<AvatarGroup avatars={users} max={4} />"
+      ],
+      "designNotes": "Overlapping avatars (-space-x-2) with ring-2 ring-bg-primary. Overflow shows +N counter."
+    },
+    "Divider": {
+      "path": "@/components/micro/Divider",
+      "figmaNodeIds": [],
+      "props": {
+        "label": { "type": "string", "optional": true }
+      },
+      "usage": [
+        "<Divider />",
+        "<Divider label=\"or\" />"
+      ],
+      "designNotes": "Horizontal line in border-default. With label: line — text — line."
+    },
+    "Tabs": {
+      "path": "@/components/navigation/Tabs",
+      "figmaNodeIds": ["4979:234629"],
+      "props": {
+        "tabs": { "type": "{ label: string; value: string }[]", "required": true },
+        "activeTab": { "type": "string", "required": true },
+        "onTabChange": { "type": "(value: string) => void", "optional": true }
+      },
+      "usage": [
+        "<Tabs tabs={[{ label: 'About', value: 'about' }, { label: 'Articles', value: 'articles' }]} activeTab=\"about\" onTabChange={setTab} />"
+      ],
+      "designNotes": "Active tab: 3px accent bottom border + gradient bg from transparent to accent-subtle. Inactive: 1px border-default bottom. Full-width flex layout."
+    },
+    "ViewToggle": {
+      "path": "@/components/navigation/ViewToggle",
+      "figmaNodeIds": ["4967:201193"],
+      "props": {
+        "activeView": { "type": "'table' | 'grid'", "required": true },
+        "onViewChange": { "type": "(view: 'table' | 'grid') => void", "optional": true }
+      },
+      "usage": [
+        "<ViewToggle activeView=\"table\" onViewChange={setView} />"
+      ],
+      "designNotes": "Two icon buttons side-by-side: List (table) and LayoutGrid (grid). Active: surface bg + primary text. Inactive: input bg + tertiary text."
+    },
+    "GameIcon": {
+      "path": "@/components/micro/GameIcon",
+      "figmaNodeIds": [],
+      "props": {
+        "src": { "type": "string", "optional": true },
+        "bgColor": { "type": "string", "optional": true },
+        "size": { "type": "'sm' | 'md' | 'lg'", "default": "md" }
+      },
+      "usage": [
+        "<GameIcon src=\"/valorant.png\" bgColor=\"bg-[#FF5252]\" size=\"sm\" />",
+        "<GameIconGroup games={[{ src: '/val.png', bgColor: 'bg-[#FF5252]' }]} max={3} />"
+      ],
+      "designNotes": "Circular game icon with colored background. Sizes: sm=24px, md=32px, lg=40px. GameIconGroup shows overlapping icons with +N overflow."
+    },
+    "GameIconGroup": {
+      "path": "@/components/micro/GameIcon",
+      "figmaNodeIds": [],
+      "props": {
+        "games": { "type": "{ src?: string; bgColor?: string }[]", "required": true },
+        "max": { "type": "number", "default": 5 },
+        "size": { "type": "'sm' | 'md' | 'lg'", "default": "sm" }
+      },
+      "usage": [
+        "<GameIconGroup games={games} max={3} />"
+      ],
+      "designNotes": "Row of GameIcon components with overflow counter in accent color."
+    },
+    "PlayerTableRow": {
+      "path": "@/components/data/PlayerTableRow",
+      "figmaNodeIds": ["4901:126104"],
+      "props": {
+        "avatar": { "type": "string", "optional": true },
+        "name": { "type": "string", "required": true },
+        "sessions": { "type": "number", "optional": true },
+        "groups": { "type": "number", "optional": true },
+        "mutualGroups": { "type": "number", "optional": true },
+        "games": { "type": "{ src?: string; bgColor?: string }[]", "optional": true },
+        "countryFlag": { "type": "string", "optional": true },
+        "country": { "type": "string", "optional": true },
+        "rating": { "type": "number", "optional": true },
+        "onAddFriend": { "type": "() => void", "optional": true },
+        "onMessage": { "type": "() => void", "optional": true },
+        "onMore": { "type": "() => void", "optional": true }
+      },
+      "usage": [
+        "<PlayerTableRow name=\"TenZ\" sessions={234} groups={21} mutualGroups={3} country=\"Japan\" rating={5.6} />"
+      ],
+      "designNotes": "Horizontal row: avatar + name, sessions count, groups/mutual, game icons with overflow, country flag + name, star rating in yellow, action icons (add friend, message, more)."
+    },
+    "PlayerTableHeader": {
+      "path": "@/components/data/PlayerTableRow",
+      "figmaNodeIds": [],
+      "props": {
+        "onSortSessions": { "type": "() => void", "optional": true },
+        "onSortGroups": { "type": "() => void", "optional": true }
+      },
+      "usage": [
+        "<PlayerTableHeader onSortSessions={handleSort} />"
+      ],
+      "designNotes": "Column headers for PlayerTableRow. Sessions and Groups columns are sortable."
+    },
+    "GameCard": {
+      "path": "@/components/cards/GameCard",
+      "figmaNodeIds": [],
+      "props": {
+        "image": { "type": "string", "optional": true },
+        "logo": { "type": "ReactNode", "optional": true },
+        "name": { "type": "string", "required": true },
+        "activeSessions": { "type": "number", "optional": true },
+        "status": { "type": "'supported' | 'coming_soon'", "default": "supported" },
+        "onClick": { "type": "() => void", "optional": true }
+      },
+      "usage": [
+        "<GameCard image=\"/valorant-hero.jpg\" name=\"Valorant\" activeSessions={54} />"
+      ],
+      "designNotes": "16:10 aspect ratio. Background image with gradient overlay. Game logo + name + session count at bottom. Hover: image scales 105%, border accent. Coming Soon badge top-right."
+    },
+    "GameHeroBanner": {
+      "path": "@/components/layout/GameHeroBanner",
+      "figmaNodeIds": ["4967:228779"],
+      "props": {
+        "backgroundImage": { "type": "string", "optional": true },
+        "gameLogo": { "type": "ReactNode", "optional": true },
+        "gameName": { "type": "string", "required": true },
+        "badges": { "type": "ReactNode[]", "optional": true }
+      },
+      "usage": [
+        "<GameHeroBanner backgroundImage=\"/val-hero.jpg\" gameName=\"Valorant\" badges={[<Badge variant=\"accent\" label=\"Supported\" />, <Badge variant=\"accent\" label=\"Active\" />]} />"
+      ],
+      "designNotes": "240px height. Background image with diagonal gradient overlay. Game logo + name centered. Optional badges top-right."
+    },
+    "GameStatCard": {
+      "path": "@/components/cards/GameStatCard",
+      "figmaNodeIds": ["4992:240770"],
+      "props": {
+        "title": { "type": "string", "required": true },
+        "icon": { "type": "ReactNode", "optional": true },
+        "value": { "type": "string | number", "required": true },
+        "subtitle": { "type": "string", "optional": true },
+        "ctaLabel": { "type": "string", "optional": true },
+        "onCta": { "type": "() => void", "optional": true },
+        "variant": { "type": "'accent' | 'default'", "default": "default" }
+      },
+      "usage": [
+        "<GameStatCard title=\"Active Valorant sessions\" value={54} ctaLabel=\"Browse sessions\" variant=\"accent\" />",
+        "<GameStatCard title=\"Valorant Groups\" value={87} subtitle=\"24 Joined\" />"
+      ],
+      "designNotes": "Accent variant: gradient bg with accent border. 32px bold value. Optional subtitle inline. Optional CTA button full-width."
+    },
+    "FederationHero": {
+      "path": "@/components/layout/FederationHero",
+      "figmaNodeIds": [],
+      "props": {
+        "backgroundImage": { "type": "string", "optional": true },
+        "federationName": { "type": "string", "required": true },
+        "tagline": { "type": "string", "optional": true },
+        "actions": { "type": "ReactNode", "optional": true }
+      },
+      "usage": [
+        "<FederationHero backgroundImage=\"/gradient.jpg\" federationName=\"São Paulo Federation\" tagline=\"One Nation, One Game, One Victory.\" actions={<><Button>Become a member</Button><Button variant=\"outline\">Set Up</Button></>} />"
+      ],
+      "designNotes": "320px min-height. Background image with gradient overlay to bg-primary. Centered text with title, tagline, and action buttons."
+    },
+    "QuickFacts": {
+      "path": "@/components/layout/FederationHero",
+      "figmaNodeIds": [],
+      "props": {
+        "facts": { "type": "{ label: string; value: string | number }[]", "required": true },
+        "contactInfo": { "type": "{ label: string; value: string }[]", "optional": true }
+      },
+      "usage": [
+        "<QuickFacts facts={[{ label: 'Members', value: '1,250' }, { label: 'Founded', value: '2023' }]} contactInfo={[{ label: 'Email', value: 'info@federation.com' }]} />"
+      ],
+      "designNotes": "Card with label-value pairs. Optional contact info section below a divider."
+    },
+    "PricingCard": {
+      "path": "@/components/cards/PricingCard",
+      "figmaNodeIds": [],
+      "props": {
+        "title": { "type": "string", "required": true },
+        "price": { "type": "string", "required": true },
+        "period": { "type": "string", "default": "/month" },
+        "features": { "type": "string[]", "required": true },
+        "ctaLabel": { "type": "string", "default": "Subscribe" },
+        "onCta": { "type": "() => void", "optional": true },
+        "highlighted": { "type": "boolean", "default": false },
+        "backgroundImage": { "type": "string", "optional": true }
+      },
+      "usage": [
+        "<PricingCard title=\"Basic Membership\" price=\"$11.90\" features={['Access to tournaments', 'Community chat']} />",
+        "<PricingCard title=\"Premium Membership\" price=\"$19.90\" features={['All basic features', 'Priority matchmaking']} highlighted />"
+      ],
+      "designNotes": "Optional hero image top with gradient fade. Title + price (32px bold) + feature list with check icons + CTA button. Highlighted: accent border."
+    },
+    "NewsCard": {
+      "path": "@/components/cards/NewsCard",
+      "figmaNodeIds": [],
+      "props": {
+        "avatar": { "type": "string", "optional": true },
+        "authorName": { "type": "string", "required": true },
+        "label": { "type": "string", "optional": true },
+        "title": { "type": "string", "required": true },
+        "body": { "type": "string", "required": true },
+        "date": { "type": "string", "optional": true },
+        "image": { "type": "string", "optional": true },
+        "onReadMore": { "type": "() => void", "optional": true }
+      },
+      "usage": [
+        "<NewsCard authorName=\"Coach Eduardo\" title=\"New Regulation Update\" body=\"The federation has updated...\" date=\"2 days ago\" />"
+      ],
+      "designNotes": "Author avatar + name + label header. Bold title. Body text (3 line clamp). Optional image. Date + Read more footer."
+    },
+    "Footer": {
+      "path": "@/components/layout/Footer",
+      "figmaNodeIds": [],
+      "props": {
+        "logo": { "type": "ReactNode", "optional": true },
+        "tagline": { "type": "string", "default": "Stay Connected. Keep Climbing." },
+        "ctaLabel": { "type": "string", "default": "Join Us" },
+        "onCta": { "type": "() => void", "optional": true },
+        "socialLinks": { "type": "ReactNode", "optional": true }
+      },
+      "usage": [
+        "<Footer logo={<RizeLogo />} socialLinks={<><DiscordButton /><TwitterButton /></>} />"
+      ],
+      "designNotes": "Top border. Centered tagline + CTA. Bottom bar: logo + copyright left, social icons right."
+    },
+    "AccountConnectionCard": {
+      "path": "@/components/cards/AccountConnectionCard",
+      "figmaNodeIds": [],
+      "props": {
+        "icon": { "type": "ReactNode", "optional": true },
+        "platform": { "type": "string", "required": true },
+        "description": { "type": "string", "optional": true },
+        "connected": { "type": "boolean", "default": false },
+        "username": { "type": "string", "optional": true },
+        "onConnect": { "type": "() => void", "optional": true },
+        "onDisconnect": { "type": "() => void", "optional": true }
+      },
+      "usage": [
+        "<AccountConnectionCard icon={<SteamIcon />} platform=\"Steam\" connected username=\"player123\" />",
+        "<AccountConnectionCard icon={<DiscordIcon />} platform=\"Discord\" description=\"Link your Discord account\" />"
+      ],
+      "designNotes": "Icon in surface bg square + platform name + connection status. Connected: accent border, green check. Disconnect button: destructive. Connect button: outline with link icon."
+    },
+    "SaveChangesBar": {
+      "path": "@/components/overlays/SaveChangesBar",
+      "figmaNodeIds": [],
+      "props": {
+        "visible": { "type": "boolean", "default": true },
+        "onSave": { "type": "() => void", "optional": true },
+        "onDiscard": { "type": "() => void", "optional": true },
+        "saving": { "type": "boolean", "default": false }
+      },
+      "usage": [
+        "<SaveChangesBar visible={hasChanges} onSave={save} onDiscard={discard} />"
+      ],
+      "designNotes": "Fixed bottom bar. Elevated bg with top border + shadow. 'You have unsaved changes' text + Reset (ghost) + Save (primary) buttons."
+    }
+  }
+}
