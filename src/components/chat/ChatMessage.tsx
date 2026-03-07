@@ -1,4 +1,5 @@
-import { cn } from "@/lib/utils";
+import { MEDIA_LIBRARY } from "@/lib/media-library";
+import { cn, setImageFallback } from "@/lib/utils";
 import { type ReactNode } from "react";
 
 interface ChatMessageProps {
@@ -34,6 +35,7 @@ export function ChatMessage({
           src={avatar}
           alt=""
           className="size-[58px] rounded-full object-cover shrink-0"
+          onError={(event) => setImageFallback(event, MEDIA_LIBRARY.fallback.avatar)}
         />
       ) : (
         <div className="size-[58px] rounded-full bg-bg-surface shrink-0" />

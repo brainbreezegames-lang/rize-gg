@@ -1,4 +1,5 @@
-import { cn } from "@/lib/utils";
+import { MEDIA_LIBRARY } from "@/lib/media-library";
+import { cn, setImageFallback } from "@/lib/utils";
 
 interface ArticleCardProps {
   image?: string;
@@ -26,7 +27,12 @@ export function ArticleCard({
     >
       {image && (
         <div className="relative h-40">
-          <img src={image} alt="" className="w-full h-full object-cover" />
+          <img
+            src={image}
+            alt=""
+            className="w-full h-full object-cover"
+            onError={(event) => setImageFallback(event, MEDIA_LIBRARY.fallback.article)}
+          />
           {badge && (
             <span className="absolute top-3 left-3 px-2 py-0.5 rounded-full bg-accent text-accent-foreground text-xs font-medium">
               {badge}

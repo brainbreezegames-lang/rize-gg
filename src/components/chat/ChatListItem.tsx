@@ -1,4 +1,5 @@
-import { cn } from "@/lib/utils";
+import { MEDIA_LIBRARY } from "@/lib/media-library";
+import { cn, setImageFallback } from "@/lib/utils";
 
 interface ChatListItemProps {
   avatar?: string;
@@ -32,7 +33,12 @@ export function ChatListItem({
     >
       <div className="relative shrink-0">
         {avatar ? (
-          <img src={avatar} alt="" className="size-10 rounded-full object-cover" />
+          <img
+            src={avatar}
+            alt=""
+            className="size-10 rounded-full object-cover"
+            onError={(event) => setImageFallback(event, MEDIA_LIBRARY.fallback.avatar)}
+          />
         ) : (
           <div className="size-10 rounded-full bg-bg-surface" />
         )}

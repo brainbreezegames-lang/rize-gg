@@ -1,4 +1,5 @@
-import { cn } from "@/lib/utils";
+import { MEDIA_LIBRARY } from "@/lib/media-library";
+import { cn, isEmojiFlag, setImageFallback } from "@/lib/utils";
 import { Star, UserPlus, MessageSquare, MoreVertical } from "lucide-react";
 import { type ReactNode } from "react";
 
@@ -49,6 +50,7 @@ export function PlayerRow({
             src={avatar}
             alt=""
             className="size-8 rounded-full object-cover shrink-0"
+            onError={(event) => setImageFallback(event, MEDIA_LIBRARY.fallback.avatar)}
           />
         ) : (
           <div className="size-8 rounded-full bg-bg-surface shrink-0" />
@@ -105,11 +107,15 @@ export function PlayerRow({
       {country && (
         <div className="flex items-center gap-1.5 w-[129px]">
           {countryFlag && (
-            <img
-              src={countryFlag}
-              alt=""
-              className="size-8 rounded-full object-cover shrink-0"
-            />
+            isEmojiFlag(countryFlag) ? (
+              <span className="text-2xl leading-none">{countryFlag}</span>
+            ) : (
+              <img
+                src={countryFlag}
+                alt=""
+                className="size-8 rounded-full object-cover shrink-0"
+              />
+            )
           )}
           <span className="text-base text-white leading-6">{country}</span>
         </div>

@@ -11,7 +11,7 @@ export function useGenerate() {
   const [error, setError] = useState<string | null>(null);
   const [violations, setViolations] = useState<Violation[]>([]);
 
-  const generate = useCallback(async (prompt: string, apiKey: string, skills?: string[]) => {
+  const generate = useCallback(async (prompt: string, model: string, skills?: string[], referenceImage?: { base64: string; mimeType: string } | null, apiKey?: string) => {
     setIsGenerating(true);
     setError(null);
     setStreamingCode("");
@@ -22,7 +22,7 @@ export function useGenerate() {
       const res = await fetch("/api/generate", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ prompt, apiKey, skills }),
+        body: JSON.stringify({ prompt, model, skills, referenceImage, apiKey }),
       });
 
       if (!res.ok) {

@@ -1,4 +1,5 @@
-import { cn } from "@/lib/utils";
+import { MEDIA_LIBRARY } from "@/lib/media-library";
+import { cn, setImageFallback } from "@/lib/utils";
 import { type ReactNode } from "react";
 
 interface GameCardProps {
@@ -36,6 +37,7 @@ export function GameCard({
           src={image}
           alt=""
           className="absolute inset-0 w-full h-full object-cover transition-transform duration-300 group-hover:scale-105"
+          onError={(event) => setImageFallback(event, MEDIA_LIBRARY.fallback.game)}
         />
       )}
 

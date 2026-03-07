@@ -112,24 +112,26 @@
     },
     "SessionCard": {
       "path": "@/components/cards/SessionCard",
-      "figmaNodeIds": ["9031:206928"],
+      "figmaNodeIds": ["4509:269909"],
       "props": {
         "gameIcon": { "type": "ReactNode", "optional": true },
+        "gameColor": { "type": "string", "optional": true, "default": "#FF5252" },
         "teamName": { "type": "string", "required": true },
+        "teamAvatar": { "type": "string", "optional": true },
         "owner": { "type": "string", "required": true },
         "game": { "type": "string", "required": true },
         "slotsUsed": { "type": "number", "required": true },
         "slotsTotal": { "type": "number", "required": true },
-        "availability": { "type": "string", "optional": true },
         "time": { "type": "string", "optional": true },
         "skillRequirement": { "type": "string", "optional": true },
         "onDetails": { "type": "() => void", "optional": true },
         "onJoin": { "type": "() => void", "optional": true }
       },
       "usage": [
-        "<SessionCard gameIcon={<Gamepad2 />} teamName=\"Just4fun\" owner=\"TenZ\" game=\"Valorant\" slotsUsed={3} slotsTotal={5} skillRequirement=\"Gold+\" />"
+        "<SessionCard gameIcon={<Gamepad2 size={24} className=\"text-white\" />} gameColor=\"#FF5252\" teamName=\"Just4fun Squad\" owner=\"TenZ\" game=\"Valorant\" slotsUsed={3} slotsTotal={5} time=\"Starting in 18:15\" skillRequirement=\"Platinum\" />",
+        "<SessionCard gameIcon={<Shield size={24} className=\"text-white\" />} gameColor=\"#F59E0B\" teamName=\"Pro Scrimmers\" owner=\"Aspas\" game=\"CS2\" slotsUsed={4} slotsTotal={5} time=\"Starting in 02:30\" skillRequirement=\"Diamond\" />"
       ],
-      "designNotes": "Game icon + team/owner/game header. Slots + availability + time row. Skill requirement. Two buttons: 'Session details' (outline) + 'Join' (primary)."
+      "designNotes": "Gradient bg (accent 2%→8%) with accent border. 52px game icon square with gameColor bg. Team name 18px semibold + avatar. Owner in accent + game with dividers. Slots/availability/time with vertical dividers. Skill requirement badge. Two buttons: 'Session details' (outline) + 'Join now →' (primary #D7FEED bg)."
     },
     "TournamentCard": {
       "path": "@/components/cards/TournamentCard",
@@ -170,12 +172,18 @@
         "memberCount": { "type": "number", "optional": true },
         "memberMax": { "type": "number", "optional": true },
         "activeGames": { "type": "{ icon?: ReactNode; label?: string }[]", "optional": true },
-        "onOpen": { "type": "() => void", "optional": true }
+        "onOpen": { "type": "() => void", "optional": true },
+        "onJoin": { "type": "() => void", "optional": true },
+        "onDetails": { "type": "() => void", "optional": true },
+        "joined": { "type": "boolean", "optional": true }
       },
       "usage": [
-        "<ClubCard avatar=\"/club.jpg\" name=\"Shadow Core\" status=\"Recruiting\" owner=\"MohTarek\" timezone=\"UTC/GMT +2\" memberCount={2} memberMax={10} activeGames={[{ label: 'Valorant' }, { label: 'CS2' }]} />"
+        "<ClubCard name=\"ShadowCore\" status=\"Recruiting\" owner=\"TenZ\" timezone=\"UTC/GMT +2\" memberCount={2} memberMax={10} activeGames={[{ label: 'VAL' }, { label: 'CS2' }]} />",
+        "<ClubCard name=\"ShadowCore\" owner=\"TenZ\" timezone=\"UTC/GMT +2\" memberCount={2} memberMax={10} activeGames={[{ label: 'VAL' }]} onOpen={() => {}} />",
+        "<ClubCard name=\"ShadowCore\" status=\"Recruiting\" owner=\"TenZ\" memberCount={5} memberMax={10} activeGames={[{ label: 'VAL' }]} onDetails={() => {}} onJoin={() => {}} />",
+        "<ClubCard name=\"ShadowCore\" owner=\"TenZ\" memberCount={5} memberMax={10} activeGames={[{ label: 'VAL' }]} joined />"
       ],
-      "designNotes": "Accent border + gradient bg. 52px rounded-[4px] avatar. Name 18px semibold + country flag + status pill (bg-[#161D22]). Owner in accent + timezone + member count with vertical dividers. Active Games section with 60x32px rounded-full game pills. 'Open Club' button with accent border."
+      "designNotes": "Accent border + gradient bg. 52px rounded-[4px] avatar. Name 18px semibold + country flag + status pill (bg-[#161D22]). Owner in accent + timezone + member count with vertical dividers. Active Games section with 60x32px rounded-full game pills. Button variants: 'Open Club' (accent border), 'Club details' + 'Join Club →' (two-button), 'Joined' (disabled)."
     },
     "MissionCard": {
       "path": "@/components/cards/MissionCard",
@@ -237,18 +245,19 @@
     },
     "StatCard": {
       "path": "@/components/cards/StatCard",
-      "figmaNodeIds": [],
+      "figmaNodeIds": ["4509:269900"],
       "props": {
         "title": { "type": "string", "required": true },
         "icon": { "type": "ReactNode", "optional": true },
         "value": { "type": "string | number", "required": true },
-        "unit": { "type": "string", "optional": true },
-        "cta": { "type": "ReactNode", "optional": true }
+        "subtitle": { "type": "string", "optional": true }
       },
       "usage": [
-        "<StatCard title=\"Active Players\" value=\"12,450\" icon={<Users size={16} />} />"
+        "<StatCard title=\"Total sessions\" value=\"1247\" subtitle=\"3200 Hours\" icon={<Gamepad2 size={24} />} />",
+        "<StatCard title=\"Login Streak\" value=\"18\" subtitle=\"Days\" icon={<Flame size={24} />} />",
+        "<StatCard title=\"Available friends\" value=\"6\" subtitle=\"Online now\" icon={<Users size={24} />} />"
       ],
-      "designNotes": "Title + icon header. Large value number + optional unit. Optional CTA link."
+      "designNotes": "Gradient bg from d7feed 2% to 8%. Border d7feed/20. Title 16px medium in #d7feed. Icon 24px in #d7feed. Value 32px semibold in #e1e7ef. Subtitle 14px light text-secondary."
     },
     "ArticleCard": {
       "path": "@/components/cards/ArticleCard",
@@ -522,19 +531,24 @@
     },
     "HeroBanner": {
       "path": "@/components/layout/HeroBanner",
-      "figmaNodeIds": ["7986:160639"],
+      "figmaNodeIds": ["4509:269775"],
       "props": {
-        "backgroundImage": { "type": "string", "optional": true },
-        "title": { "type": "string", "required": true },
-        "subtitle": { "type": "string", "optional": true },
+        "userName": { "type": "string", "optional": true },
+        "headline": { "type": "ReactNode", "optional": true },
+        "tagline": { "type": "string", "optional": true },
+        "taglineIcon": { "type": "ReactNode", "optional": true },
         "ctaLabel": { "type": "string", "optional": true },
         "onCta": { "type": "() => void", "optional": true },
-        "overlay": { "type": "boolean", "default": true }
+        "backgroundImage": { "type": "string", "optional": true },
+        "characterImage": { "type": "string", "optional": true },
+        "activeDot": { "type": "number", "optional": true },
+        "totalDots": { "type": "number", "optional": true }
       },
       "usage": [
-        "<HeroBanner backgroundImage=\"/hero.jpg\" title=\"Find Your Team\" subtitle=\"Compete and Rise\" ctaLabel=\"Get Started\" />"
+        "<HeroBanner userName=\"Mehdyy98\" tagline=\"Rift's calling.. Claim your victory.\" ctaLabel=\"Find your team\" />",
+        "<HeroBanner userName=\"TenZ\" headline={<>Ready to <span className=\"text-accent\">Squad up</span>?</>} tagline=\"Join the competition\" ctaLabel=\"Join now\" />"
       ],
-      "designNotes": "Full-width with bg image. Gradient overlay from bottom. Title + subtitle + CTA at bottom-left. Min height 240px. Rounded-[var(--radius-lg)]."
+      "designNotes": "Welcome back greeting + userName. Headline 40px bold with accent highlight. Tagline with optional game icon. CTA button bg-accent. Carousel dots. Optional character image on right. Gradient bg. Min height 384px."
     },
     "SettingsSidebar": {
       "path": "@/components/layout/SettingsSidebar",

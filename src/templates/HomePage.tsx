@@ -25,8 +25,8 @@ export default function HomePage() {
         />
         <main className="flex-1 overflow-y-auto px-6 py-8 flex flex-col gap-8">
           <HeroBanner
-            title="Find Your Team. Compete. Rise."
-            subtitle="Join thousands of players competing in tournaments, scrims, and ranked sessions across MENA."
+            userName="Mehdyy98"
+            tagline="Rift's calling.. Claim your victory."
             ctaLabel="Find your team"
             className="bg-gradient-to-br from-bg-secondary to-bg-primary"
           />

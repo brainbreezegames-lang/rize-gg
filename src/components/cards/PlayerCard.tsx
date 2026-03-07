@@ -1,4 +1,5 @@
-import { cn } from "@/lib/utils";
+import { MEDIA_LIBRARY } from "@/lib/media-library";
+import { cn, isEmojiFlag, setImageFallback } from "@/lib/utils";
 import { Star, UserPlus, MessageSquare, MoreVertical } from "lucide-react";
 import { type ReactNode } from "react";
 
@@ -49,6 +50,7 @@ export function PlayerCard({
               src={avatar}
               alt=""
               className="size-14 rounded-full object-cover ring-1 ring-border-default"
+              onError={(event) => setImageFallback(event, MEDIA_LIBRARY.fallback.avatar)}
             />
           ) : (
             <div className="size-14 rounded-full bg-bg-surface ring-1 ring-border-default" />
@@ -61,7 +63,11 @@ export function PlayerCard({
           {country && (
             <div className="flex items-center gap-0.5">
               {countryFlag && (
-                <img src={countryFlag} alt="" className="w-5 h-3.5 object-cover rounded-sm" />
+                isEmojiFlag(countryFlag) ? (
+                  <span className="text-sm leading-none">{countryFlag}</span>
+                ) : (
+                  <img src={countryFlag} alt="" className="w-5 h-3.5 object-cover rounded-sm" />
+                )
               )}
               <span className="text-sm font-light text-text-secondary leading-5">
                 {country}

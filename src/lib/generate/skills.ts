@@ -13,7 +13,7 @@ export const DESIGN_SKILLS: DesignSkill[] = [
     name: "Gestalt Layout",
     description: "Visual perception principles for clear groupings and hierarchy",
     icon: "LayoutGrid",
-    defaultOn: true,
+    defaultOn: false,
     promptSnippet: `## SKILL: Gestalt Visual Perception
 Apply these principles to your layout:
 - PROXIMITY: Related items CLOSE together (gap-2 to gap-4), separate sections with gap-6 or Divider. Spacing between groups must be 2-3x spacing within groups.
@@ -28,7 +28,7 @@ Apply these principles to your layout:
     name: "Accessibility",
     description: "WCAG 2.2 AA compliance for inclusive design",
     icon: "Eye",
-    defaultOn: true,
+    defaultOn: false,
     promptSnippet: `## SKILL: Accessibility (WCAG 2.2 AA)
 Ensure your output meets these standards:
 - Every icon-only Button must have an aria-label: <Button size="icon" aria-label="Open settings"><Settings size={16} /></Button>
@@ -63,7 +63,7 @@ Apply professional type hierarchy:
     name: "System Patterns",
     description: "Atomic design composition and consistent patterns",
     icon: "Layers",
-    defaultOn: true,
+    defaultOn: false,
     promptSnippet: `## SKILL: Design System Patterns
 Follow atomic design composition:
 - ATOMS: Button, Badge, StatusPill, Avatar, Divider, GameIcon, ProgressBar, Toggle — never recreate these
@@ -198,6 +198,163 @@ Ensure your design is ethical:
 - CONFIRMATION FOR DESTRUCTIVE: Wrap delete/leave actions in Modal with explicit confirmation. "Are you sure you want to leave this club?"`,
   },
   {
+    id: "brand-guidelines",
+    name: "Brand Guidelines",
+    description: "Full Rize.gg visual style guide — colors, typography, spacing, effects, and anti-patterns",
+    icon: "Palette",
+    defaultOn: true,
+    promptSnippet: `## RULE: Rize.gg Brand Guidelines (Visual Style Guide)
+
+### BRAND IDENTITY
+Rize.gg is a competitive gaming/esports platform for MENA. The visual identity is DARK, PREMIUM, and PERFORMANCE-FOCUSED — like a high-end gaming monitor UI crossed with a professional sports analytics dashboard. Think Discord's density meets a luxury watch brand's precision. NOT playful, NOT cartoony, NOT neon-heavy. Calm, confident, data-rich.
+
+### DESIGN SYSTEM FIDELITY
+- Match the existing Rize.gg design language before trying to be novel.
+- Prefer the shipped design-system components and their documented compositions over custom raw markup.
+- Reuse the existing page shell, spacing rhythm, border treatments, and component density unless the brief explicitly asks for a departure.
+- Keep the interface product-grade and believable for the current app, not a disconnected concept shot.
+- When in doubt, choose stronger hierarchy and cleaner composition rather than adding more widgets.
+
+### COLOR SYSTEM (Dark Mode Only — No Light Theme)
+
+BACKGROUNDS:
+- Page background: #0B1211 (bg-bg-primary) — near-black with subtle green-teal undertone
+- Card/Input: #121415 (bg-bg-card / bg-bg-input) — slightly lighter
+- Surface: #1A1F2E (bg-bg-surface) — blue-gray for hover states & elevated areas
+- Surface Hover: #222838 (bg-bg-surface-hover) — interactive hover
+- Elevated: #20272A (bg-bg-elevated) — modals, drawers, floating panels
+
+ACCENT (Mint Teal — NOT neon green, NOT cyan):
+- Primary: #99F9EA (bg-accent) — buttons, active states, links, highlights
+- Hover: #7EECD8 (bg-accent-hover) — slightly darker/warmer
+- Muted: rgba(153,249,234,0.12) (bg-accent-muted) — subtle accent backgrounds
+- Subtle: rgba(153,249,234,0.04) (bg-accent-subtle) — very faint accent wash
+- Foreground: #0B1211 (text-accent-foreground) — dark text ON accent backgrounds
+
+TEXT:
+- Primary: #FFFFFF — headlines, card titles, player names
+- Secondary: #A2B4B1 — descriptions, meta text, labels
+- Tertiary: #5A6577 — disabled, placeholders, hints
+- Accent: #99F9EA — links, active nav items, highlighted values
+
+BORDERS:
+- Default: #273139 — card borders, dividers, input borders
+- Subtle: #1E2535 — low-emphasis dividers
+- Accent: #99F9EA — active cards, focused inputs
+
+STATUS (always semantic, never decorative):
+- Success/Online: #16A249 — registration open, recruiting
+- Error/Live: #FF5252 — live tournaments, errors
+- Warning: #FBBD23 — idle, expiring timers
+- Info: #4DA6FF — informational badges
+- Online dot: #44DD77 — avatar indicator
+- Offline dot: #5A6577 — avatar indicator
+
+RANK COLORS:
+- Gold: #FFD700 | Silver: #C0C0C0 | Bronze: #CD7F32 | Diamond: #B9F2FF
+
+DESTRUCTIVE:
+- Background: #A83A3A | Hover: #923232 | Text: #F8FAFC
+
+### TYPOGRAPHY
+
+FONT: Oxanium only — geometric, slightly squared sans-serif. Technical, gaming-appropriate. No other fonts anywhere.
+
+TYPE SCALE:
+- 12px (xs) regular — timestamps, tiny labels, badge text
+- 14px (sm) regular-medium — form labels, input text, card meta, button text
+- 16px (base) regular-medium — body, descriptions, navigation
+- 18px (lg) semibold — card titles, section headers
+- 20px (xl) semibold — component titles, sub-page headers
+- 24px (2xl) semibold-bold — page headers, modal titles
+- 32px (3xl) bold — large stat values, hero titles
+
+WEIGHT RULES:
+- 400: body text, descriptions
+- 500: button text, form labels, nav items
+- 600: card titles, section headers, most headings
+- 700: page headlines, stat numbers, hero titles
+
+LETTER SPACING: Default normal. Large headings (24px+): slight negative (-0.1px to -0.14px). Never positive tracking.
+TEXT OVERFLOW: line-clamp-2 for card descriptions. truncate for single-line (player names).
+
+### SPACING
+
+4px base grid. Standard patterns:
+- Card padding: 16px (p-4)
+- Component gap: 16px (gap-4)
+- Section gap: 24px (gap-6)
+- Page padding: px-6 py-8
+- Sidebar: 240px expanded, 60px collapsed
+- Max content width: max-w-6xl
+
+### BORDER RADIUS
+
+- sm (6px): small/medium buttons, input icons
+- md (8px): cards, inputs, tabs, large buttons — THE DEFAULT
+- lg (12px): hero banners, modals, large containers
+- xl (16px): extra large decorative elements
+- full (9999px): avatars, badges, status pills, toggles
+
+RULE: Cards = md. Badges/pills/avatars = full. Buttons = sm (sm/md size) or md (lg size). Modals/heroes = lg.
+
+### CARD ANATOMY
+
+All cards share: bg-bg-card, border border-border-default, rounded-[var(--radius-md)], p-4
+Structure: Header (title + subtitle) → Divider → Content → Footer/Actions
+Hover: border-color transitions to rgba(153,249,234,0.3) with transition-colors
+
+### BUTTON VARIANTS
+
+| Variant | BG | Text | Hover |
+|---------|-----|------|-------|
+| primary | #99F9EA | #0B1211 (dark) | #7EECD8 |
+| secondary | #1A1F2E | #FFFFFF | #222838 |
+| outline | transparent | #FFFFFF | #222838 bg |
+| ghost | transparent | #A2B4B1 | #222838 bg + white text |
+| destructive | #A83A3A | #F8FAFC | #923232 |
+| discord | #5865F2 | white | brightness +10% |
+
+Sizes: sm (32px h, 12px px), md (40px h, 16px px), lg (48px h, 24px px)
+
+### GRADIENTS & EFFECTS
+
+IMAGE OVERLAYS: Top-down gradient from bg-primary/90 → bg-primary/40 → transparent. Ensures text readability over images.
+ACCENT GLOW: ClubCard uses gradient from rgba(153,249,234,0.02) → rgba(153,249,234,0.08) — premium "glow from within".
+BACKDROP BLUR: Modals use bg black/60 + blur(4px). Countdown segments use blur(5px) + accent-subtle bg.
+SHADOWS: Cards = NO shadow (use borders). Modals/drawers = shadow-2xl. Rule: floats = shadow, in-flow = border.
+
+### INTERACTION STATES
+
+HOVER: Cards get accent border at 30% opacity. Buttons follow variant rules. List items fill to #222838. Links shift to white or underline.
+FOCUS: Inputs get accent border. Buttons keep default ring.
+ACTIVE: Sidebar active = accent-muted bg + accent text + left border. Active tab = surface bg + primary text. Active filter = accent bg + dark text.
+DISABLED: 50% opacity, pointer-events-none, no hover effects.
+TRANSITIONS: All interactive elements have transitions. Default 150ms. Progress bars 500ms. Use transition-colors or transition-all.
+
+### VISUAL PRINCIPLES
+
+1. DENSITY OVER EMPTINESS — fill screens with useful data, stat cards, player counts, countdowns
+2. HIERARCHY THROUGH WEIGHT NOT SIZE — use font-weight and text-color, not oversized headlines
+3. BORDERS DEFINE, SHADOWS FLOAT — 1px borders for in-flow elements, shadows only for floating UI
+4. ACCENT IS SURGICAL — #99F9EA used precisely for CTAs, active states, links. Never splashed broadly
+5. STATUS COLORS ARE SEMANTIC — green=success, red=error, yellow=warning, blue=info. Never decorative
+6. COMPONENT CONSISTENCY — all cards share the same skeleton. Content differentiates them
+7. DESKTOP-FIRST — grids collapse 3→2→1. Sidebar stays fixed. No layout drama
+
+### ANTI-PATTERNS (NEVER DO THESE)
+
+- No neon colors (#00FF00, glowing borders)
+- No gradients as backgrounds (only for image overlays and ClubCard effect)
+- No rounded-xl on cards (always radius-md/8px)
+- No white or light backgrounds — ever
+- No drop shadows on cards — use borders
+- No colored text on colored backgrounds — dark text on accent, light text on dark
+- No excessive animation — 150ms, subtle. No bouncing or sliding
+- No rounded corners > 16px
+- No raw HTML elements — use design system components`,
+  },
+  {
     id: "data-heavy",
     name: "Data-Heavy Design",
     description: "Dashboard layouts, KPI panels, data tables, and analytics patterns",
@@ -256,7 +413,7 @@ export function buildSkillPrompts(activeSkillIds: string[]): string {
   if (activeSkills.length === 0) return "";
 
   return (
-    "\n\n## ACTIVE DESIGN SKILLS\n" +
+    "\n\n## ACTIVE DESIGN RULES\n" +
     activeSkills.map((s) => s.promptSnippet).join("\n\n")
   );
 }

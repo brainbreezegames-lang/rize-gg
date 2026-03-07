@@ -1,8 +1,10 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef, useMemo } from "react";
+import Link from "next/link";
 import { LiveProvider, LivePreview, LiveError } from "react-live";
 import { liveScope } from "@/lib/generate/scope";
+import { MEDIA_LIBRARY } from "@/lib/media-library";
 import { useGenerate } from "./_components/useGenerate";
 import type { Violation } from "@/lib/generate/validate";
 import {
@@ -10,6 +12,7 @@ import {
   XCircle, AlertTriangle, CheckCircle2, Gamepad2, Trophy, Users,
   Star, Globe, Shield, Crown, Swords, Target, Monitor,
   LayoutGrid, MousePointer, Heart, Layers, ChevronDown, ChevronUp,
+  ImageIcon, X, RefreshCw, ArrowRight, Smartphone, Maximize2, Minimize2,
 } from "lucide-react";
 import { DESIGN_SKILLS } from "@/lib/generate/skills";
 import {
@@ -64,6 +67,13 @@ const PLACEHOLDER = `function GeneratedPage() {
   );
 }`;
 
+type PreviewViewport = "desktop" | "mobile";
+
+const PREVIEW_CONFIG: Record<PreviewViewport, { label: string; width: number; height: number }> = {
+  desktop: { label: "Desktop", width: 1440, height: 1024 },
+  mobile: { label: "Mobile", width: 393, height: 852 },
+};
+
 function ViolationBadge({ violations }: { violations: Violation[] }) {
   const errors = violations.filter((v) => v.type === "error").length;
   const warnings = violations.filter((v) => v.type === "warning").length;
@@ -73,6 +83,84 @@ function ViolationBadge({ violations }: { violations: Violation[] }) {
       {errors > 0 && <span className="flex items-center gap-1 text-red-400"><XCircle size={12} /> {errors}</span>}
       {warnings > 0 && <span className="flex items-center gap-1 text-yellow-400"><AlertTriangle size={12} /> {warnings}</span>}
     </span>
+  );
+}
+
+function PreviewStage({
+  viewport,
+  expanded,
+  children,
+}: {
+  viewport: PreviewViewport;
+  expanded: boolean;
+  children: React.ReactNode;
+}) {
+  const containerRef = useRef<HTMLDivElement>(null);
+  const [containerSize, setContainerSize] = useState({ width: 0, height: 0 });
+  const config = PREVIEW_CONFIG[viewport];
+
+  useEffect(() => {
+    const node = containerRef.current;
+    if (!node) return;
+
+    const updateSize = () => {
+      setContainerSize({
+        width: node.clientWidth,
+        height: node.clientHeight,
+      });
+    };
+
+    updateSize();
+
+    if (typeof ResizeObserver === "undefined") {
+      window.addEventListener("resize", updateSize);
+      return () => window.removeEventListener("resize", updateSize);
+    }
+
+    const observer = new ResizeObserver(updateSize);
+    observer.observe(node);
+    return () => observer.disconnect();
+  }, []);
+
+  const framePadding = expanded ? 12 : 24;
+  const availableWidth = Math.max(containerSize.width - framePadding * 2, 1);
+  const availableHeight = Math.max(containerSize.height - framePadding * 2, 1);
+  const scale =
+    containerSize.width > 0 && containerSize.height > 0
+      ? Math.min(availableWidth / config.width, availableHeight / config.height, 1)
+      : 1;
+
+  return (
+    <div
+      ref={containerRef}
+      className="preview-canvas relative flex-1 overflow-auto bg-[radial-gradient(circle_at_top,_rgba(153,249,234,0.08),_transparent_36%),linear-gradient(180deg,_rgba(18,20,21,0.94),_rgba(11,18,17,1))]"
+    >
+      <div className="pointer-events-none absolute inset-0 bg-[linear-gradient(rgba(153,249,234,0.03)_1px,transparent_1px),linear-gradient(90deg,rgba(153,249,234,0.03)_1px,transparent_1px)] bg-[size:32px_32px]" />
+      <div className="relative flex min-h-full items-start justify-center p-6">
+        <div
+          style={{
+            width: `${config.width * scale}px`,
+            height: `${config.height * scale}px`,
+          }}
+        >
+          <div
+            className={`preview-stage ${viewport === "mobile" ? "preview-stage--mobile" : ""} origin-top-left overflow-hidden rounded-[20px] border border-border-default bg-bg-primary shadow-[0_24px_80px_rgba(0,0,0,0.45)]`}
+            style={{
+              width: `${config.width}px`,
+              height: `${config.height}px`,
+              transform: `scale(${scale})`,
+              ["--preview-width" as string]: `${config.width}px`,
+              ["--preview-height" as string]: `${config.height}px`,
+            }}
+          >
+            {children}
+          </div>
+        </div>
+      </div>
+      <div className="pointer-events-none absolute bottom-4 right-4 rounded-full border border-border-default bg-bg-secondary/90 px-3 py-1 text-[10px] uppercase tracking-[0.2em] text-text-tertiary backdrop-blur">
+        {config.label} • {config.width}x{config.height}
+      </div>
+    </div>
   );
 }
 
@@ -183,8 +271,8 @@ function CardsSection() {
 
       <Label name="SessionCard" path="@/components/cards/SessionCard" />
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-        <SessionCard gameIcon={<Gamepad2 size={20} className="text-red-500" />} teamName="Just4fun" owner="TenZ" game="Valorant" slotsUsed={3} slotsTotal={5} availability="Evening" time="7:00 PM" skillRequirement="Gold+" />
-        <SessionCard gameIcon={<Shield size={20} className="text-yellow-500" />} teamName="GG Squad" owner="Aspas" game="CS2" slotsUsed={4} slotsTotal={5} availability="Night" time="10:00 PM" skillRequirement="Faceit 7+" />
+        <SessionCard gameIcon={<Gamepad2 size={24} className="text-white" />} gameColor="#FF5252" teamName="Just4fun Squad" owner="TenZ" game="Valorant" slotsUsed={3} slotsTotal={5} time="Starting in 18:15" skillRequirement="Platinum" />
+        <SessionCard gameIcon={<Shield size={24} className="text-white" />} gameColor="#F59E0B" teamName="GG Squad" owner="Aspas" game="CS2" slotsUsed={4} slotsTotal={5} time="Starting in 02:30" skillRequirement="Diamond" />
       </div>
 
       <Divider />
@@ -228,7 +316,7 @@ function CardsSection() {
       <Label name="StatCard" path="@/components/cards/StatCard" />
       <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
         <StatCard title="Active Players" value="12,450" icon={<Users size={16} />} />
-        <StatCard title="Tournaments" value="89" unit="live" icon={<Trophy size={16} />} />
+        <StatCard title="Tournaments" value="89" subtitle="live" icon={<Trophy size={16} />} />
         <StatCard title="Total Sessions" value="3,280" icon={<Gamepad2 size={16} />} />
         <StatCard title="Clubs" value="156" icon={<Crown size={16} />} />
       </div>
@@ -431,7 +519,7 @@ function LayoutSection() {
 
       <Divider />
       <Label name="HeroBanner" path="@/components/layout/HeroBanner" />
-      <HeroBanner backgroundImage="/placeholders/hero-gaming.svg" title="Find Your Team. Compete. Rise." subtitle="Join thousands of players in tournaments, scrims, and ranked sessions." ctaLabel="Get Started" />
+      <HeroBanner userName="Mehdyy98" tagline="Rift's calling.. Claim your victory." ctaLabel="Find your team" backgroundImage="/placeholders/hero-gaming.svg" />
 
       <Divider />
       <Label name="GameHeroBanner" path="@/components/layout/GameHeroBanner" />
@@ -536,12 +624,19 @@ function MicroSection() {
 
 // ─── Main ────────────────────────────────────────────────────────────
 export default function GeneratePage() {
-  const [activeTab, setActiveTab] = useState<"reference" | "generator">("reference");
+  const [activeTab, setActiveTab] = useState<"reference" | "generator">("generator");
   const [activeCategory, setActiveCategory] = useState("buttons");
 
   // Generator state
-  const [apiKey] = useState("AIzaSyD8sNXhfWietyPEEn67xSMoXoRHA5shDH8");
+  const [selectedModel, setSelectedModel] = useState<"claude-opus-4.6" | "gemini-3.1-pro" | "chatgpt-5.4">("claude-opus-4.6");
+  const [previewViewport, setPreviewViewport] = useState<PreviewViewport>("desktop");
+  const [isPreviewExpanded, setIsPreviewExpanded] = useState(false);
   const [prompt, setPrompt] = useState("");
+  const [apiKey, setApiKey] = useState(() => {
+    if (typeof window !== "undefined") return localStorage.getItem("rize-api-key") || "";
+    return "";
+  });
+  const [showApiKey, setShowApiKey] = useState(false);
   const [showCode, setShowCode] = useState(false);
   const [showViolations, setShowViolations] = useState(false);
   const [copied, setCopied] = useState(false);
@@ -550,12 +645,39 @@ export default function GeneratePage() {
   const [activeSkills, setActiveSkills] = useState<string[]>(() =>
     DESIGN_SKILLS.filter((s) => s.defaultOn).map((s) => s.id)
   );
+  const [referenceImage, setReferenceImage] = useState<{ base64: string; mimeType: string; preview: string } | null>(null);
   const { code, streamingCode, isGenerating, error, violations, generate, setCode } = useGenerate();
+  const previewScope = useMemo(() => ({ ...liveScope, MEDIA_LIBRARY }), []);
+  const liveProviderKey = `${previewViewport}-${isPreviewExpanded ? "expanded" : "docked"}-${code.length}`;
 
   const toggleSkill = (id: string) => {
     setActiveSkills((prev) =>
       prev.includes(id) ? prev.filter((s) => s !== id) : [...prev, id]
     );
+  };
+
+  const handleImageAttach = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    const img = new Image();
+    img.onload = () => {
+      const MAX = 768;
+      let { width, height } = img;
+      if (width > MAX || height > MAX) {
+        const scale = MAX / Math.max(width, height);
+        width = Math.round(width * scale);
+        height = Math.round(height * scale);
+      }
+      const canvas = document.createElement("canvas");
+      canvas.width = width;
+      canvas.height = height;
+      canvas.getContext("2d")!.drawImage(img, 0, 0, width, height);
+      const dataUrl = canvas.toDataURL("image/jpeg", 0.7);
+      const base64 = dataUrl.split(",")[1];
+      setReferenceImage({ base64, mimeType: "image/jpeg", preview: dataUrl });
+    };
+    img.src = URL.createObjectURL(file);
+    e.target.value = "";
   };
 
   useEffect(() => {
@@ -569,11 +691,17 @@ export default function GeneratePage() {
     if (!prompt.trim() || isGenerating) return;
     setLastPrompt(prompt.trim());
     setPrompt("");
-    await generate(prompt.trim(), apiKey, activeSkills);
+    const img = referenceImage ? { base64: referenceImage.base64, mimeType: referenceImage.mimeType } : null;
+    setReferenceImage(null);
+    await generate(prompt.trim(), selectedModel, activeSkills, img, apiKey || undefined);
   };
 
   const handleKeyDown = (e: React.KeyboardEvent) => {
     if (e.key === "Enter" && !e.shiftKey) { e.preventDefault(); handleGenerate(); }
+  };
+
+  const togglePreviewExpanded = () => {
+    setIsPreviewExpanded((prev) => !prev);
   };
 
   const liveCode = code ? `${code}\nrender(<GeneratedPage />);` : `${PLACEHOLDER}\nrender(<GeneratedPage />);`;
@@ -590,12 +718,56 @@ export default function GeneratePage() {
     micro: <MicroSection />,
   };
 
+  const promptSuggestions = [
+    { icon: <Users size={14} />, label: "Player profile with stats and achievements" },
+    { icon: <Trophy size={14} />, label: "Tournament bracket with live scores" },
+    { icon: <Gamepad2 size={14} />, label: "Team finder with filters and search" },
+    { icon: <Star size={14} />, label: "Missions & rewards dashboard" },
+    { icon: <Globe size={14} />, label: "Federation overview with leaderboard" },
+    { icon: <Crown size={14} />, label: "Club management page" },
+  ];
+
+  const generationSteps = [
+    { label: "Analyzing prompt", done: !!streamingCode },
+    { label: "Assembling components", done: (streamingCode?.length || 0) > 200 },
+    { label: "Applying design tokens", done: (streamingCode?.length || 0) > 500 },
+    { label: "Validating output", done: !!code && !isGenerating },
+  ];
+
+  const activeRules = DESIGN_SKILLS.filter((skill) => activeSkills.includes(skill.id));
+  const generationActiveStep = generationSteps.findIndex((step) => !step.done);
+  const generationNarrative = isGenerating
+    ? (streamingCode?.length || 0) > 900
+      ? "Polishing responsive behavior and final details."
+      : (streamingCode?.length || 0) > 350
+        ? "Aligning the layout to your design system and spacing rhythm."
+        : (streamingCode?.length || 0) > 80
+          ? "Shaping the main composition and component hierarchy."
+          : "Reading the brief and locking onto the right visual direction."
+    : code
+      ? "Preview updated. Refine the brief or switch models to compare directions."
+      : "Describe the screen you want, and the preview will grow from the brief.";
+  const promptGuidance = !prompt.trim()
+    ? "Lead with the screen type, then add mood, hierarchy, and any must-keep constraints."
+    : prompt.trim().length < 90
+      ? "Good start. Add the key hero moment, content density, and what should feel premium."
+      : referenceImage
+        ? "Strong brief. Your reference image is attached and will guide the art direction."
+        : "Strong brief. Add a reference image only if you want tighter visual matching.";
+  const friendlyError = error
+    ? /429|quota|billing/i.test(error)
+      ? "That model is unavailable right now. Switch models or try again in a moment."
+      : "Generation paused before the preview finished. Try again or tighten the brief."
+    : null;
+
   return (
     <div className="flex h-screen bg-bg-primary text-text-primary">
       {/* Sidebar */}
-      <div className="w-[220px] flex flex-col border-r border-border-default bg-bg-secondary shrink-0">
+      <div className={`${activeTab === "generator" && isPreviewExpanded ? "hidden" : "flex"} w-[420px] flex-col border-r border-border-default bg-bg-secondary shrink-0 transition-all duration-300`}>
         <div className="h-14 border-b border-border-default flex items-center px-4 gap-2">
-          <Sparkles size={18} className="text-text-accent" />
+          <div className="size-7 rounded-[var(--radius-sm)] bg-gradient-to-br from-accent/20 to-accent/5 flex items-center justify-center">
+            <Sparkles size={14} className="text-text-accent" />
+          </div>
           <span className="font-semibold text-sm">Design System</span>
         </div>
 
@@ -613,71 +785,122 @@ export default function GeneratePage() {
             ))}
           </nav>
         ) : (
-          <div className="flex-1 flex flex-col overflow-hidden">
-            <div className="flex-1 overflow-y-auto p-4 flex flex-col gap-3">
-              {!code && !isGenerating && (
-                <div className="flex-1 flex items-center justify-center">
-                  <div className="text-xs flex flex-col gap-3">
-                    <p className="text-center text-text-secondary text-sm">Describe a page to generate.</p>
-                    {["Build a player profile with stats", "Create a missions & rewards page", "Build a team finder page", "Create a messaging page"].map((s, i) => (
-                      <button key={i} onClick={() => setPrompt(s)} className="px-3 py-2 bg-bg-input rounded-[var(--radius-sm)] border border-border-default hover:border-accent/30 transition-colors cursor-pointer text-left text-text-secondary text-xs">{s}</button>
-                    ))}
-                  </div>
-                </div>
-              )}
-              {lastPrompt && <div className="text-xs px-3 py-2 rounded-[var(--radius-sm)] bg-accent-muted text-text-accent">{lastPrompt}</div>}
-              {isGenerating && <div className="flex items-center gap-2 text-xs text-text-accent px-3 py-2"><Loader2 size={14} className="animate-spin" /> Generating...</div>}
-              {code && !isGenerating && <div className="text-xs px-3 py-2 rounded-[var(--radius-sm)] bg-bg-surface text-text-secondary">Done. {violations.length === 0 ? "Clean." : `${violations.length} issues.`}</div>}
-            </div>
+          <div className="flex-1 flex min-h-0 flex-col overflow-hidden">
+            <div className="flex-1" />
 
-            {/* Skills Panel */}
-            <div className="border-t border-border-default">
-              <button
-                onClick={() => setSkillsOpen(!skillsOpen)}
-                className="w-full flex items-center justify-between px-3 py-2 text-xs text-text-secondary hover:text-text-primary transition-colors cursor-pointer"
-              >
-                <span className="flex items-center gap-1.5">
-                  <Sparkles size={12} className="text-text-accent" />
-                  Skills ({activeSkills.length}/{DESIGN_SKILLS.length})
-                </span>
-                {skillsOpen ? <ChevronDown size={12} /> : <ChevronUp size={12} />}
-              </button>
-              {skillsOpen && (
-                <div className="px-3 pb-3 flex flex-col gap-1.5 max-h-48 overflow-y-auto">
-                  {DESIGN_SKILLS.map((skill) => {
-                    const isActive = activeSkills.includes(skill.id);
-                    return (
-                      <button
-                        key={skill.id}
-                        onClick={() => toggleSkill(skill.id)}
-                        className={`flex items-center gap-2 px-2 py-1.5 rounded-[var(--radius-sm)] text-left transition-all cursor-pointer ${
-                          isActive
-                            ? "bg-accent-subtle border border-border-accent text-text-accent"
-                            : "bg-bg-input border border-border-default text-text-tertiary hover:text-text-secondary hover:border-border-default"
-                        }`}
-                      >
-                        <div className={`w-3 h-3 rounded-sm border flex items-center justify-center shrink-0 ${
-                          isActive ? "bg-accent border-accent" : "border-border-default"
-                        }`}>
-                          {isActive && <Check size={8} className="text-accent-foreground" />}
-                        </div>
-                        <div className="flex-1 min-w-0">
-                          <div className="text-[11px] font-medium truncate">{skill.name}</div>
-                          <div className="text-[9px] text-text-tertiary truncate">{skill.description}</div>
-                        </div>
-                      </button>
-                    );
-                  })}
-                </div>
-              )}
-            </div>
+            <div className="border-t border-border-default px-5 py-4">
+              <p className="text-xs text-text-secondary">
+                {friendlyError || generationNarrative}
+              </p>
 
-            <div className="p-3 border-t border-border-default">
-              <div className="flex gap-2">
-                <textarea value={prompt} onChange={(e) => setPrompt(e.target.value)} onKeyDown={handleKeyDown} placeholder="Describe a page..." rows={2} className="flex-1 bg-bg-input text-xs text-text-primary placeholder-text-tertiary border border-border-default rounded-[var(--radius-sm)] px-3 py-2 outline-none focus:border-accent transition-colors resize-none" />
-                <button onClick={handleGenerate} disabled={isGenerating || !prompt.trim()} className="px-3 bg-accent text-accent-foreground rounded-[var(--radius-sm)] hover:bg-accent-hover transition-colors disabled:opacity-40 disabled:cursor-not-allowed shrink-0 cursor-pointer"><Send size={16} /></button>
+              <div className="mt-4 flex items-center gap-3">
+                <span className="text-[10px] font-medium uppercase tracking-[0.24em] text-text-tertiary">Model</span>
+                <div className="flex items-center gap-1 rounded-[var(--radius-sm)] bg-bg-input p-0.5 flex-1">
+                  <button onClick={() => setSelectedModel("claude-opus-4.6")} className={`flex-1 rounded-sm py-1.5 text-[11px] font-medium transition-colors cursor-pointer ${selectedModel === "claude-opus-4.6" ? "bg-bg-surface text-text-primary" : "text-text-tertiary hover:text-text-secondary"}`}>Claude Opus 4.6</button>
+                  <button onClick={() => setSelectedModel("gemini-3.1-pro")} className={`flex-1 rounded-sm py-1.5 text-[11px] font-medium transition-colors cursor-pointer ${selectedModel === "gemini-3.1-pro" ? "bg-bg-surface text-text-primary" : "text-text-tertiary hover:text-text-secondary"}`}>Gemini 3.1 Pro</button>
+                  <button onClick={() => setSelectedModel("chatgpt-5.4")} className={`flex-1 rounded-sm py-1.5 text-[11px] font-medium transition-colors cursor-pointer ${selectedModel === "chatgpt-5.4" ? "bg-bg-surface text-text-primary" : "text-text-tertiary hover:text-text-secondary"}`}>ChatGPT 5.4</button>
+                </div>
               </div>
-              {error && <p className="text-xs text-red-400 mt-2 flex items-center gap-1"><XCircle size={12} /> {error}</p>}
+
+              <div className="mt-3 flex items-center gap-3">
+                <span className="text-[10px] font-medium uppercase tracking-[0.24em] text-text-tertiary">API Key</span>
+                <div className="flex items-center gap-1 flex-1 rounded-[var(--radius-sm)] border border-border-default bg-bg-input px-2.5 py-1.5">
+                  <input
+                    type={showApiKey ? "text" : "password"}
+                    value={apiKey}
+                    onChange={(e) => {
+                      setApiKey(e.target.value);
+                      localStorage.setItem("rize-api-key", e.target.value);
+                    }}
+                    placeholder="sk-or-... (OpenRouter)"
+                    className="flex-1 bg-transparent text-[11px] text-text-primary outline-none placeholder:text-text-tertiary"
+                  />
+                  <button
+                    onClick={() => setShowApiKey(!showApiKey)}
+                    className="text-text-tertiary hover:text-text-secondary transition-colors cursor-pointer"
+                  >
+                    <Eye size={12} />
+                  </button>
+                </div>
+              </div>
+
+              <div className="mt-4">
+                <textarea
+                  value={prompt}
+                  onChange={(e) => setPrompt(e.target.value)}
+                  onKeyDown={handleKeyDown}
+                  placeholder="Describe the page you want to generate..."
+                  rows={7}
+                  className="w-full resize-none rounded-[var(--radius-md)] border border-border-default bg-bg-input px-4 py-4 text-sm leading-relaxed text-text-primary outline-none transition-colors placeholder:text-text-tertiary focus:border-accent"
+                />
+              </div>
+
+              <div className="mt-3 flex items-center justify-between gap-3">
+                <div className="flex items-center gap-3 text-[11px] text-text-secondary">
+                  <label className="cursor-pointer hover:text-text-primary transition-colors">
+                    Reference image
+                    <input type="file" accept="image/*" onChange={handleImageAttach} className="hidden" />
+                  </label>
+                  <span className={prompt.length > 500 ? "text-status-warning" : "text-text-tertiary"}>
+                    {prompt.length > 0 ? `${prompt.length} chars` : "Start typing"}
+                  </span>
+                </div>
+                <button
+                  onClick={handleGenerate}
+                  disabled={isGenerating || !prompt.trim()}
+                  className="rounded-[var(--radius-sm)] bg-accent px-4 py-2 text-xs font-medium text-accent-foreground transition-colors hover:bg-accent-hover disabled:cursor-not-allowed disabled:opacity-30"
+                >
+                  {isGenerating ? "Generating..." : "Generate"}
+                </button>
+              </div>
+
+              {referenceImage && (
+                <div className="mt-3 flex items-center justify-between gap-3 text-[11px] text-text-secondary">
+                  <span>Reference attached</span>
+                  <button onClick={() => setReferenceImage(null)} className="text-text-tertiary hover:text-text-primary transition-colors">
+                    Remove
+                  </button>
+                </div>
+              )}
+
+              <div className="mt-4 border-t border-border-default pt-4">
+                <button
+                  onClick={() => setSkillsOpen(!skillsOpen)}
+                  className="flex w-full items-center justify-between text-xs text-text-secondary transition-colors hover:text-text-primary cursor-pointer"
+                >
+                  <span>Design rules</span>
+                  <span className="flex items-center gap-2">
+                    <span className="text-[10px] text-text-tertiary">{activeRules.length}/{DESIGN_SKILLS.length}</span>
+                    {skillsOpen ? <ChevronDown size={12} /> : <ChevronUp size={12} />}
+                  </span>
+                </button>
+                <div className="mt-2 text-[11px] text-text-tertiary">
+                  {activeRules.map((rule) => rule.name).join(", ")}
+                </div>
+                {skillsOpen && (
+                  <div className="mt-3 flex max-h-40 flex-col gap-1.5 overflow-y-auto pr-1">
+                    {DESIGN_SKILLS.map((skill) => {
+                      const isActive = activeSkills.includes(skill.id);
+                      return (
+                        <button
+                          key={skill.id}
+                          onClick={() => toggleSkill(skill.id)}
+                          className={`flex items-center justify-between rounded-[var(--radius-sm)] px-2 py-2 text-left text-[11px] transition-colors cursor-pointer ${
+                            isActive
+                              ? "bg-bg-surface text-text-primary"
+                              : "text-text-secondary hover:bg-bg-input hover:text-text-primary"
+                          }`}
+                        >
+                          <span className="truncate">{skill.name}</span>
+                          <span className="ml-3 shrink-0 text-[10px] text-text-tertiary">
+                            {isActive ? "On" : "Off"}
+                          </span>
+                        </button>
+                      );
+                    })}
+                  </div>
+                )}
+              </div>
             </div>
           </div>
         )}
@@ -690,7 +913,7 @@ export default function GeneratePage() {
             <>
               <h1 className="text-sm font-semibold">Visual Component Reference</h1>
               <div className="flex-1" />
-              <a href="/" className="text-xs text-text-tertiary hover:text-text-secondary transition-colors">← Back to app</a>
+              <Link href="/" className="text-xs text-text-tertiary hover:text-text-secondary transition-colors">← Back to app</Link>
             </>
           ) : (
             <>
@@ -698,9 +921,34 @@ export default function GeneratePage() {
                 <button onClick={() => setShowCode(false)} className={`flex items-center gap-1 px-2.5 py-1 rounded text-xs transition-colors cursor-pointer ${!showCode ? "bg-bg-surface text-text-primary" : "text-text-tertiary hover:text-text-secondary"}`}><Eye size={11} /> Preview</button>
                 <button onClick={() => setShowCode(true)} className={`flex items-center gap-1 px-2.5 py-1 rounded text-xs transition-colors cursor-pointer ${showCode ? "bg-bg-surface text-text-primary" : "text-text-tertiary hover:text-text-secondary"}`}><Code2 size={11} /> Code</button>
               </div>
+              {!showCode && (
+                <div className="flex items-center gap-0.5 bg-bg-input rounded-[var(--radius-sm)] p-0.5">
+                  <button
+                    onClick={() => setPreviewViewport("desktop")}
+                    className={`flex items-center gap-1 px-2.5 py-1 rounded text-xs transition-colors cursor-pointer ${previewViewport === "desktop" ? "bg-bg-surface text-text-primary" : "text-text-tertiary hover:text-text-secondary"}`}
+                  >
+                    <Monitor size={11} />
+                    Desktop
+                  </button>
+                  <button
+                    onClick={() => setPreviewViewport("mobile")}
+                    className={`flex items-center gap-1 px-2.5 py-1 rounded text-xs transition-colors cursor-pointer ${previewViewport === "mobile" ? "bg-bg-surface text-text-primary" : "text-text-tertiary hover:text-text-secondary"}`}
+                  >
+                    <Smartphone size={11} />
+                    Mobile
+                  </button>
+                </div>
+              )}
               <div className="flex-1" />
-              {code && <ViolationBadge violations={violations} />}
-              {code && <button onClick={() => setShowViolations(!showViolations)} className={`text-xs px-2 py-1 rounded transition-colors cursor-pointer ${showViolations ? "bg-bg-surface text-text-primary" : "text-text-tertiary hover:text-text-secondary"}`}>Lint</button>}
+              {!showCode && (
+                <button
+                  onClick={togglePreviewExpanded}
+                  className="text-xs px-2 py-1 rounded transition-colors cursor-pointer text-text-tertiary hover:text-text-secondary"
+                  title={isPreviewExpanded ? "Collapse preview" : "Expand preview"}
+                >
+                  {isPreviewExpanded ? <Minimize2 size={11} /> : <Maximize2 size={11} />}
+                </button>
+              )}
               {code && <button onClick={async () => { await navigator.clipboard.writeText(code); setCopied(true); setTimeout(() => setCopied(false), 2000); }} className="text-xs text-text-tertiary hover:text-text-secondary transition-colors cursor-pointer">{copied ? <Check size={11} className="text-green-400" /> : <Copy size={11} />}</button>}
               {code && <button onClick={async () => { await navigator.clipboard.writeText(code); setCopied(true); setTimeout(() => setCopied(false), 2000); }} className="text-xs text-text-tertiary hover:text-text-secondary transition-colors cursor-pointer"><Download size={11} /></button>}
             </>
@@ -720,12 +968,17 @@ export default function GeneratePage() {
                 <pre className="p-4 text-xs text-text-secondary font-mono leading-relaxed whitespace-pre-wrap">{isGenerating ? streamingCode : code || "// No code generated yet"}</pre>
               </div>
             ) : (
-              <LiveProvider code={liveCode} scope={liveScope} noInline>
-                <div className="flex-1 overflow-auto"><LivePreview /></div>
-                <LiveError className="p-4 text-xs text-red-400 bg-bg-surface border-t border-border-default font-mono whitespace-pre-wrap" />
+              <LiveProvider key={liveProviderKey} code={liveCode} scope={previewScope} noInline>
+                <div className="flex-1 overflow-hidden bg-[#060909]">
+                  <PreviewStage viewport={previewViewport} expanded={isPreviewExpanded}>
+                    <LivePreview />
+                  </PreviewStage>
+                </div>
+                {process.env.NODE_ENV === "development" && (
+                  <LiveError className="border-t border-border-default bg-bg-surface p-4 font-mono text-xs whitespace-pre-wrap text-red-400" />
+                )}
               </LiveProvider>
             )}
-            {showViolations && <ViolationList violations={violations} />}
           </div>
         )}
       </div>

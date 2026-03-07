@@ -2,7 +2,17 @@ This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-
 
 ## Getting Started
 
-First, run the development server:
+Create a local env file first:
+
+```bash
+cp .env.example .env.local
+```
+
+Set one provider key:
+
+- `OPENROUTER_API_KEY` for Claude Opus 4.6, Gemini 3.1 Pro, and ChatGPT 5.4
+
+Then run the development server:
 
 ```bash
 npm run dev

@@ -108,6 +108,7 @@ import {
   Share2,
   ExternalLink,
   Globe,
+  Globe2,
   Flag,
   User,
   UserPlus,
@@ -132,9 +133,19 @@ import {
   List,
   LayoutGrid,
   Link,
+  Tag,
+  Sparkles,
+  Loader2,
+  RotateCcw,
+  Smartphone,
+  Maximize2,
+  Minimize2,
+  Code2,
+  History,
 } from "lucide-react";
 
 import { useState, useEffect, useMemo, useCallback, Fragment } from "react";
+import { MEDIA_LIBRARY } from "@/lib/media-library";
 
 export const liveScope = {
   // React
@@ -216,6 +227,7 @@ export const liveScope = {
   Divider,
   GameIcon,
   GameIconGroup,
+  MEDIA_LIBRARY,
 
   // Icons
   Home, Users, Trophy, Swords, Gamepad2, Search, Filter,
@@ -231,4 +243,5 @@ export const liveScope = {
   RefreshCw, AlertCircle, Info, CheckCircle, XCircle,
   Menu, Hash, Flame, TrendingUp, Award, Monitor,
   List, LayoutGrid, Link,
+  Globe2, Tag, Sparkles, Loader2, RotateCcw, Smartphone, Maximize2, Minimize2, Code2, History,
 };

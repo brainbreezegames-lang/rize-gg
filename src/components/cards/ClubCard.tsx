@@ -1,4 +1,5 @@
-import { cn } from "@/lib/utils";
+import { MEDIA_LIBRARY } from "@/lib/media-library";
+import { cn, isEmojiFlag, setImageFallback } from "@/lib/utils";
 import { Users, Globe, ChevronRight } from "lucide-react";
 import { type ReactNode } from "react";
 
@@ -14,6 +15,9 @@ interface ClubCardProps {
   memberMax?: number;
   activeGames?: { icon?: ReactNode; label?: string }[];
   onOpen?: () => void;
+  onJoin?: () => void;
+  onDetails?: () => void;
+  joined?: boolean;
   className?: string;
 }
 
@@ -29,6 +33,9 @@ export function ClubCard({
   memberMax,
   activeGames,
   onOpen,
+  onJoin,
+  onDetails,
+  joined,
   className,
 }: ClubCardProps) {
   return (
@@ -47,6 +54,7 @@ export function ClubCard({
             src={avatar}
             alt=""
             className="size-[52px] rounded-[4px] object-cover shrink-0"
+            onError={(event) => setImageFallback(event, MEDIA_LIBRARY.fallback.avatar)}
           />
         ) : (
           <div className="size-[52px] rounded-[4px] bg-bg-surface shrink-0" />
@@ -60,11 +68,15 @@ export function ClubCard({
                 {name}
               </span>
               {countryFlag && (
-                <img
-                  src={countryFlag}
-                  alt=""
-                  className="w-5 h-3.5 object-cover shrink-0"
-                />
+                isEmojiFlag(countryFlag) ? (
+                  <span className="text-sm leading-none">{countryFlag}</span>
+                ) : (
+                  <img
+                    src={countryFlag}
+                    alt=""
+                    className="w-5 h-3.5 object-cover shrink-0"
+                  />
+                )
               )}
             </div>
             {status && (
@@ -150,13 +162,47 @@ export function ClubCard({
       {/* Divider */}
       <div className="w-full h-px bg-border-default" />
 
-      {/* Open Club button */}
-      <button
-        onClick={onOpen}
-        className="flex items-center justify-center gap-1 w-full px-4 py-2 rounded-[var(--radius-sm)] border border-accent text-accent text-sm font-medium leading-6 cursor-pointer hover:bg-accent-muted transition-colors"
-      >
-        Open Club
-      </button>
+      {/* Action buttons */}
+      <div className="flex items-center gap-[18px] w-full">
+        {onOpen && !onDetails && !onJoin && (
+          <button
+            onClick={onOpen}
+            className="flex items-center justify-center gap-1 w-full px-4 py-2 rounded-[var(--radius-sm)] border border-accent text-accent text-sm font-medium leading-6 cursor-pointer hover:bg-accent-muted transition-colors"
+          >
+            Open Club
+          </button>
+        )}
+        {onDetails && (
+          <button
+            onClick={onDetails}
+            className="flex-1 flex items-center justify-center px-4 py-2 rounded-[var(--radius-sm)] border border-border-default text-white text-sm font-medium leading-6 cursor-pointer hover:bg-bg-surface-hover transition-colors"
+          >
+            Club details
+          </button>
+        )}
+        {onJoin && !joined && (
+          <button
+            onClick={onJoin}
+            className="flex-1 flex items-center justify-center gap-1 px-4 py-2 rounded-[var(--radius-sm)] bg-accent text-accent-foreground text-sm font-medium leading-6 cursor-pointer hover:bg-accent-hover transition-colors"
+          >
+            Join Club <span aria-hidden>→</span>
+          </button>
+        )}
+        {joined && (
+          <button
+            className="flex-1 flex items-center justify-center px-4 py-2 rounded-[var(--radius-sm)] border border-border-default text-text-secondary text-sm font-medium leading-6 cursor-default"
+          >
+            Joined
+          </button>
+        )}
+        {!onOpen && !onDetails && !onJoin && !joined && (
+          <button
+            className="flex items-center justify-center gap-1 w-full px-4 py-2 rounded-[var(--radius-sm)] border border-border-default text-white text-sm font-medium leading-6 cursor-pointer hover:bg-bg-surface-hover transition-colors"
+          >
+            Club details
+          </button>
+        )}
+      </div>
     </div>
   );
 }

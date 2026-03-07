@@ -96,11 +96,20 @@ const EXAMPLE_HOME = `function GeneratedPage() {
           }
         />
         <main className="flex-1 overflow-y-auto px-6 py-8 flex flex-col gap-8">
-          <HeroBanner
-            title="Find Your Team. Compete. Rise."
-            subtitle="Join thousands of players competing in tournaments, scrims, and ranked sessions across MENA."
-            ctaLabel="Find your team"
-          />
+          <div className="flex gap-6">
+            <HeroBanner
+              userName="Mehdyy98"
+              tagline="Rift's calling.. Claim your victory."
+              ctaLabel="Find your team"
+              backgroundImage={MEDIA_LIBRARY.heroes.gamingDesk}
+              className="flex-1 min-h-[384px]"
+            />
+            <div className="flex flex-col gap-6 w-[300px] shrink-0">
+              <StatCard title="Total sessions" icon={<Gamepad2 size={24} />} value="1247" subtitle="3200 Hours" />
+              <StatCard title="Login Streak" icon={<Flame size={24} />} value="18" subtitle="Days" />
+              <StatCard title="Available friends" icon={<Users size={24} />} value="6" subtitle="Online now" />
+            </div>
+          </div>
 
           <div className="flex gap-3 overflow-x-auto pb-2">
             <GameTabCard gameName="Valorant" currentRank="Gold 3" active />
@@ -108,46 +117,40 @@ const EXAMPLE_HOME = `function GeneratedPage() {
             <GameTabCard gameName="League of Legends" currentRank="Platinum 2" />
           </div>
 
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-            <StatCard title="Active Players" value="12,450" icon={<Users size={16} />} />
-            <StatCard title="Live Tournaments" value="89" icon={<Trophy size={16} />} />
-            <StatCard title="Open Sessions" value="234" icon={<Swords size={16} />} />
-            <StatCard title="Active Clubs" value="156" icon={<Users size={16} />} />
-          </div>
-
           <SectionHeader title="Active Sessions" actionLabel="Browse all" onAction={() => {}} />
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
             <SessionCard
-              gameIcon={<Gamepad2 size={20} className="text-red-500" />}
-              teamName="Just4fun"
+              gameIcon={<Gamepad2 size={24} className="text-white" />}
+              gameColor="#FF5252"
+              teamName="Just4fun Squad"
               owner="TenZ"
               game="Valorant"
               slotsUsed={3}
               slotsTotal={5}
-              availability="Evening"
-              time="7:00 PM"
-              skillRequirement="Gold+"
+              time="Starting in 18:15"
+              skillRequirement="Platinum"
             />
             <SessionCard
-              gameIcon={<Gamepad2 size={20} className="text-yellow-500" />}
-              teamName="Rush B"
-              owner="s1mple"
-              game="CS2"
+              gameIcon={<Gamepad2 size={24} className="text-white" />}
+              gameColor="#F59E0B"
+              teamName="Pro Scrimmers"
+              owner="Aspas"
+              game="Valorant"
               slotsUsed={4}
               slotsTotal={5}
-              availability="Now"
-              skillRequirement="Faceit 7+"
+              time="Starting in 02:30"
+              skillRequirement="Diamond"
             />
             <SessionCard
-              gameIcon={<Gamepad2 size={20} className="text-blue-500" />}
-              teamName="Mid or Feed"
-              owner="Faker"
-              game="League of Legends"
+              gameIcon={<Gamepad2 size={24} className="text-white" />}
+              gameColor="#3B82F6"
+              teamName="Ranked Grind"
+              owner="Demon1"
+              game="CS2"
               slotsUsed={2}
               slotsTotal={5}
-              availability="Night"
-              time="11:00 PM"
-              skillRequirement="Platinum+"
+              time="Starting in 45:00"
+              skillRequirement="Gold"
             />
           </div>
 
@@ -162,6 +165,8 @@ const EXAMPLE_HOME = `function GeneratedPage() {
               rankRequirement="Gold +"
               description="Get ready for the ultimate showdown!"
               countdown={{ days: "01", hours: "18", minutes: "03" }}
+              heroImage={MEDIA_LIBRARY.heroes.arenaCrowd}
+              organizerAvatar={MEDIA_LIBRARY.avatars.playerThree}
               organizerName="Fatima Saeed"
             />
             <TournamentCard
@@ -172,28 +177,17 @@ const EXAMPLE_HOME = `function GeneratedPage() {
               capacity="12/16"
               description="Elite CS2 competition."
               countdown={{ days: "03", hours: "06", minutes: "45" }}
+              heroImage={MEDIA_LIBRARY.heroes.rgbBattlestation}
+              organizerAvatar={MEDIA_LIBRARY.avatars.playerOne}
               organizerName="Ahmed Ali"
             />
           </div>
 
-          <SectionHeader title="Latest Articles" actionLabel="Read more" onAction={() => {}} />
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-            <ArticleCard
-              badge="Fresh Article"
-              title="VCT 2025 Season Preview"
-              description="Everything you need to know about the upcoming Valorant Champions Tour."
-              date="Mar 4, 2025"
-            />
-            <ArticleCard
-              title="Top 10 CS2 Strategies"
-              description="Master these strategies to climb the ranks."
-              date="Mar 2, 2025"
-            />
-            <ArticleCard
-              title="League Patch 14.5 Analysis"
-              description="How the latest patch shakes up the meta."
-              date="Feb 28, 2025"
-            />
+          <SectionHeader title="Available Clubs" actionLabel="Browse all" onAction={() => {}} />
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+            <ClubCard avatar={MEDIA_LIBRARY.avatars.playerOne} name="ShadowCore" status="Recruiting" owner="TenZ" timezone="UTC/GMT +2" memberCount={2} memberMax={10} activeGames={[{ label: "VAL" }, { label: "CS2" }, { label: "LoL" }]} />
+            <ClubCard avatar={MEDIA_LIBRARY.avatars.playerTwo} name="NightOwls" owner="Aspas" timezone="UTC/GMT +3" memberCount={5} memberMax={10} activeGames={[{ label: "VAL" }, { label: "CS2" }]} onOpen={() => {}} />
+            <ClubCard avatar={MEDIA_LIBRARY.avatars.playerThree} name="Desert Storm" status="Recruiting" owner="Demon1" timezone="UTC/GMT +2" memberCount={8} memberMax={10} activeGames={[{ label: "VAL" }]} onDetails={() => {}} onJoin={() => {}} />
           </div>
         </main>
       </div>
@@ -257,6 +251,8 @@ const EXAMPLE_TOURNAMENT_LIST = `function GeneratedPage() {
               rankRequirement="Gold +"
               description="Get ready for the ultimate showdown in the Valorant Arena!"
               countdown={{ days: "01", hours: "18", minutes: "03" }}
+              heroImage={MEDIA_LIBRARY.heroes.arenaCrowd}
+              organizerAvatar={MEDIA_LIBRARY.avatars.playerThree}
               organizerName="Fatima Saeed"
             />
             <TournamentCard
@@ -268,6 +264,8 @@ const EXAMPLE_TOURNAMENT_LIST = `function GeneratedPage() {
               rankRequirement="Faceit 8+"
               description="Elite CS2 competition for the best teams in the region."
               countdown={{ days: "03", hours: "06", minutes: "45" }}
+              heroImage={MEDIA_LIBRARY.heroes.rgbBattlestation}
+              organizerAvatar={MEDIA_LIBRARY.avatars.playerOne}
               organizerName="Ahmed Ali"
             />
             <TournamentCard
@@ -279,6 +277,8 @@ const EXAMPLE_TOURNAMENT_LIST = `function GeneratedPage() {
               rankRequirement="Platinum+"
               description="League of Legends tournament across MENA region."
               countdown={{ days: "07", hours: "12", minutes: "30" }}
+              heroImage={MEDIA_LIBRARY.heroes.stageLights}
+              organizerAvatar={MEDIA_LIBRARY.avatars.playerFive}
               organizerName="Nour Hassan"
             />
           </div>
@@ -291,6 +291,8 @@ const EXAMPLE_TOURNAMENT_LIST = `function GeneratedPage() {
               statusColor="bg-bg-surface"
               location="Riyadh"
               capacity="16/16"
+              heroImage={MEDIA_LIBRARY.heroes.neonRoom}
+              organizerAvatar={MEDIA_LIBRARY.avatars.playerThree}
               organizerName="Fatima Saeed"
             />
           </div>
@@ -343,7 +345,7 @@ const EXAMPLE_PLAYER_PROFILE = `function GeneratedPage() {
         />
         <main className="flex-1 overflow-y-auto px-6 py-8 flex flex-col gap-6">
           <div className="flex items-start gap-6">
-            <Avatar size="2xl" online />
+            <Avatar size="2xl" src={MEDIA_LIBRARY.avatars.playerOne} online />
             <div className="flex-1">
               <div className="flex items-center gap-3 mb-2">
                 <h1 className="text-2xl font-semibold text-text-primary">TenZ</h1>
@@ -365,10 +367,10 @@ const EXAMPLE_PLAYER_PROFILE = `function GeneratedPage() {
           </div>
 
           <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-            <StatCard title="Sessions Played" value="1,247" icon={<Swords size={16} />} />
-            <StatCard title="Tournaments Won" value="23" icon={<Trophy size={16} />} />
-            <StatCard title="Win Rate" value="68%" icon={<TrendingUp size={16} />} />
-            <StatCard title="Rating" value="9.4" icon={<Star size={16} />} />
+            <StatCard title="Sessions Played" value="1,247" subtitle="Hours" icon={<Swords size={24} />} />
+            <StatCard title="Tournaments Won" value="23" subtitle="Wins" icon={<Trophy size={24} />} />
+            <StatCard title="Win Rate" value="68%" subtitle="Average" icon={<TrendingUp size={24} />} />
+            <StatCard title="Rating" value="9.4" subtitle="Score" icon={<Star size={24} />} />
           </div>
 
           <Tabs
@@ -419,11 +421,11 @@ const EXAMPLE_PLAYER_PROFILE = `function GeneratedPage() {
 
           <SectionHeader title="Leaderboard Position" />
           <div className="flex flex-col gap-1">
-            <LeaderboardRow rank={1} name="TenZ" countryFlag="🇨🇦" rankTier="Diamond" score={2450} maxScore={3000} />
-            <LeaderboardRow rank={2} name="s1mple" countryFlag="🇺🇦" rankTier="Diamond" score={2380} maxScore={3000} />
-            <LeaderboardRow rank={3} name="NiKo" countryFlag="🇧🇦" rankTier="Platinum" score={2310} maxScore={3000} />
-            <LeaderboardRow rank={4} name="Faker" countryFlag="🇰🇷" rankTier="Platinum" score={2250} maxScore={3000} />
-            <LeaderboardRow rank={5} name="ZywOo" countryFlag="🇫🇷" rankTier="Gold" score={2180} maxScore={3000} />
+            <LeaderboardRow rank={1} avatar={MEDIA_LIBRARY.avatars.playerOne} name="TenZ" countryFlag="🇨🇦" rankTier="Diamond" score={2450} maxScore={3000} />
+            <LeaderboardRow rank={2} avatar={MEDIA_LIBRARY.avatars.playerTwo} name="s1mple" countryFlag="🇺🇦" rankTier="Diamond" score={2380} maxScore={3000} />
+            <LeaderboardRow rank={3} avatar={MEDIA_LIBRARY.avatars.playerFive} name="NiKo" countryFlag="🇧🇦" rankTier="Platinum" score={2310} maxScore={3000} />
+            <LeaderboardRow rank={4} avatar={MEDIA_LIBRARY.avatars.playerSix} name="Faker" countryFlag="🇰🇷" rankTier="Platinum" score={2250} maxScore={3000} />
+            <LeaderboardRow rank={5} avatar={MEDIA_LIBRARY.avatars.playerSeven} name="ZywOo" countryFlag="🇫🇷" rankTier="Gold" score={2180} maxScore={3000} />
           </div>
         </main>
       </div>
@@ -447,6 +449,7 @@ const EXAMPLE_GAME_DETAIL = `function GeneratedPage() {
         />
         <main className="flex-1 overflow-y-auto flex flex-col gap-6">
           <GameHeroBanner
+            backgroundImage={MEDIA_LIBRARY.heroes.arenaCrowd}
             gameName="Valorant"
             badges={[
               <Badge key="s" variant="accent" label="Supported" />,
@@ -491,46 +494,47 @@ const EXAMPLE_GAME_DETAIL = `function GeneratedPage() {
 
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
               <SessionCard
-                gameIcon={<Gamepad2 size={20} className="text-red-500" />}
+                gameIcon={<Gamepad2 size={24} className="text-white" />}
+                gameColor="#FF5252"
                 teamName="Just4fun"
                 owner="TenZ"
                 game="Valorant"
                 slotsUsed={3}
                 slotsTotal={5}
-                availability="Evening"
-                time="7:00 PM"
+                time="Starting in 18:15"
                 skillRequirement="Gold+"
               />
               <SessionCard
-                gameIcon={<Gamepad2 size={20} className="text-red-500" />}
+                gameIcon={<Gamepad2 size={24} className="text-white" />}
+                gameColor="#FF5252"
                 teamName="Radiant Hunters"
                 owner="Aspas"
                 game="Valorant"
                 slotsUsed={1}
                 slotsTotal={5}
-                availability="Now"
+                time="Starting in 05:00"
                 skillRequirement="Diamond+"
               />
               <SessionCard
-                gameIcon={<Gamepad2 size={20} className="text-red-500" />}
+                gameIcon={<Gamepad2 size={24} className="text-white" />}
+                gameColor="#FF5252"
                 teamName="Night Owls"
                 owner="ScreaM"
                 game="Valorant"
                 slotsUsed={4}
                 slotsTotal={5}
-                availability="Night"
-                time="11:00 PM"
+                time="Starting in 45:00"
                 skillRequirement="Platinum+"
               />
               <SessionCard
-                gameIcon={<Gamepad2 size={20} className="text-red-500" />}
+                gameIcon={<Gamepad2 size={24} className="text-white" />}
+                gameColor="#FF5252"
                 teamName="Desert Storm"
                 owner="Shao"
                 game="Valorant"
                 slotsUsed={2}
                 slotsTotal={5}
-                availability="Morning"
-                time="10:00 AM"
+                time="Starting in 30:00"
                 skillRequirement="Gold+"
               />
             </div>
@@ -586,22 +590,22 @@ const EXAMPLE_PLAYERS_DIRECTORY = `function GeneratedPage() {
 
           <div className="flex flex-col">
             <PlayerTableHeader />
-            <PlayerTableRow name="TenZ" sessions={234} groups={21} mutualGroups={3} country="Canada" countryFlag="🇨🇦" rating={5.6} />
-            <PlayerTableRow name="s1mple" sessions={189} groups={15} mutualGroups={1} country="Ukraine" countryFlag="🇺🇦" rating={5.4} />
-            <PlayerTableRow name="Faker" sessions={312} groups={28} mutualGroups={5} country="South Korea" countryFlag="🇰🇷" rating={5.8} />
-            <PlayerTableRow name="NiKo" sessions={167} groups={19} mutualGroups={2} country="Bosnia" countryFlag="🇧🇦" rating={5.2} />
-            <PlayerTableRow name="Aspas" sessions={145} groups={12} mutualGroups={0} country="Brazil" countryFlag="🇧🇷" rating={5.1} />
-            <PlayerTableRow name="ZywOo" sessions={201} groups={17} mutualGroups={4} country="France" countryFlag="🇫🇷" rating={5.5} />
+            <PlayerTableRow avatar={MEDIA_LIBRARY.avatars.playerOne} name="TenZ" sessions={234} groups={21} mutualGroups={3} country="Canada" countryFlag="🇨🇦" rating={5.6} />
+            <PlayerTableRow avatar={MEDIA_LIBRARY.avatars.playerTwo} name="s1mple" sessions={189} groups={15} mutualGroups={1} country="Ukraine" countryFlag="🇺🇦" rating={5.4} />
+            <PlayerTableRow avatar={MEDIA_LIBRARY.avatars.playerFive} name="Faker" sessions={312} groups={28} mutualGroups={5} country="South Korea" countryFlag="🇰🇷" rating={5.8} />
+            <PlayerTableRow avatar={MEDIA_LIBRARY.avatars.playerSix} name="NiKo" sessions={167} groups={19} mutualGroups={2} country="Bosnia" countryFlag="🇧🇦" rating={5.2} />
+            <PlayerTableRow avatar={MEDIA_LIBRARY.avatars.playerThree} name="Aspas" sessions={145} groups={12} mutualGroups={0} country="Brazil" countryFlag="🇧🇷" rating={5.1} />
+            <PlayerTableRow avatar={MEDIA_LIBRARY.avatars.playerFour} name="ZywOo" sessions={201} groups={17} mutualGroups={4} country="France" countryFlag="🇫🇷" rating={5.5} />
           </div>
 
           <Divider />
 
           <SectionHeader title="Featured Players" actionLabel="View all" onAction={() => {}} />
           <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
-            <PlayerCard name="TenZ" federation="Canada" description="Radiant • Sentinels" />
-            <PlayerCard name="s1mple" federation="Ukraine" description="FPL • Natus Vincere" />
-            <PlayerCard name="Faker" federation="South Korea" description="Challenger • T1" />
-            <PlayerCard name="NiKo" federation="Bosnia" description="Faceit 10 • G2" />
+            <PlayerCard avatar={MEDIA_LIBRARY.avatars.playerOne} name="TenZ" country="Canada" countryFlag="🇨🇦" rating={5.6} totalRatings={82} />
+            <PlayerCard avatar={MEDIA_LIBRARY.avatars.playerTwo} name="s1mple" country="Ukraine" countryFlag="🇺🇦" rating={5.4} totalRatings={67} />
+            <PlayerCard avatar={MEDIA_LIBRARY.avatars.playerFive} name="Faker" country="South Korea" countryFlag="🇰🇷" rating={5.8} totalRatings={112} />
+            <PlayerCard avatar={MEDIA_LIBRARY.avatars.playerSix} name="NiKo" country="Bosnia" countryFlag="🇧🇦" rating={5.2} totalRatings={53} />
           </div>
         </main>
       </div>
@@ -621,9 +625,10 @@ const EXAMPLE_TOURNAMENT_DETAIL = `function GeneratedPage() {
         />
         <main className="flex-1 overflow-y-auto px-6 py-8 flex flex-col gap-6">
           <HeroBanner
-            title="MENA Valorant Championship"
-            subtitle="The biggest Valorant tournament in the MENA region — $50,000 prize pool"
+            userName="MENA Valorant Championship"
+            tagline="The biggest Valorant tournament in the MENA region — $50,000 prize pool"
             ctaLabel="Join Tournament"
+            backgroundImage={MEDIA_LIBRARY.heroes.arenaCrowd}
           />
 
           <div className="flex items-center gap-3 flex-wrap">
@@ -633,10 +638,10 @@ const EXAMPLE_TOURNAMENT_DETAIL = `function GeneratedPage() {
           </div>
 
           <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-            <StatCard title="Prize Pool" value="$50,000" icon={<Trophy size={16} />} />
-            <StatCard title="Teams Registered" value="12/16" icon={<Users size={16} />} />
-            <StatCard title="Matches Played" value="18" icon={<Swords size={16} />} />
-            <StatCard title="Registration Closes" value="5 Days" icon={<Clock size={16} />} />
+            <StatCard title="Prize Pool" value="$50,000" subtitle="Total" icon={<Trophy size={24} />} />
+            <StatCard title="Teams Registered" value="12/16" subtitle="Teams" icon={<Users size={24} />} />
+            <StatCard title="Matches Played" value="18" subtitle="Games" icon={<Swords size={24} />} />
+            <StatCard title="Registration Closes" value="5" subtitle="Days" icon={<Clock size={24} />} />
           </div>
 
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
@@ -663,7 +668,7 @@ const EXAMPLE_TOURNAMENT_DETAIL = `function GeneratedPage() {
               <SectionHeader title="Tournament Info" />
               <div className="flex flex-col gap-4 p-4 bg-bg-card rounded-[var(--radius-lg)]">
                 <div className="flex items-center gap-3">
-                  <Avatar size="md" />
+                  <Avatar size="md" src={MEDIA_LIBRARY.avatars.playerThree} />
                   <div>
                     <p className="text-sm font-medium text-text-primary">Fatima Saeed</p>
                     <p className="text-xs text-text-tertiary">Organizer</p>
@@ -683,10 +688,10 @@ const EXAMPLE_TOURNAMENT_DETAIL = `function GeneratedPage() {
 
               <SectionHeader title="Registered Teams" actionLabel="View all 12" onAction={() => {}} />
               <div className="flex flex-col gap-3">
-                <ClubCard name="Team Falcons" memberCount={5} games={["Valorant"]} />
-                <ClubCard name="NASR Esports" memberCount={5} games={["Valorant"]} />
-                <ClubCard name="Geekay Esports" memberCount={5} games={["Valorant"]} />
-                <ClubCard name="Twisted Minds" memberCount={5} games={["Valorant"]} />
+                <ClubCard name="Team Falcons" memberCount={5} memberMax={5} activeGames={[{ label: "VAL" }]} joined />
+                <ClubCard name="NASR Esports" memberCount={5} memberMax={5} activeGames={[{ label: "VAL" }]} joined />
+                <ClubCard name="Geekay Esports" memberCount={5} memberMax={5} activeGames={[{ label: "VAL" }]} onDetails={() => {}} onJoin={() => {}} />
+                <ClubCard name="Twisted Minds" memberCount={5} memberMax={5} activeGames={[{ label: "VAL" }]} onDetails={() => {}} onJoin={() => {}} />
               </div>
             </div>
           </div>
@@ -757,6 +762,56 @@ function GeneratedPage() {
     </div>
   );
 }
+\`\`\`
+
+## CANVAS TARGET — DESIGN FOR A REAL PRODUCT VIEWPORT
+- Design desktop screens for a 1440px-wide product viewport first. Think "real SaaS/web app canvas", not a cramped embed.
+- The default composition should look complete and balanced at desktop width with no clipped tabs, chopped buttons, or half-visible cards.
+- Then make the same screen responsive for tablet/mobile by stacking and wrapping at smaller breakpoints.
+- Use responsive classes intentionally: \`md:\`, \`lg:\`, \`xl:\`. Do not compress a desktop layout to fit a narrow width.
+- If a toolbar or filter row gets crowded, split it into two rows or let it wrap cleanly with \`flex-wrap\`.
+- Avoid "trying to fit everything above the fold" if that causes truncation or overlap. A clean vertical flow is better.
+- Primary desktop sections should usually use full-width rows, grids, or two-column layouts inside \`<main>\`, not tiny compressed islands.
+
+## IMAGERY — USE STABLE PHOTOGRAPHY, NEVER INVENT URLS
+- This product needs strong esports/lifestyle imagery. Prefer high-quality photography for hero backgrounds, article covers, tournament banners, and player avatars.
+- A curated \`MEDIA_LIBRARY\` object is available in scope. Use it directly for remote photography.
+- Use \`MEDIA_LIBRARY.heroes.*\` for HeroBanner/GameHeroBanner/FederationHero/TournamentCard hero images.
+- Use \`MEDIA_LIBRARY.avatars.*\` for Avatar, PlayerCard, ClubCard, ChatMessage, ChatListItem, and organizer/player photos.
+- Use \`MEDIA_LIBRARY.articles.*\` for ArticleCard and NewsCard imagery.
+- Use \`MEDIA_LIBRARY.fallback.*\` or local \`/placeholders/*\` assets only when you need non-photographic game artwork or a deliberate illustration.
+- NEVER invent random image URLs. NEVER paste arbitrary CDN links. Prefer \`MEDIA_LIBRARY\` first.
+- For country markers, prefer emoji flags like \`🇨🇦\`, \`🇧🇷\`, \`🇸🇦\` instead of external flag image URLs.
+
+## MEDIA_LIBRARY (available in scope)
+\`\`\`ts
+// Hero / background images
+MEDIA_LIBRARY.heroes.arenaCrowd        // esports arena crowd
+MEDIA_LIBRARY.heroes.stageLights       // concert/event stage
+MEDIA_LIBRARY.heroes.esportsPortrait   // player portrait
+MEDIA_LIBRARY.heroes.gamingDesk        // gaming desk setup
+MEDIA_LIBRARY.heroes.rgbBattlestation  // RGB battlestation
+MEDIA_LIBRARY.heroes.controllerSetup  // controller + desk
+MEDIA_LIBRARY.heroes.neonRoom          // neon gaming room
+MEDIA_LIBRARY.heroes.darkBattlestation // dark premium setup
+
+// Player avatars (use all 8 for variety)
+MEDIA_LIBRARY.avatars.playerOne        // male, brown hair
+MEDIA_LIBRARY.avatars.playerTwo        // male, dark hair
+MEDIA_LIBRARY.avatars.playerFive       // male, light beard
+MEDIA_LIBRARY.avatars.playerSix        // male, glasses
+MEDIA_LIBRARY.avatars.playerSeven      // male, young
+MEDIA_LIBRARY.avatars.playerEight      // male, casual
+MEDIA_LIBRARY.avatars.playerThree      // female, smiling
+MEDIA_LIBRARY.avatars.playerFour       // female, serious
+
+// Article / feature images
+MEDIA_LIBRARY.articles.arenaFeature    // esports arena
+MEDIA_LIBRARY.articles.keyboardFeature // gaming keyboard
+MEDIA_LIBRARY.articles.studioFeature   // gaming studio
+MEDIA_LIBRARY.articles.esportsEvent    // live event
+MEDIA_LIBRARY.articles.gamingGear      // gaming gear
+MEDIA_LIBRARY.articles.teamCoach       // coach / team
 \`\`\`
 
 ## DESIGN TOKENS (use ONLY these Tailwind classes)
@@ -876,5 +931,7 @@ ${EXAMPLE_TOURNAMENT_DETAIL}
 13. Is there NO horizontal overflow? No \`w-screen\`, no absolute widths, no fixed positioning? ✓
 14. Are the RIGHT components used? (ClubCard for teams, DataTable for tables, CountdownTimer for timers, etc.) ✓
 15. Does the function contain NO import/require/export statements? ✓
+16. Does the desktop layout look intentional at 1440px without clipped controls or cut-off cards? ✓
+17. Does the page collapse responsively for mobile instead of shrinking the desktop layout into a tiny canvas? ✓
 ${skillsSection}`;
 }

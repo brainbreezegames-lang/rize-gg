@@ -1,4 +1,5 @@
-import { cn } from "@/lib/utils";
+import { MEDIA_LIBRARY } from "@/lib/media-library";
+import { cn, setImageFallback } from "@/lib/utils";
 import { MapPin, Users, ChevronDown } from "lucide-react";
 import { type ReactNode } from "react";
 
@@ -53,6 +54,7 @@ export function TournamentCard({
             src={heroImage}
             alt=""
             className="absolute inset-0 w-full h-full object-cover"
+            onError={(event) => setImageFallback(event, MEDIA_LIBRARY.fallback.hero)}
           />
         )}
         <div className="relative flex items-start justify-between">
@@ -116,7 +118,12 @@ export function TournamentCard({
             {(gameIcon || gameIconNode) && (
               <div className="size-14 rounded-[var(--radius-md)] overflow-hidden shrink-0">
                 {gameIconNode || (
-                  <img src={gameIcon} alt="" className="size-full object-cover" />
+                  <img
+                    src={gameIcon}
+                    alt=""
+                    className="size-full object-cover"
+                    onError={(event) => setImageFallback(event, MEDIA_LIBRARY.fallback.game)}
+                  />
                 )}
               </div>
             )}
@@ -165,6 +172,7 @@ export function TournamentCard({
                   src={organizerAvatar}
                   alt=""
                   className="size-8 rounded-full object-cover shrink-0"
+                  onError={(event) => setImageFallback(event, MEDIA_LIBRARY.fallback.avatar)}
                 />
               ) : (
                 <div className="size-8 rounded-full bg-bg-surface shrink-0" />

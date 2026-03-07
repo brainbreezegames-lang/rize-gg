@@ -1,4 +1,5 @@
-import { cn } from "@/lib/utils";
+import { MEDIA_LIBRARY } from "@/lib/media-library";
+import { cn, setImageFallback } from "@/lib/utils";
 
 type AvatarSize = "xs" | "sm" | "md" | "lg" | "xl" | "2xl";
 
@@ -42,6 +43,7 @@ export function Avatar({
           src={src}
           alt={alt}
           className="w-full h-full rounded-full object-cover"
+          onError={(event) => setImageFallback(event, MEDIA_LIBRARY.fallback.avatar)}
         />
       ) : (
         <div className="w-full h-full rounded-full bg-bg-surface flex items-center justify-center text-text-tertiary">

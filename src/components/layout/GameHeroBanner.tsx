@@ -1,4 +1,5 @@
-import { cn } from "@/lib/utils";
+import { MEDIA_LIBRARY } from "@/lib/media-library";
+import { cn, setImageFallback } from "@/lib/utils";
 import { type ReactNode } from "react";
 
 interface GameHeroBannerProps {
@@ -29,6 +30,7 @@ export function GameHeroBanner({
           src={backgroundImage}
           alt=""
           className="absolute inset-0 w-full h-full object-cover"
+          onError={(event) => setImageFallback(event, MEDIA_LIBRARY.fallback.hero)}
         />
       )}
 

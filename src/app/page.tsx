@@ -147,15 +147,15 @@ export default function ShowcasePage() {
           <SectionHeader title="Cards" onAction={() => {}} />
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
             <SessionCard
-              gameIcon={<Gamepad2 size={20} className="text-red-500" />}
-              teamName="Just4fun"
+              gameIcon={<Gamepad2 size={24} className="text-white" />}
+              gameColor="#FF5252"
+              teamName="Just4fun Squad"
               owner="TenZ"
               game="Valorant"
               slotsUsed={3}
               slotsTotal={5}
-              availability="Evening"
-              time="7:00 PM"
-              skillRequirement="Gold+"
+              time="Starting in 18:15"
+              skillRequirement="Platinum"
             />
             <ClubCard name="Shadow Core" status="Recruiting" owner="MohTarek" timezone="UTC/GMT +2" memberCount={2} memberMax={10} />
             <MissionCard
@@ -194,8 +194,8 @@ export default function ShowcasePage() {
           </div>
           <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
             <PlayerCard name="TenZ" country="Canada" rating={5.6} totalRatings={82} />
-            <StatCard title="Active Players" value="12,450" icon={<Users size={16} />} />
-            <StatCard title="Tournaments" value="89" unit="live" icon={<Trophy size={16} />} />
+            <StatCard title="Active Players" value="12,450" subtitle="Online" icon={<Users size={16} />} />
+            <StatCard title="Tournaments" value="89" subtitle="live" icon={<Trophy size={16} />} />
             <ArticleCard image="/placeholders/game-valorant.svg" badge="Fresh Article" title="VCT 2025 Preview" description="Everything you need to know about the upcoming VCT season." date="Mar 4, 2025" />
           </div>
           <div className="flex gap-3 overflow-x-auto pb-2">
@@ -257,7 +257,11 @@ export default function ShowcasePage() {
         <section className="flex flex-col gap-6">
           <SectionHeader title="Layout" />
           <PageHeader title="Tournaments" subtitle="Find and join competitive tournaments" actions={<Button>Create Tournament</Button>} />
-          <HeroBanner backgroundImage="/placeholders/hero-gaming.svg" title="Find Your Team. Compete. Rise." subtitle="Join thousands of players competing in tournaments, scrims, and ranked sessions." ctaLabel="Get Started" />
+          <HeroBanner
+            userName="Mehdyy98"
+            tagline="Rift's calling.. Claim your victory."
+            ctaLabel="Find your team"
+          />
         </section>
 
         <Divider />

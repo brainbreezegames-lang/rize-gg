@@ -1,4 +1,5 @@
-import { cn } from "@/lib/utils";
+import { MEDIA_LIBRARY } from "@/lib/media-library";
+import { cn, setImageFallback } from "@/lib/utils";
 
 interface NewsCardProps {
   avatar?: string;
@@ -38,6 +39,7 @@ export function NewsCard({
             src={avatar}
             alt=""
             className="size-8 rounded-full object-cover shrink-0"
+            onError={(event) => setImageFallback(event, MEDIA_LIBRARY.fallback.avatar)}
           />
         ) : (
           <div className="size-8 rounded-full bg-bg-surface shrink-0" />
@@ -67,6 +69,7 @@ export function NewsCard({
             src={image}
             alt=""
             className="w-full h-40 object-cover"
+            onError={(event) => setImageFallback(event, MEDIA_LIBRARY.fallback.article)}
           />
         </div>
       )}

@@ -71,6 +71,27 @@ body {
   -moz-osx-font-smoothing: grayscale;
 }
 
+.preview-stage .h-screen,
+.preview-stage .min-h-screen {
+  height: var(--preview-height) !important;
+  min-height: var(--preview-height) !important;
+}
+
+.preview-stage .w-screen,
+.preview-stage .min-w-screen {
+  width: var(--preview-width) !important;
+  min-width: var(--preview-width) !important;
+}
+
+.preview-stage > * {
+  width: 100%;
+  height: 100%;
+}
+
+.preview-stage--mobile aside {
+  display: none !important;
+}
+
 /* Scrollbar */
 ::-webkit-scrollbar {
   width: 6px;
