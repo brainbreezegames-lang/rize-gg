@@ -207,6 +207,7 @@ export default function EditPage() {
       }
       const accumulated = await consumeStream(res, setStreamingCode);
       applyResult(accumulated);
+      setChatOpen(false);
     } catch (err) {
       setError(err instanceof Error ? err.message : "Something went wrong");
     } finally {
@@ -241,6 +242,7 @@ export default function EditPage() {
       }
       const accumulated = await consumeStream(res, setStreamingCode);
       applyResult(accumulated);
+      setChatOpen(false);
     } catch (err) {
       setError(err instanceof Error ? err.message : "Something went wrong");
     } finally {
