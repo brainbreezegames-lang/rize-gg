@@ -648,6 +648,112 @@ function MicroSection() {
   );
 }
 
+// ─── History Panel ────────────────────────────────────────────────────
+function HistoryPanel({ onRestore }: { onRestore: (iter: SavedIteration) => void }) {
+  const [iterations, setIterations] = useState<SavedIteration[]>([]);
+  const [isOpen, setIsOpen] = useState(false);
+
+  useEffect(() => {
+    try {
+      const saved = JSON.parse(localStorage.getItem(ITER_KEY) || "[]");
+      setIterations(saved);
+    } catch {}
+  }, []);
+
+  // Refresh when panel opens
+  const handleToggle = () => {
+    if (!isOpen) {
+      try {
+        const saved = JSON.parse(localStorage.getItem(ITER_KEY) || "[]");
+        setIterations(saved);
+      } catch {}
+    }
+    setIsOpen(!isOpen);
+  };
+
+  const handleDelete = (id: string) => {
+    const updated = iterations.filter((i) => i.id !== id);
+    setIterations(updated);
+    localStorage.setItem(ITER_KEY, JSON.stringify(updated));
+  };
+
+  const handleClearAll = () => {
+    setIterations([]);
+    localStorage.removeItem(ITER_KEY);
+  };
+
+  const formatTime = (ts: number) => {
+    const d = new Date(ts);
+    const now = new Date();
+    const diffMs = now.getTime() - d.getTime();
+    const diffMin = Math.floor(diffMs / 60000);
+    if (diffMin < 1) return "Just now";
+    if (diffMin < 60) return `${diffMin}m ago`;
+    const diffHr = Math.floor(diffMin / 60);
+    if (diffHr < 24) return `${diffHr}h ago`;
+    return d.toLocaleDateString(undefined, { month: "short", day: "numeric" });
+  };
+
+  return (
+    <div className="flex-1 flex flex-col min-h-0">
+      <button
+        onClick={handleToggle}
+        className="flex items-center justify-between px-4 py-2.5 text-xs text-text-secondary hover:text-text-primary transition-colors cursor-pointer border-b border-border-default"
+      >
+        <span className="flex items-center gap-1.5">
+          <Layers size={12} />
+          History
+          {iterations.length > 0 && (
+            <span className="text-[10px] text-text-tertiary">({iterations.length})</span>
+          )}
+        </span>
+        {isOpen ? <ChevronUp size={12} /> : <ChevronDown size={12} />}
+      </button>
+      {isOpen && (
+        <div className="flex-1 overflow-y-auto">
+          {iterations.length === 0 ? (
+            <p className="px-4 py-6 text-xs text-text-tertiary text-center">No history yet. Generate a page to see it here.</p>
+          ) : (
+            <>
+              {iterations.map((iter) => (
+                <div
+                  key={iter.id}
+                  className="group flex items-start gap-2 px-4 py-2.5 border-b border-border-subtle hover:bg-bg-surface-hover transition-colors"
+                >
+                  <div className="flex-1 min-w-0">
+                    <p className="text-[11px] text-text-primary truncate">{iter.prompt}</p>
+                    <p className="text-[10px] text-text-tertiary mt-0.5">{formatTime(iter.timestamp)}</p>
+                  </div>
+                  <div className="flex items-center gap-1 shrink-0 opacity-0 group-hover:opacity-100 transition-opacity">
+                    <button
+                      onClick={() => onRestore(iter)}
+                      className="text-[10px] px-1.5 py-0.5 rounded bg-accent text-accent-foreground font-medium cursor-pointer hover:bg-accent-hover transition-colors"
+                    >
+                      Restore
+                    </button>
+                    <button
+                      onClick={() => handleDelete(iter.id)}
+                      className="text-text-tertiary hover:text-status-error cursor-pointer transition-colors p-0.5"
+                    >
+                      <X size={10} />
+                    </button>
+                  </div>
+                </div>
+              ))}
+              <button
+                onClick={handleClearAll}
+                className="w-full px-4 py-2 text-[10px] text-text-tertiary hover:text-status-error transition-colors cursor-pointer text-center"
+              >
+                Clear all history
+              </button>
+            </>
+          )}
+        </div>
+      )}
+    </div>
+  );
+}
+
 // ─── Main ────────────────────────────────────────────────────────────
 export default function GeneratePage() {
   const [activeTab, setActiveTab] = useState<"reference" | "generator">("generator");
@@ -802,6 +908,18 @@ export default function GeneratePage() {
 
       const convertPrompt = `CRITICAL: You are converting a UI design screenshot into code. Study the reference image EXTREMELY carefully and recreate it with pixel-perfect accuracy.
 
+OUTPUT FORMAT: Output ONLY a single function called \`GeneratedPage\`. No imports. No exports. No explanation text. All components and icons are already in scope.
+
+\`\`\`tsx
+function GeneratedPage() {
+  return (
+    <div className="flex h-screen bg-bg-primary">
+      {/* Your code here */}
+    </div>
+  );
+}
+\`\`\`
+
 INSTRUCTIONS:
 1. Analyze every element in the image: the sidebar navigation, main content area, cards, stats, text, buttons, badges, avatars, icons, activity feeds — EVERYTHING you see.
 2. Match the EXACT layout structure: how many columns, their widths, the grid/flex arrangement.
@@ -814,9 +932,12 @@ ${lastPrompt ? `The user described this design as: "${lastPrompt}"` : ""}
 
 Look at the reference image and recreate EVERY section, card, list item, stat, and UI element you see. Do NOT simplify or skip any part of the design. The output should look identical to the screenshot.`;
 
-      await generate(convertPrompt, selectedModel, activeSkills, resized, apiKey || undefined);
-      setGeneratedImage(null);
-      setIsPreviewExpanded(true);
+      const success = await generate(convertPrompt, selectedModel, activeSkills, resized, apiKey || undefined);
+      if (success) {
+        setGeneratedImage(null);
+      } else {
+        setImageError("Code conversion failed. Check the error above and try again.");
+      }
     } catch (err) {
       setImageError(err instanceof Error ? err.message : "Failed to convert image");
     } finally {
@@ -920,7 +1041,7 @@ Look at the reference image and recreate EVERY section, card, list item, stat, a
           </nav>
         ) : (
           <div className="flex-1 flex min-h-0 flex-col overflow-hidden">
-            <div className="flex-1" />
+            <HistoryPanel onRestore={(iter) => { setCode(iter.code); setLastPrompt(iter.prompt); }} />
 
             <div className="border-t border-border-default px-5 py-4">
               <p className={`text-xs ${friendlyError ? "text-status-error" : "text-text-secondary"}`} role={friendlyError ? "alert" : "status"} aria-live="polite">
@@ -1211,9 +1332,7 @@ Look at the reference image and recreate EVERY section, card, list item, stat, a
                     <LivePreview />
                   </PreviewStage>
                 </div>
-                {process.env.NODE_ENV === "development" && (
-                  <LiveError className="border-t border-border-default bg-bg-surface p-4 font-mono text-xs whitespace-pre-wrap text-red-400" />
-                )}
+                <LiveError className="border-t border-border-default bg-bg-surface p-4 font-mono text-xs whitespace-pre-wrap text-red-400" />
               </LiveProvider>
             )}
           </div>
