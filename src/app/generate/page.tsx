@@ -123,13 +123,38 @@ function PreviewStage({
     return () => observer.disconnect();
   }, []);
 
-  const framePadding = expanded ? 12 : 24;
+  const framePadding = expanded ? 0 : 24;
   const availableWidth = Math.max(containerSize.width - framePadding * 2, 1);
   const availableHeight = Math.max(containerSize.height - framePadding * 2, 1);
   const scale =
-    containerSize.width > 0 && containerSize.height > 0
-      ? Math.min(availableWidth / config.width, availableHeight / config.height, 1)
-      : 1;
+    expanded
+      ? 1
+      : containerSize.width > 0 && containerSize.height > 0
+        ? Math.min(availableWidth / config.width, availableHeight / config.height, 1)
+        : 1;
+
+  // In expanded mode: render at full size, container scrolls naturally
+  if (expanded) {
+    return (
+      <div
+        ref={containerRef}
+        className="preview-canvas relative flex-1 overflow-auto bg-bg-primary"
+      >
+        <div
+          className={`preview-stage preview-stage--expanded ${viewport === "mobile" ? "preview-stage--mobile" : ""} bg-bg-primary`}
+          style={{
+            width: viewport === "mobile" ? `${config.width}px` : "100%",
+            height: "100%",
+            margin: viewport === "mobile" ? "0 auto" : undefined,
+            ["--preview-width" as string]: `${containerSize.width}px`,
+            ["--preview-height" as string]: `${containerSize.height}px`,
+          }}
+        >
+          {children}
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div
@@ -380,7 +405,7 @@ function CardsSection() {
 
 function FormsSection() {
   const [search, setSearch] = useState("");
-  const [toggleOn, setToggleOn] = useState(true);
+  const [toggleOn, setToggleOn] = useState(false);
   return (
     <section id="forms" className="scroll-mt-20 flex flex-col gap-6">
       <div><h2 className="text-lg font-semibold text-text-primary">Forms</h2><p className="text-xs text-text-secondary mt-1">TextInput, SearchInput, Select, Toggle, PasswordInput, ChatInput. Import from @/components/forms</p></div>
@@ -552,7 +577,7 @@ function LayoutSection() {
 function OverlaysSection() {
   const [modalOpen, setModalOpen] = useState(false);
   const [drawerOpen, setDrawerOpen] = useState(false);
-  const [toggleOn, setToggleOn] = useState(true);
+  const [toggleOn, setToggleOn] = useState(false);
   return (
     <section id="overlays" className="scroll-mt-20 flex flex-col gap-6">
       <div><h2 className="text-lg font-semibold text-text-primary">Overlays</h2><p className="text-xs text-text-secondary mt-1">Modal, FilterDrawer, SaveChangesBar. Import from @/components/overlays</p></div>
@@ -629,14 +654,11 @@ export default function GeneratePage() {
   const [activeCategory, setActiveCategory] = useState("buttons");
 
   // Generator state
-  const [selectedModel, setSelectedModel] = useState<"claude-opus-4.6" | "gemini-3.1-pro" | "chatgpt-5.4">("claude-opus-4.6");
+  const [selectedModel, setSelectedModel] = useState<"claude-opus-4.6" | "gemini-3.1-pro" | "chatgpt-5.4">("gemini-3.1-pro");
   const [previewViewport, setPreviewViewport] = useState<PreviewViewport>("desktop");
   const [isPreviewExpanded, setIsPreviewExpanded] = useState(false);
   const [prompt, setPrompt] = useState("");
-  const [apiKey, setApiKey] = useState(() => {
-    if (typeof window !== "undefined") return localStorage.getItem("rize-api-key") || "";
-    return "";
-  });
+  const [apiKey, setApiKey] = useState("");
   const [showApiKey, setShowApiKey] = useState(false);
   const [showCode, setShowCode] = useState(false);
   const [showViolations, setShowViolations] = useState(false);
@@ -683,6 +705,12 @@ export default function GeneratePage() {
     img.src = URL.createObjectURL(file);
     e.target.value = "";
   };
+
+  // Load API key from localStorage on mount (avoids hydration mismatch)
+  useEffect(() => {
+    const saved = localStorage.getItem("rize-api-key");
+    if (saved) setApiKey(saved);
+  }, []);
 
   useEffect(() => {
     if (code && lastPrompt && !isGenerating) {
@@ -743,14 +771,57 @@ export default function GeneratePage() {
     link.click();
   };
 
+  const [isConvertingToCode, setIsConvertingToCode] = useState(false);
+
   const handleConvertToCode = async () => {
     if (!generatedImage) return;
-    setGeneratedImage(null);
-    const img = { base64: generatedImage.split(",")[1], mimeType: "image/png" };
-    const convertPrompt = lastPrompt
-      ? `Recreate this UI design exactly as shown in the reference image. The design shows: ${lastPrompt}. Match the layout, colors, typography, and spacing precisely.`
-      : "Recreate this UI design exactly as shown in the reference image. Match the layout, colors, typography, and spacing precisely.";
-    await generate(convertPrompt, selectedModel, activeSkills, img, apiKey || undefined);
+
+    setImageError(null);
+    setIsConvertingToCode(true);
+
+    try {
+      // Resize image to reduce payload size (max 1536px wide, JPEG for smaller base64)
+      const resized = await new Promise<{ base64: string; mimeType: string }>((resolve, reject) => {
+        const img = new Image();
+        img.onload = () => {
+          const canvas = document.createElement("canvas");
+          const maxW = 1536;
+          const scale = img.width > maxW ? maxW / img.width : 1;
+          canvas.width = Math.round(img.width * scale);
+          canvas.height = Math.round(img.height * scale);
+          const ctx = canvas.getContext("2d");
+          if (!ctx) return reject(new Error("Canvas not supported"));
+          ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+          const dataUrl = canvas.toDataURL("image/jpeg", 0.8);
+          const commaIdx = dataUrl.indexOf(",");
+          resolve({ base64: dataUrl.slice(commaIdx + 1), mimeType: "image/jpeg" });
+        };
+        img.onerror = () => reject(new Error("Failed to load image for resizing"));
+        img.src = generatedImage;
+      });
+
+      const convertPrompt = `CRITICAL: You are converting a UI design screenshot into code. Study the reference image EXTREMELY carefully and recreate it with pixel-perfect accuracy.
+
+INSTRUCTIONS:
+1. Analyze every element in the image: the sidebar navigation, main content area, cards, stats, text, buttons, badges, avatars, icons, activity feeds — EVERYTHING you see.
+2. Match the EXACT layout structure: how many columns, their widths, the grid/flex arrangement.
+3. Match the EXACT content: all text labels, numbers, names, status indicators visible in the image.
+4. Match colors, spacing, border radius, font sizes, font weights as closely as possible.
+5. Use the design system components (Sidebar, TopBar, StatCard, Button, Avatar, Badge, etc.) wherever they match what's in the image.
+6. For elements that don't have an exact design system match, build them with raw Tailwind using the design tokens.
+
+${lastPrompt ? `The user described this design as: "${lastPrompt}"` : ""}
+
+Look at the reference image and recreate EVERY section, card, list item, stat, and UI element you see. Do NOT simplify or skip any part of the design. The output should look identical to the screenshot.`;
+
+      await generate(convertPrompt, selectedModel, activeSkills, resized, apiKey || undefined);
+      setGeneratedImage(null);
+      setIsPreviewExpanded(true);
+    } catch (err) {
+      setImageError(err instanceof Error ? err.message : "Failed to convert image");
+    } finally {
+      setIsConvertingToCode(false);
+    }
   };
 
   const handleKeyDown = (e: React.KeyboardEvent) => {
@@ -794,33 +865,33 @@ export default function GeneratePage() {
   const activeRules = DESIGN_SKILLS.filter((skill) => activeSkills.includes(skill.id));
   const generationActiveStep = generationSteps.findIndex((step) => !step.done);
   const generationNarrative = isGeneratingImage
-    ? "Generating image with Gemini Flash... This takes 10-30 seconds."
+    ? "Creating your design with Gemini Flash... usually 10–30 seconds."
     : isGenerating
     ? (streamingCode?.length || 0) > 900
-      ? "Polishing responsive behavior and final details."
+      ? "Finishing up — polishing responsive details..."
       : (streamingCode?.length || 0) > 350
-        ? "Aligning the layout to your design system and spacing rhythm."
+        ? "Assembling components and applying design tokens..."
         : (streamingCode?.length || 0) > 80
-          ? "Shaping the main composition and component hierarchy."
-          : "Reading the brief and locking onto the right visual direction."
+          ? "Building the layout and component hierarchy..."
+          : "Reading your brief and choosing the right components..."
     : generatedImage
-      ? "Image generated. Download it or convert to code."
+      ? "Image ready. Download it or convert to interactive code."
     : code
-      ? "Preview updated. Refine the brief or switch models to compare directions."
-      : "Describe the screen you want, and the preview will grow from the brief.";
+      ? "Preview updated. Refine your brief or try a different model."
+      : "Describe any page — the AI builds it with your design system.";
   const promptGuidance = !prompt.trim()
-    ? "Lead with the screen type, then add mood, hierarchy, and any must-keep constraints."
+    ? "Start with the page type, then add key sections and content details."
     : prompt.trim().length < 90
-      ? "Good start. Add the key hero moment, content density, and what should feel premium."
+      ? "Good start — add more detail about the sections, cards, or data you need."
       : referenceImage
-        ? "Strong brief. Your reference image is attached and will guide the art direction."
-        : "Strong brief. Add a reference image only if you want tighter visual matching.";
+        ? "Strong brief with reference image attached."
+        : "Strong brief. Attach a reference image for tighter visual matching.";
   const friendlyError = imageError
-    ? `Image generation failed: ${imageError}`
+    ? `Couldn't generate the image — ${imageError}. Try again or switch models.`
     : error
     ? /429|quota|billing/i.test(error)
-      ? "That model is unavailable right now. Switch models or try again in a moment."
-      : "Generation paused before the preview finished. Try again or tighten the brief."
+      ? "That model is unavailable right now. Switch to Gemini (free) or try again in a moment."
+      : `Something went wrong — ${error}. Try again or use a different model.`
     : null;
 
   return (
@@ -835,15 +906,15 @@ export default function GeneratePage() {
         </div>
 
         <div className="flex border-b border-border-default">
-          <button onClick={() => setActiveTab("reference")} className={`flex-1 text-xs font-medium py-2.5 transition-colors cursor-pointer ${activeTab === "reference" ? "text-text-accent border-b-2 border-accent" : "text-text-tertiary hover:text-text-secondary"}`}>Components</button>
-          <button onClick={() => setActiveTab("generator")} className={`flex-1 text-xs font-medium py-2.5 transition-colors cursor-pointer ${activeTab === "generator" ? "text-text-accent border-b-2 border-accent" : "text-text-tertiary hover:text-text-secondary"}`}>AI Generate</button>
+          <button onClick={() => setActiveTab("reference")} className={`flex-1 text-xs font-medium py-2.5 transition-colors cursor-pointer focus:outline-none focus:ring-2 focus:ring-accent/50 focus:ring-inset ${activeTab === "reference" ? "text-text-accent border-b-2 border-accent" : "text-text-tertiary hover:text-text-secondary"}`}>Components</button>
+          <button onClick={() => setActiveTab("generator")} className={`flex-1 text-xs font-medium py-2.5 transition-colors cursor-pointer focus:outline-none focus:ring-2 focus:ring-accent/50 focus:ring-inset ${activeTab === "generator" ? "text-text-accent border-b-2 border-accent" : "text-text-tertiary hover:text-text-secondary"}`}>AI Generate</button>
         </div>
 
         {activeTab === "reference" ? (
           <nav className="flex-1 overflow-y-auto py-2">
             {CATEGORIES.map((cat) => (
               <a key={cat.key} href={`#${cat.key}`} onClick={(e) => { e.preventDefault(); setActiveCategory(cat.key); document.getElementById(cat.key)?.scrollIntoView({ behavior: "smooth" }); }}
-                className={`block px-4 py-2 text-xs transition-colors cursor-pointer ${activeCategory === cat.key ? "text-text-accent bg-accent-subtle border-r-2 border-accent" : "text-text-secondary hover:text-text-primary hover:bg-bg-surface-hover"}`}
+                className={`block px-4 py-2 text-xs transition-colors cursor-pointer focus:outline-none focus:ring-2 focus:ring-accent/50 focus:ring-inset ${activeCategory === cat.key ? "text-text-accent bg-accent-subtle border-r-2 border-accent" : "text-text-secondary hover:text-text-primary hover:bg-bg-surface-hover"}`}
               >{cat.label}</a>
             ))}
           </nav>
@@ -852,16 +923,16 @@ export default function GeneratePage() {
             <div className="flex-1" />
 
             <div className="border-t border-border-default px-5 py-4">
-              <p className="text-xs text-text-secondary">
+              <p className={`text-xs ${friendlyError ? "text-status-error" : "text-text-secondary"}`} role={friendlyError ? "alert" : "status"} aria-live="polite">
                 {friendlyError || generationNarrative}
               </p>
 
               <div className="mt-4 flex items-center gap-3">
                 <span className="text-[10px] font-medium uppercase tracking-[0.24em] text-text-tertiary">Model</span>
                 <div className="flex items-center gap-1 rounded-[var(--radius-sm)] bg-bg-input p-0.5 flex-1">
-                  <button onClick={() => setSelectedModel("claude-opus-4.6")} className={`flex-1 rounded-sm py-1.5 text-[11px] font-medium transition-colors cursor-pointer ${selectedModel === "claude-opus-4.6" ? "bg-bg-surface text-text-primary" : "text-text-tertiary hover:text-text-secondary"}`}>Claude Opus 4.6</button>
-                  <button onClick={() => setSelectedModel("gemini-3.1-pro")} className={`flex-1 rounded-sm py-1.5 text-[11px] font-medium transition-colors cursor-pointer ${selectedModel === "gemini-3.1-pro" ? "bg-bg-surface text-text-primary" : "text-text-tertiary hover:text-text-secondary"}`}>Gemini 3.1 Pro</button>
-                  <button onClick={() => setSelectedModel("chatgpt-5.4")} className={`flex-1 rounded-sm py-1.5 text-[11px] font-medium transition-colors cursor-pointer ${selectedModel === "chatgpt-5.4" ? "bg-bg-surface text-text-primary" : "text-text-tertiary hover:text-text-secondary"}`}>ChatGPT 5.4</button>
+                  <button onClick={() => setSelectedModel("claude-opus-4.6")} className={`flex-1 flex items-center justify-center gap-1 rounded-sm py-1.5 text-[11px] font-medium transition-colors cursor-pointer focus:outline-none focus:ring-2 focus:ring-accent/50 ${selectedModel === "claude-opus-4.6" ? "bg-bg-surface text-text-primary" : "text-text-tertiary hover:text-text-secondary"}`}>{selectedModel === "claude-opus-4.6" && <Check size={10} className="text-text-accent" />}Claude</button>
+                  <button onClick={() => setSelectedModel("gemini-3.1-pro")} className={`flex-1 flex items-center justify-center gap-1 rounded-sm py-1.5 text-[11px] font-medium transition-colors cursor-pointer focus:outline-none focus:ring-2 focus:ring-accent/50 ${selectedModel === "gemini-3.1-pro" ? "bg-bg-surface text-text-primary" : "text-text-tertiary hover:text-text-secondary"}`}>{selectedModel === "gemini-3.1-pro" && <Check size={10} className="text-text-accent" />}Gemini</button>
+                  <button onClick={() => setSelectedModel("chatgpt-5.4")} className={`flex-1 flex items-center justify-center gap-1 rounded-sm py-1.5 text-[11px] font-medium transition-colors cursor-pointer focus:outline-none focus:ring-2 focus:ring-accent/50 ${selectedModel === "chatgpt-5.4" ? "bg-bg-surface text-text-primary" : "text-text-tertiary hover:text-text-secondary"}`}>{selectedModel === "chatgpt-5.4" && <Check size={10} className="text-text-accent" />}GPT</button>
                 </div>
               </div>
 
@@ -872,7 +943,7 @@ export default function GeneratePage() {
                     <span className="flex items-center gap-1 text-[11px] text-green-400"><CheckCircle2 size={11} /> Key saved</span>
                     <button
                       onClick={() => setShowApiKey(true)}
-                      className="text-[10px] text-text-tertiary hover:text-text-secondary transition-colors cursor-pointer"
+                      className="text-[10px] text-text-tertiary hover:text-text-secondary transition-colors cursor-pointer focus:outline-none focus:underline"
                     >
                       Change
                     </button>
@@ -888,12 +959,14 @@ export default function GeneratePage() {
                       }}
                       onBlur={() => { if (apiKey) setShowApiKey(false); }}
                       placeholder="sk-or-... (OpenRouter)"
+                      aria-label="OpenRouter API key"
                       className="flex-1 bg-transparent text-[11px] text-text-primary outline-none placeholder:text-text-tertiary"
                     />
                     {apiKey && (
                       <button
                         onClick={() => setShowApiKey(false)}
-                        className="text-green-400 hover:text-green-300 transition-colors cursor-pointer"
+                        aria-label="Save API key"
+                        className="text-green-400 hover:text-green-300 transition-colors cursor-pointer focus:outline-none focus:ring-2 focus:ring-accent/50 rounded"
                       >
                         <CheckCircle2 size={12} />
                       </button>
@@ -907,46 +980,49 @@ export default function GeneratePage() {
                   value={prompt}
                   onChange={(e) => setPrompt(e.target.value)}
                   onKeyDown={handleKeyDown}
-                  placeholder="Describe the page you want to generate..."
+                  placeholder={`e.g. "A tournament bracket page with live scores and team cards"`}
                   rows={7}
-                  className="w-full resize-none rounded-[var(--radius-md)] border border-border-default bg-bg-input px-4 py-4 text-sm leading-relaxed text-text-primary outline-none transition-colors placeholder:text-text-tertiary focus:border-accent"
+                  aria-label="Describe the page you want to generate"
+                  className="w-full resize-none rounded-[var(--radius-md)] border border-border-default bg-bg-input px-4 py-4 text-sm leading-relaxed text-text-primary outline-none transition-colors placeholder:text-text-tertiary focus:border-accent focus:ring-2 focus:ring-accent/20"
                 />
               </div>
 
               <div className="mt-3 flex items-center justify-between gap-3">
                 <div className="flex items-center gap-3 text-[11px] text-text-secondary">
-                  <label className="cursor-pointer hover:text-text-primary transition-colors">
-                    Reference image
-                    <input type="file" accept="image/*" onChange={handleImageAttach} className="hidden" />
+                  <label className="cursor-pointer hover:text-text-primary transition-colors focus-within:underline">
+                    <ImageIcon size={12} className="inline mr-1" />
+                    Attach reference
+                    <input type="file" accept="image/*" onChange={handleImageAttach} className="hidden" aria-label="Attach reference image" />
                   </label>
                   <span className={prompt.length > 500 ? "text-status-warning" : "text-text-tertiary"}>
-                    {prompt.length > 0 ? `${prompt.length} chars` : "Start typing"}
+                    {prompt.length > 0 ? `${prompt.length} chars` : ""}
                   </span>
                 </div>
                 <div className="flex items-center gap-2">
                   <button
                     onClick={handleGenerateImage}
                     disabled={isGenerating || isGeneratingImage || !prompt.trim()}
-                    className="flex items-center gap-1.5 rounded-[var(--radius-sm)] border border-border-default bg-bg-surface px-3 py-2 text-xs font-medium text-text-primary transition-colors hover:bg-bg-surface-hover disabled:cursor-not-allowed disabled:opacity-30 cursor-pointer"
-                    title="Generate as image using AI"
+                    aria-label="Generate as image"
+                    className="flex items-center gap-1.5 rounded-[var(--radius-sm)] border border-border-default bg-bg-surface px-3 py-2 text-xs font-medium text-text-primary transition-colors hover:bg-bg-surface-hover disabled:cursor-not-allowed disabled:opacity-30 cursor-pointer focus:outline-none focus:ring-2 focus:ring-accent/50"
                   >
-                    <ImageIcon size={12} />
-                    {isGeneratingImage ? "Generating..." : "Image"}
+                    {isGeneratingImage ? <Loader2 size={12} className="animate-spin" /> : <ImageIcon size={12} />}
+                    {isGeneratingImage ? "Creating..." : "As image"}
                   </button>
                   <button
                     onClick={handleGenerate}
                     disabled={isGenerating || isGeneratingImage || !prompt.trim()}
-                    className="rounded-[var(--radius-sm)] bg-accent px-4 py-2 text-xs font-medium text-accent-foreground transition-colors hover:bg-accent-hover disabled:cursor-not-allowed disabled:opacity-30 cursor-pointer"
+                    className="flex items-center gap-1.5 rounded-[var(--radius-sm)] bg-accent px-4 py-2 text-xs font-medium text-accent-foreground transition-colors hover:bg-accent-hover disabled:cursor-not-allowed disabled:opacity-30 cursor-pointer focus:outline-none focus:ring-2 focus:ring-accent/50 focus:ring-offset-2 focus:ring-offset-bg-primary"
                   >
-                    {isGenerating ? "Generating..." : "Generate"}
+                    {isGenerating ? <Loader2 size={12} className="animate-spin" /> : <Send size={12} />}
+                    {isGenerating ? "Generating..." : "Generate page"}
                   </button>
                 </div>
               </div>
 
               {referenceImage && (
                 <div className="mt-3 flex items-center justify-between gap-3 text-[11px] text-text-secondary">
-                  <span>Reference attached</span>
-                  <button onClick={() => setReferenceImage(null)} className="text-text-tertiary hover:text-text-primary transition-colors">
+                  <span className="flex items-center gap-1"><Check size={10} className="text-text-accent" /> Reference attached</span>
+                  <button onClick={() => setReferenceImage(null)} aria-label="Remove reference image" className="text-text-tertiary hover:text-text-primary transition-colors cursor-pointer focus:outline-none focus:underline">
                     Remove
                   </button>
                 </div>
@@ -955,12 +1031,13 @@ export default function GeneratePage() {
               <div className="mt-4 border-t border-border-default pt-4">
                 <button
                   onClick={() => setSkillsOpen(!skillsOpen)}
-                  className="flex w-full items-center justify-between text-xs text-text-secondary transition-colors hover:text-text-primary cursor-pointer"
+                  aria-expanded={skillsOpen}
+                  className="flex w-full items-center justify-between text-xs text-text-secondary transition-colors hover:text-text-primary cursor-pointer focus:outline-none focus:ring-2 focus:ring-accent/50 rounded-[var(--radius-sm)] px-1 -mx-1"
                 >
                   <span>Design rules</span>
                   <span className="flex items-center gap-2">
-                    <span className="text-[10px] text-text-tertiary">{activeRules.length}/{DESIGN_SKILLS.length}</span>
-                    {skillsOpen ? <ChevronDown size={12} /> : <ChevronUp size={12} />}
+                    <span className="text-[10px] text-text-tertiary">{activeRules.length}/{DESIGN_SKILLS.length} active</span>
+                    {skillsOpen ? <ChevronUp size={12} /> : <ChevronDown size={12} />}
                   </span>
                 </button>
                 <div className="mt-2 text-[11px] text-text-tertiary">
@@ -974,15 +1051,16 @@ export default function GeneratePage() {
                         <button
                           key={skill.id}
                           onClick={() => toggleSkill(skill.id)}
-                          className={`flex items-center justify-between rounded-[var(--radius-sm)] px-2 py-2 text-left text-[11px] transition-colors cursor-pointer ${
+                          aria-pressed={isActive}
+                          className={`flex items-center justify-between rounded-[var(--radius-sm)] px-2 py-2 text-left text-[11px] transition-colors cursor-pointer focus:outline-none focus:ring-2 focus:ring-accent/50 ${
                             isActive
                               ? "bg-bg-surface text-text-primary"
                               : "text-text-secondary hover:bg-bg-input hover:text-text-primary"
                           }`}
                         >
                           <span className="truncate">{skill.name}</span>
-                          <span className="ml-3 shrink-0 text-[10px] text-text-tertiary">
-                            {isActive ? "On" : "Off"}
+                          <span className={`ml-3 shrink-0 text-[10px] flex items-center gap-1 ${isActive ? "text-text-accent" : "text-text-tertiary"}`}>
+                            {isActive ? <><Check size={10} /> On</> : "Off"}
                           </span>
                         </button>
                       );
@@ -1002,26 +1080,30 @@ export default function GeneratePage() {
             <>
               <h1 className="text-sm font-semibold">Visual Component Reference</h1>
               <div className="flex-1" />
-              <Link href="/" className="text-xs text-text-tertiary hover:text-text-secondary transition-colors">← Back to app</Link>
+              <Link href="/" className="text-xs text-text-tertiary hover:text-text-secondary transition-colors focus:outline-none focus:underline">← Back to app</Link>
             </>
           ) : (
             <>
-              <div className="flex items-center gap-0.5 bg-bg-input rounded-[var(--radius-sm)] p-0.5">
-                <button onClick={() => setShowCode(false)} className={`flex items-center gap-1 px-2.5 py-1 rounded text-xs transition-colors cursor-pointer ${!showCode ? "bg-bg-surface text-text-primary" : "text-text-tertiary hover:text-text-secondary"}`}><Eye size={11} /> Preview</button>
-                <button onClick={() => setShowCode(true)} className={`flex items-center gap-1 px-2.5 py-1 rounded text-xs transition-colors cursor-pointer ${showCode ? "bg-bg-surface text-text-primary" : "text-text-tertiary hover:text-text-secondary"}`}><Code2 size={11} /> Code</button>
+              <div className="flex items-center gap-0.5 bg-bg-input rounded-[var(--radius-sm)] p-0.5" role="tablist" aria-label="View mode">
+                <button role="tab" aria-selected={!showCode} onClick={() => setShowCode(false)} className={`flex items-center gap-1 px-2.5 py-1 rounded text-xs transition-colors cursor-pointer focus:outline-none focus:ring-2 focus:ring-accent/50 ${!showCode ? "bg-bg-surface text-text-primary" : "text-text-tertiary hover:text-text-secondary"}`}><Eye size={11} /> Preview</button>
+                <button role="tab" aria-selected={showCode} onClick={() => setShowCode(true)} className={`flex items-center gap-1 px-2.5 py-1 rounded text-xs transition-colors cursor-pointer focus:outline-none focus:ring-2 focus:ring-accent/50 ${showCode ? "bg-bg-surface text-text-primary" : "text-text-tertiary hover:text-text-secondary"}`}><Code2 size={11} /> Code</button>
               </div>
               {!showCode && (
-                <div className="flex items-center gap-0.5 bg-bg-input rounded-[var(--radius-sm)] p-0.5">
+                <div className="flex items-center gap-0.5 bg-bg-input rounded-[var(--radius-sm)] p-0.5" role="tablist" aria-label="Preview viewport">
                   <button
+                    role="tab"
+                    aria-selected={previewViewport === "desktop"}
                     onClick={() => setPreviewViewport("desktop")}
-                    className={`flex items-center gap-1 px-2.5 py-1 rounded text-xs transition-colors cursor-pointer ${previewViewport === "desktop" ? "bg-bg-surface text-text-primary" : "text-text-tertiary hover:text-text-secondary"}`}
+                    className={`flex items-center gap-1 px-2.5 py-1 rounded text-xs transition-colors cursor-pointer focus:outline-none focus:ring-2 focus:ring-accent/50 ${previewViewport === "desktop" ? "bg-bg-surface text-text-primary" : "text-text-tertiary hover:text-text-secondary"}`}
                   >
                     <Monitor size={11} />
                     Desktop
                   </button>
                   <button
+                    role="tab"
+                    aria-selected={previewViewport === "mobile"}
                     onClick={() => setPreviewViewport("mobile")}
-                    className={`flex items-center gap-1 px-2.5 py-1 rounded text-xs transition-colors cursor-pointer ${previewViewport === "mobile" ? "bg-bg-surface text-text-primary" : "text-text-tertiary hover:text-text-secondary"}`}
+                    className={`flex items-center gap-1 px-2.5 py-1 rounded text-xs transition-colors cursor-pointer focus:outline-none focus:ring-2 focus:ring-accent/50 ${previewViewport === "mobile" ? "bg-bg-surface text-text-primary" : "text-text-tertiary hover:text-text-secondary"}`}
                   >
                     <Smartphone size={11} />
                     Mobile
@@ -1032,14 +1114,14 @@ export default function GeneratePage() {
               {!showCode && (
                 <button
                   onClick={togglePreviewExpanded}
-                  className="text-xs px-2 py-1 rounded transition-colors cursor-pointer text-text-tertiary hover:text-text-secondary"
-                  title={isPreviewExpanded ? "Collapse preview" : "Expand preview"}
+                  aria-label={isPreviewExpanded ? "Collapse preview" : "Expand preview"}
+                  className="text-xs px-2 py-1 rounded transition-colors cursor-pointer text-text-tertiary hover:text-text-secondary focus:outline-none focus:ring-2 focus:ring-accent/50"
                 >
                   {isPreviewExpanded ? <Minimize2 size={11} /> : <Maximize2 size={11} />}
                 </button>
               )}
-              {code && <button onClick={async () => { await navigator.clipboard.writeText(code); setCopied(true); setTimeout(() => setCopied(false), 2000); }} className="text-xs text-text-tertiary hover:text-text-secondary transition-colors cursor-pointer">{copied ? <Check size={11} className="text-green-400" /> : <Copy size={11} />}</button>}
-              {code && <button onClick={async () => { await navigator.clipboard.writeText(code); setCopied(true); setTimeout(() => setCopied(false), 2000); }} className="text-xs text-text-tertiary hover:text-text-secondary transition-colors cursor-pointer"><Download size={11} /></button>}
+              {code && <button onClick={async () => { await navigator.clipboard.writeText(code); setCopied(true); setTimeout(() => setCopied(false), 2000); }} aria-label={copied ? "Copied" : "Copy code"} className="text-xs text-text-tertiary hover:text-text-secondary transition-colors cursor-pointer p-1 rounded focus:outline-none focus:ring-2 focus:ring-accent/50">{copied ? <Check size={11} className="text-green-400" /> : <Copy size={11} />}</button>}
+              {code && <button onClick={async () => { const blob = new Blob([code], { type: "text/plain" }); const url = URL.createObjectURL(blob); const a = document.createElement("a"); a.href = url; a.download = "generated-page.tsx"; a.click(); URL.revokeObjectURL(url); }} aria-label="Download code" className="text-xs text-text-tertiary hover:text-text-secondary transition-colors cursor-pointer p-1 rounded focus:outline-none focus:ring-2 focus:ring-accent/50"><Download size={11} /></button>}
             </>
           )}
         </div>
@@ -1055,18 +1137,18 @@ export default function GeneratePage() {
             {generatedImage || isGeneratingImage || imageError ? (
               <div className="flex-1 flex flex-col items-center justify-center overflow-auto bg-[#060909] p-6">
                 {isGeneratingImage ? (
-                  <div className="flex flex-col items-center gap-4">
+                  <div role="status" aria-live="polite" className="flex flex-col items-center gap-4">
                     <Loader2 size={32} className="animate-spin text-accent" />
-                    <p className="text-sm text-text-secondary">Generating image with Gemini Flash...</p>
-                    <p className="text-xs text-text-tertiary">This may take 10-30 seconds</p>
+                    <p className="text-sm text-text-secondary">Creating your design with Gemini Flash...</p>
+                    <p className="text-xs text-text-tertiary">This usually takes 10–30 seconds</p>
                   </div>
                 ) : imageError ? (
-                  <div className="flex flex-col items-center gap-4">
+                  <div role="alert" className="flex flex-col items-center gap-4">
                     <XCircle size={32} className="text-status-error" />
                     <p className="text-sm text-status-error max-w-md text-center">{imageError}</p>
                     <button
                       onClick={() => setImageError(null)}
-                      className="rounded-[var(--radius-sm)] border border-border-default bg-bg-surface px-4 py-2 text-xs font-medium text-text-primary transition-colors hover:bg-bg-surface-hover cursor-pointer"
+                      className="rounded-[var(--radius-sm)] border border-border-default bg-bg-surface px-4 py-2 text-xs font-medium text-text-primary transition-colors hover:bg-bg-surface-hover cursor-pointer focus:outline-none focus:ring-2 focus:ring-accent/50"
                     >
                       Dismiss
                     </button>
@@ -1078,33 +1160,43 @@ export default function GeneratePage() {
                       <img
                         src={generatedImage}
                         alt="Generated UI design"
-                        className="w-full h-auto"
+                        className={`w-full h-auto transition-opacity ${isConvertingToCode ? "opacity-40" : ""}`}
                       />
+                      {isConvertingToCode && (
+                        <div className="absolute inset-0 flex flex-col items-center justify-center gap-3">
+                          <Loader2 size={32} className="animate-spin text-accent" />
+                          <p className="text-sm font-medium text-text-primary">Converting to code...</p>
+                          <p className="text-xs text-text-secondary">Analyzing the design and generating components</p>
+                        </div>
+                      )}
                     </div>
-                    <div className="flex items-center gap-3">
-                      <button
-                        onClick={handleDownloadImage}
-                        className="flex items-center gap-2 rounded-[var(--radius-sm)] border border-border-default bg-bg-surface px-4 py-2 text-xs font-medium text-text-primary transition-colors hover:bg-bg-surface-hover cursor-pointer"
-                      >
-                        <DownloadCloud size={14} />
-                        Download Image
-                      </button>
-                      <button
-                        onClick={handleConvertToCode}
-                        disabled={isGenerating}
-                        className="flex items-center gap-2 rounded-[var(--radius-sm)] bg-accent px-4 py-2 text-xs font-medium text-accent-foreground transition-colors hover:bg-accent-hover disabled:cursor-not-allowed disabled:opacity-30 cursor-pointer"
-                      >
-                        <ArrowRightLeft size={14} />
-                        {isGenerating ? "Converting..." : "Convert to Code"}
-                      </button>
-                      <button
-                        onClick={() => setGeneratedImage(null)}
-                        className="flex items-center gap-1 rounded-[var(--radius-sm)] px-3 py-2 text-xs text-text-tertiary transition-colors hover:text-text-secondary cursor-pointer"
-                      >
-                        <X size={12} />
-                        Dismiss
-                      </button>
-                    </div>
+                    {!isConvertingToCode && (
+                      <div className="flex items-center gap-3">
+                        <button
+                          onClick={handleDownloadImage}
+                          className="flex items-center gap-2 rounded-[var(--radius-sm)] border border-border-default bg-bg-surface px-4 py-2 text-xs font-medium text-text-primary transition-colors hover:bg-bg-surface-hover cursor-pointer focus:outline-none focus:ring-2 focus:ring-accent/50"
+                        >
+                          <DownloadCloud size={14} />
+                          Download image
+                        </button>
+                        <button
+                          onClick={handleConvertToCode}
+                          disabled={isGenerating}
+                          className="flex items-center gap-2 rounded-[var(--radius-sm)] bg-accent px-4 py-2 text-xs font-medium text-accent-foreground transition-colors hover:bg-accent-hover disabled:cursor-not-allowed disabled:opacity-30 cursor-pointer focus:outline-none focus:ring-2 focus:ring-accent/50 focus:ring-offset-2 focus:ring-offset-bg-primary"
+                        >
+                          <ArrowRightLeft size={14} />
+                          Convert to code
+                        </button>
+                        <button
+                          onClick={() => setGeneratedImage(null)}
+                          aria-label="Dismiss image"
+                          className="flex items-center gap-1 rounded-[var(--radius-sm)] px-3 py-2 text-xs text-text-tertiary transition-colors hover:text-text-secondary cursor-pointer focus:outline-none focus:ring-2 focus:ring-accent/50"
+                        >
+                          <X size={12} />
+                          Dismiss
+                        </button>
+                      </div>
+                    )}
                   </div>
                 ) : null}
               </div>
@@ -1114,7 +1206,7 @@ export default function GeneratePage() {
               </div>
             ) : (
               <LiveProvider key={liveProviderKey} code={liveCode} scope={previewScope} noInline>
-                <div className="flex-1 overflow-hidden bg-[#060909]">
+                <div className="flex-1 overflow-auto bg-[#060909]">
                   <PreviewStage viewport={previewViewport} expanded={isPreviewExpanded}>
                     <LivePreview />
                   </PreviewStage>

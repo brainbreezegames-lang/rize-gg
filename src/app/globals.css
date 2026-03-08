@@ -88,6 +88,30 @@ body {
   height: 100%;
 }
 
+/* Expanded mode: full-size interactive preview */
+.preview-stage--expanded .h-screen,
+.preview-stage--expanded .min-h-screen {
+  height: auto !important;
+  min-height: 100% !important;
+}
+
+.preview-stage--expanded {
+  min-height: 100%;
+}
+
+.preview-stage--expanded > * {
+  width: 100%;
+  min-height: 100%;
+}
+
+.preview-stage--expanded .overflow-hidden {
+  overflow: visible !important;
+}
+
+.preview-stage--expanded .overflow-y-auto {
+  overflow-y: visible !important;
+}
+
 .preview-stage--mobile aside {
   display: none !important;
 }

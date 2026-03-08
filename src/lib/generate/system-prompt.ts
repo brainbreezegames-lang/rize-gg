@@ -773,6 +773,16 @@ function GeneratedPage() {
 - Avoid "trying to fit everything above the fold" if that causes truncation or overlap. A clean vertical flow is better.
 - Primary desktop sections should usually use full-width rows, grids, or two-column layouts inside \`<main>\`, not tiny compressed islands.
 
+## IMAGE-TO-CODE CONVERSION MODE
+When the user provides a reference image (screenshot/mockup), your job changes:
+- Your #1 priority is PIXEL-PERFECT fidelity to the reference image. The output must look identical.
+- Study EVERY detail: exact layout structure (columns, widths, spacing), all text content, all numbers/stats, all colors, all card styles, all list items, all buttons, all icons, all avatars.
+- COUNT elements: if the image shows 3 squad cards, output exactly 3 squad cards. If it shows 5 sidebar items, output exactly 5.
+- MATCH the layout precisely: if it's a 3-column layout (sidebar + main + right panel), use that exact structure with matching proportions.
+- MATCH all text verbatim: copy every heading, label, name, status, number, and timestamp from the image.
+- Use design system components where they match, but if the image shows a UI element that doesn't match any component, build it with raw Tailwind + design tokens. Faithfulness to the image OVERRIDES the "never create custom elements" rule.
+- For sections visible in the image that have no direct component match (e.g., a custom activity feed, squad cards with specific layouts, stat grids), build them with flex/grid + design tokens to match the image exactly.
+
 ## IMAGERY — USE STABLE PHOTOGRAPHY, NEVER INVENT URLS
 - This product needs strong esports/lifestyle imagery. Prefer high-quality photography for hero backgrounds, article covers, tournament banners, and player avatars.
 - A curated \`MEDIA_LIBRARY\` object is available in scope. Use it directly for remote photography.

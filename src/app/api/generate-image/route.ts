@@ -2,7 +2,7 @@ const OPENROUTER_BASE = "https://openrouter.ai/api/v1";
 const OPENROUTER_API_KEY = process.env.OPENROUTER_API_KEY;
 
 function buildImagePrompt(prompt: string): string {
-  return `A high-fidelity UI design showing: ${prompt}. Modern, clean, polished interface. The content fills the entire image from edge to edge. Desktop widescreen layout, 16:9 aspect ratio. Dark theme with mint/teal accent colors.`;
+  return `Generate an image of a high-fidelity UI design showing: ${prompt}. Modern, clean, polished interface. The content fills the entire image from edge to edge. Desktop widescreen layout, 16:9 aspect ratio. Dark theme with mint/teal accent colors.`;
 }
 
 export async function POST(request: Request) {
@@ -36,6 +36,12 @@ export async function POST(request: Request) {
       },
       body: JSON.stringify({
         model: "google/gemini-3.1-flash-image-preview",
+        modalities: ["image", "text"],
+        stream: false,
+        image_config: {
+          aspect_ratio: "16:9",
+          image_size: "2K",
+        },
         messages: [
           {
             role: "user",
@@ -55,70 +61,42 @@ export async function POST(request: Request) {
     }
 
     const data = await res.json();
-    console.log("[generate-image] Response received, extracting image");
+    const message = data.choices?.[0]?.message;
 
-    // OpenRouter returns the image as a base64 data URL in the content
-    const content = data.choices?.[0]?.message?.content;
+    console.log("[generate-image] Response received");
+    console.log("[generate-image] Message keys:", message ? Object.keys(message) : "no message");
 
-    if (!content) {
-      return Response.json(
-        { error: "No content in response" },
-        { status: 500 }
-      );
-    }
-
-    // Check if the response contains inline image data (multimodal response)
-    const parts = data.choices?.[0]?.message?.parts;
+    // OpenRouter returns images in message.images array
+    const images = message?.images;
     let imageDataUri: string | null = null;
 
-    // OpenRouter may return image as base64 in different formats
-    // Format 1: parts array with inlineData
-    if (parts) {
-      for (const part of parts) {
-        if (part.inlineData) {
-          imageDataUri = `data:${part.inlineData.mimeType};base64,${part.inlineData.data}`;
+    if (images && Array.isArray(images) && images.length > 0) {
+      for (const img of images) {
+        if (img.type === "image_url" && img.image_url?.url) {
+          imageDataUri = img.image_url.url;
           break;
-        }
-      }
-    }
-
-    // Format 2: content is an array with image_url type
-    if (!imageDataUri && Array.isArray(content)) {
-      for (const item of content) {
-        if (item.type === "image_url" && item.image_url?.url) {
-          imageDataUri = item.image_url.url;
-          break;
-        }
-      }
-    }
-
-    // Format 3: content contains markdown image with base64
-    if (!imageDataUri && typeof content === "string") {
-      // Check for markdown image: ![...](data:image/...)
-      const mdMatch = content.match(/!\[.*?\]\((data:image\/[^)]+)\)/);
-      if (mdMatch) {
-        imageDataUri = mdMatch[1];
-      }
-
-      // Check for raw base64 data URI
-      if (!imageDataUri && content.startsWith("data:image/")) {
-        imageDataUri = content;
-      }
-
-      // Check for inline base64 without data: prefix
-      if (!imageDataUri) {
-        const b64Match = content.match(/base64,([A-Za-z0-9+/=\n]+)/);
-        if (b64Match) {
-          imageDataUri = `data:image/png;base64,${b64Match[1].replace(/\n/g, "")}`;
         }
       }
     }
 
     if (!imageDataUri) {
-      console.error("[generate-image] Could not extract image. Content type:", typeof content);
-      console.error("[generate-image] Content preview:", typeof content === "string" ? content.slice(0, 200) : JSON.stringify(content).slice(0, 200));
+      // Fallback: check content array
+      const content = message?.content;
+      if (Array.isArray(content)) {
+        for (const item of content) {
+          if (item.type === "image_url" && item.image_url?.url) {
+            imageDataUri = item.image_url.url;
+            break;
+          }
+        }
+      }
+    }
+
+    if (!imageDataUri) {
+      const msgStr = message ? JSON.stringify(message).slice(0, 500) : "null";
+      console.error("[generate-image] No image found. Message:", msgStr);
       return Response.json(
-        { error: "Could not extract image from response. The model may not have generated an image." },
+        { error: "No image in response. The model may not have generated an image." },
         { status: 500 }
       );
     }
