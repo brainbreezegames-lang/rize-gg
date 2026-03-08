@@ -2,6 +2,7 @@
 
 import { useState, useCallback } from "react";
 import { extractCodeFromResponse } from "@/lib/generate/parse-response";
+import { normalizeCode } from "@/lib/generate/normalize";
 import { validateGeneratedCode, type Violation } from "@/lib/generate/validate";
 
 export function useGenerate() {
@@ -59,7 +60,7 @@ export function useGenerate() {
         }
       }
 
-      const finalCode = extractCodeFromResponse(accumulated);
+      const finalCode = normalizeCode(extractCodeFromResponse(accumulated));
       setCode(finalCode);
       setViolations(validateGeneratedCode(finalCode));
     } catch (err) {
