@@ -28,7 +28,7 @@ const variantConfig: Record<StatusVariant, { bg: string; text: string; defaultLa
 };
 
 export function StatusPill({ variant, label, className }: StatusPillProps) {
-  const config = variantConfig[variant];
+  const config = variantConfig[variant] ?? variantConfig.idle;
 
   return (
     <span
