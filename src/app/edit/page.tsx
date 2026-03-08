@@ -10,7 +10,7 @@ import { normalizeCode } from "@/lib/generate/normalize";
 import { STUDIO_MODES, type StudioMode } from "@/lib/studio/prompts";
 import {
   Sparkles, Send, X, RotateCcw, Loader2, ChevronDown, ChevronUp,
-  Wand2, LayoutGrid, Layers, Eye, AlignLeft,
+  Wand2, LayoutGrid, Layers, Eye, AlignLeft, Brain, PenLine,
   Zap,
 } from "lucide-react";
 
@@ -60,6 +60,8 @@ const STUDIO_ICONS: Record<string, React.ReactNode> = {
   Sparkles:   <Sparkles size={13} />,
   Eye:        <Eye size={13} />,
   AlignLeft:  <AlignLeft size={13} />,
+  Brain:      <Brain size={13} />,
+  PenLine:    <PenLine size={13} />,
 };
 
 // ─── Helpers ──────────────────────────────────────────────────────────────────

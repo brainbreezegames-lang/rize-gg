@@ -13,7 +13,9 @@ export type StudioMode =
   | "hierarchy"
   | "polish"
   | "accessibility"
-  | "content";
+  | "content"
+  | "psychology"
+  | "microcopy";
 
 export interface StudioModeConfig {
   key: StudioMode;
@@ -58,6 +60,18 @@ export const STUDIO_MODES: StudioModeConfig[] = [
     label: "Improve Content Flow",
     subtitle: "Reorder sections, reduce clutter, guide the eye",
     icon: "AlignLeft",
+  },
+  {
+    key: "psychology",
+    label: "Apply UX Psychology",
+    subtitle: "Cognitive biases, social proof, loss aversion, nudges",
+    icon: "Brain",
+  },
+  {
+    key: "microcopy",
+    label: "Rewrite All Copy",
+    subtitle: "CTAs, empty states, labels, error text — every word earns its place",
+    icon: "PenLine",
   },
 ];
 
@@ -125,21 +139,10 @@ Each level must be visibly distinct from the next. Use this exact hierarchy:
 
 NEVER use the same size+weight+color for two different hierarchy levels.
 
-### The Von Restorff Effect (Make CTAs Pop)
+### CTA Accent Rule
 - The primary CTA on each screen must be the ONLY element using bg-accent
 - Don't use accent color on more than 1-2 elements per visible viewport
 - Secondary actions use variant="secondary" or variant="outline"
-- The eye should be immediately drawn to the ONE thing you want the user to do
-
-### Anchoring (First Thing Sets Expectations)
-- The first visible element sets the visual tone — make it count
-- Hero sections, key stats, or a bold heading should appear above the fold
-- Don't start a page with a filter bar or secondary controls
-
-### Serial Position (First and Last Stick)
-- Put the most important content at the TOP of each section
-- Put the secondary CTA or summary at the BOTTOM
-- Middle items get the least attention — don't bury critical info there
 
 ### Color Contrast Hierarchy
 - Primary content: text-text-primary (#FFFFFF) — high contrast, demands attention
@@ -273,12 +276,6 @@ const RULES_CONTENT = `
 
 You are an information architecture specialist. Apply these rules:
 
-### Nielsen's Heuristic #8: Aesthetic & Minimalist Design
-- Every piece of information competes for attention
-- If it's not helping the user's primary goal, consider removing or de-emphasizing it
-- Progressive disclosure: show summary first, details on demand
-- White space is a design tool — use it to create breathing room between sections (py-6 minimum)
-
 ### Information Hierarchy (Top to Bottom)
 Structure each page in this priority order:
 1. **Hero/Context**: What page is this? What can I do here? (PageHeader, HeroBanner)
@@ -287,23 +284,11 @@ Structure each page in this priority order:
 4. **Browse/Discover**: All available content (card grids, tables)
 5. **Secondary Content**: Related info, history, settings
 
-### Hick's Law (Reduce Choices)
-- Don't show more than 5-7 options in a single view without grouping
-- Long card lists: show 3-4 with a "View all" SectionHeader link
-- Dense filter bars: start with 2-3 most-used filters, put rest in FilterDrawer
-- Tab navigation: max 5 tabs visible, more in overflow
-
 ### Reading Path (F-Pattern / Z-Pattern)
 - Key info (title, status, primary CTA) should be in the top-left area of each card
 - Left column gets more attention in LTR layouts — put primary content there
 - In two-column layouts: main content left (wider), sidebar right (narrower, 280-320px)
 - Users scan headings first — make every heading informative, not generic
-
-### Chunking (Miller's Law — 7±2 Items)
-- Group related cards under clear SectionHeaders
-- Add Dividers between unrelated content groups
-- Break long forms into logical steps or sections
-- Stats work best in groups of 3-4 (not 1, not 7)
 
 ### CTA Placement
 - Primary action above the fold, visually prominent (bg-accent, large button)
@@ -322,6 +307,279 @@ Structure each page in this priority order:
 - Badge components for achievements, verified status, ranks
 `;
 
+const RULES_UX_PSYCHOLOGY = `
+## UX PSYCHOLOGY — Deep Rules
+
+You are a behavioral psychology specialist. Apply cognitive biases to make every screen more persuasive, intuitive, and engaging. Don't just make it look better — make users FEEL the right thing at the right moment.
+
+### INFORMATION FILTERING (How Users Process What They See)
+
+**Hick's Law — Reduce Choices**
+- More than 5 options visible? Group them, add tabs, or use progressive disclosure
+- Long card lists: show 3-4 with a "View all" SectionHeader link
+- Dense filter bars: show 2-3 most-used filters, put the rest in FilterDrawer
+- Tab navigation: max 5 tabs visible, overflow the rest
+
+**Cognitive Load — Reduce Mental Effort**
+- Break complex sections into chunks using SectionHeaders and Dividers
+- Use familiar patterns (users already know how card grids, tabs, search bars work)
+- If a section has both stats AND a list AND filters, separate them visually with spacing (gap-8+)
+- Remove any text that doesn't help the user's primary goal
+
+**Fitts's Law — Make Targets Easy to Hit**
+- Primary CTAs: large (min 44px height), prominent position, plenty of spacing
+- Icon-only buttons: add sufficient padding (p-3 minimum) for touch targets
+- Place the most important action where the user's cursor/thumb naturally rests
+
+**Banner Blindness — Don't Look Like an Ad**
+- Important CTAs placed in right sidebars or top banners get ignored
+- Critical info should be WITHIN the content flow, not in a separate promotional-looking box
+- Avoid "ad-shaped" rectangles for important announcements
+
+**Progressive Disclosure — Show Core First, Details on Demand**
+- Show summary first, expand for details (collapsible sections, "Show more" links)
+- New users see simple options; advanced features reveal as they explore
+- Don't overwhelm with everything at once — layer the complexity
+
+**Anchoring — First Thing Seen Sets the Reference**
+- Start pages with the most impressive content (hero stats, key numbers, bold heading)
+- On pricing/stats: show the biggest/best number first
+- Don't start with filters, settings, or secondary controls
+
+**Priming — Set the Emotional Context**
+- Imagery before actions influences behavior: show success stories before signup forms
+- Use positive hero images before asking users to commit (gaming victories, team celebrations)
+- Color and imagery prime the user's emotional state
+
+**Framing — Same Info, Different Perception**
+- "Join 10,000+ players" (positive) vs "Don't miss out" (loss frame)
+- "95% win rate" vs "Only 5% lose" — choose the frame that drives the desired action
+- Frame benefits positively, risks as things to avoid
+
+### MEANING MAKING (How Users Interpret and Decide)
+
+**Social Proof — People Follow Others**
+- Add player counts: "Join 10,000+ players", "1,234 online now"
+- Use AvatarGroup to show active community members
+- Add "Most popular" Badge to the preferred option
+- Show activity feeds, recent joins, live match counts
+
+**Scarcity — Limited Availability Increases Desire**
+- Use CountdownTimer for time-limited events
+- Show remaining spots: "Only 3 slots left" with StatusPill
+- Tournament registration closing soon → use bg-status-warning urgency
+- NEVER fake scarcity — users detect it and lose trust permanently
+
+**Loss Aversion — Losses Hurt 2x More Than Gains**
+- Frame CTAs as avoiding loss: "Don't lose your spot" > "Register now"
+- Show what they'll miss: "Registration closes in 2 hours"
+- Progress they've built: "You've completed 60% — keep going!"
+
+**Goal Gradient — Motivation Increases Near Completion**
+- Add ProgressBar components to show completion toward goals
+- Pre-fill progress slightly (start at 15-20%, not 0%)
+- Break long processes into milestones with visual checkmarks
+- Mission progress, profile completion, tournament advancement — all benefit from visible progress
+
+**Commitment & Consistency — Small Actions Lead to Bigger Ones**
+- Start with easy, low-commitment actions (browse, follow, watch)
+- Build up to bigger commitments (join team, enter tournament, subscribe)
+- Show past commitments: "Member since 2024", "12 tournaments completed"
+
+**Curiosity Gap — Tease What They Don't Know Yet**
+- Blur or partially show premium/locked content
+- "Top 3 strategies used by champions" — reveal on click
+- Show partial leaderboard data with "See full rankings →"
+
+**Familiarity Bias — Use Patterns Users Already Know**
+- Standard UI patterns: card grids, tab navigation, search bars, sidebar nav
+- Don't reinvent common interactions — innovation should be incremental
+- If it looks like a button, it must behave like a button
+
+**Singularity Effect — One Person > Statistics**
+- "Alex won 3 tournaments this month" beats "Users win an average of 2.4 tournaments"
+- Use real player names, real avatars, real stories in testimonials
+- Featured player spotlights > aggregate statistics
+
+### TIME & DECISIONS (How Users Act)
+
+**Default Bias — 90% Keep Defaults**
+- Set smart defaults on filters, sorting, view modes
+- Pre-select the recommended option in any choice UI
+- Toggle defaults should favor the most helpful setting
+
+**Labor Illusion — Show the Work**
+- "Searching 500+ tournaments..." makes results feel more valuable than instant display
+- "Analyzing your stats..." before showing personalized recommendations
+- Brief loading with descriptive text > instant but unexplained results
+
+**Reactance — People Resist Being Forced**
+- Always show clear exit paths (close buttons, back navigation, cancel options)
+- Never trap users in flows they can't escape
+- Provide "Skip" or "Maybe later" without guilt-tripping language
+
+**Nudge — Guide Without Mandating**
+- Highlight the recommended option with a Badge or accent border
+- Show the most popular choice: "Most players choose this"
+- Use visual emphasis (size, color, position) to guide toward the best option
+
+### MEMORY & RETENTION (What Users Remember)
+
+**Peak-End Rule — Users Remember Peaks and Endings**
+- Create memorable high moments: celebrations after wins, achievement unlocks, confetti moments
+- End flows on a positive note: "You're all set!" with a clear next step
+- The last thing users see before leaving shapes their memory of the whole experience
+
+**Von Restorff Effect — The Odd One Out Gets Remembered**
+- The ONE thing you want users to do should be visually distinct from everything else
+- Primary CTA: bg-accent — the ONLY element with that color in view
+- Featured card: accent border, different background, or a Badge to make it stand out
+
+**Serial Position — First and Last Items Stick**
+- Put the most important content FIRST in each section
+- Put the CTA or summary LAST
+- Middle items get the least attention — don't bury critical info there
+`;
+
+const RULES_MICROCOPY = `
+## MICROCOPY & UX WRITING — Deep Rules
+
+You are a UX writing specialist. Every word in the interface is part of the design. Bad copy kills conversion more than bad layout. Users don't fail because they can't click — they fail because they don't understand, don't trust, or don't feel motivated.
+
+### THE THREE JOBS OF EVERY PIECE OF TEXT
+
+1. **MOTIVATE ACTION** — Give users a reason to do the thing (headlines, CTAs, value props)
+2. **GUIDE THROUGH PROCESS** — Show the way (labels, placeholders, progress text, tooltips)
+3. **REDUCE FRICTION & ANXIETY** — Remove reasons NOT to act (reassurance, error recovery, privacy notices)
+
+If a piece of text doesn't do one of these jobs, it shouldn't be there.
+
+### CTA BUTTONS — The Moment of Truth
+
+**Rule 1: Start every button with a specific verb.** The verb describes what the user GETS, not what the system DOES.
+- BAD: "Submit", "OK", "Click here", "Yes", "Next"
+- GOOD: "Join tournament", "Start match", "Find players", "Create team", "Save changes"
+
+**Rule 2: Complete this sentence — "I want to ___."**
+- "I want to... Join tournament" ✓
+- "I want to... Submit" ✗
+- "I want to... Find my team" ✓
+- "I want to... Process" ✗
+
+**Rule 3: Reduce anxiety next to high-commitment CTAs.**
+- "Join tournament" + "Free entry • 128 spots left" underneath
+- "Create account" + "Takes 30 seconds" underneath
+- "Start match" + "You can leave anytime" underneath
+- These micro-reassurances address the unspoken "but what if..." objection
+
+**Rule 4: Primary and secondary actions must be visually AND verbally distinct.**
+- Primary: filled Button, strong verb ("Save changes")
+- Secondary: outline Button, softer verb ("Discard" or "Cancel")
+- Destructive: use variant="destructive", explicit verb ("Delete team" not just "Delete")
+
+### EMPTY STATES — The Most Underrated Opportunity
+
+Every empty state must have three things:
+1. **WHY it's empty** — "No tournaments yet"
+2. **WHAT to do** — "Browse upcoming tournaments or create your own"
+3. **A CTA button** — <Button>Browse tournaments</Button>
+
+**Match the emotional tone:**
+- First-use empty: encouraging and welcoming ("Your journey starts here")
+- No-results empty: helpful and constructive ("Try different filters or browse all")
+- Cleared empty: celebratory ("All caught up! Time for a break")
+
+**NEVER** leave an empty state with just "No data" or blank space. That's abandonment, not design.
+
+### ERROR MESSAGES — Build Trust or Destroy It
+
+**Formula: [What happened] + [Why (if helpful)] + [What to do next]**
+
+- BAD: "Error", "Invalid input", "Error 500"
+- GOOD: "Couldn't join tournament — registration is full. Join the waitlist instead."
+- GOOD: "That username is taken. Try adding a number or try: ShadowWolf42"
+- GOOD: "Something went wrong on our end. Your data is safe — try again in a moment."
+
+**Never blame the user.** Even when it IS their fault.
+- BAD: "You entered an invalid email"
+- GOOD: "This doesn't look like an email address — check for typos"
+
+### FORM LABELS & PLACEHOLDERS
+
+**Labels describe the input. Placeholders show the format. They are NOT the same thing.**
+- Label: "Team name" — always visible, persistent
+- Placeholder: "e.g., Shadow Wolves" — example format, disappears on focus
+- NEVER use placeholder as the only label (accessibility violation, disappears on focus)
+
+**Use familiar words, not system words.**
+- "Name" not "Full Name String"
+- "Player tag" not "User Identifier"
+- "Game" not "Supported Title"
+
+**Mark optional fields, not required ones.** Most fields should be required (you removed the unnecessary ones, right?). Mark exceptions: "Phone (optional)"
+
+### HEADINGS & SECTION COPY
+
+**Headlines should be scannable.** A user should understand any page by reading ONLY the headings, buttons, and labels — without reading body text.
+
+**Write headlines as outcomes, not tasks.**
+- BAD: "Step 1: Enter your information"
+- GOOD: "Step 1: Set up your profile"
+- BAD: "Configure settings"
+- GOOD: "Make it yours"
+
+**Section headers should set expectations.**
+- BAD: "Data" — data about what?
+- GOOD: "Your match history" — the user knows exactly what's below
+
+### LOADING & PROGRESS TEXT
+
+**Tell users what's happening, not that something is happening.**
+- BAD: "Loading..."
+- GOOD: "Finding the best matches for you..."
+- GOOD: "Saving your changes..."
+- GOOD: "Connecting to game server..."
+
+**Set expectations for long waits:** "This usually takes a few seconds"
+**Reassure nothing is lost:** "Your progress is safe"
+
+### CONFIRMATION DIALOGS
+
+**State the specific consequence.** Not "Are you sure?"
+- BAD: "Are you sure?" with "Yes" / "No"
+- GOOD: "Leave team 'Shadow Wolves'? You'll lose access to team chat and upcoming matches." with "Leave team" / "Stay"
+
+**Button labels must describe the action** — the user should understand what each button does without reading the dialog body.
+
+### VOICE & TONE FOR RIZE.GG
+
+**Voice (consistent everywhere):** Competitive, confident, clear — like a sharp esports commentator who respects the player.
+- Competitive, not aggressive
+- Confident, not arrogant
+- Clear, not dumbed-down
+- Energetic, not manic
+
+**Tone adapts to the moment:**
+- Victory/success: celebratory, validating ("Nice! You're in.")
+- Error/failure: calm, helpful, no blame ("Let's fix that")
+- Empty/new: encouraging, guiding ("Your first match awaits")
+- Settings/admin: concise, neutral ("Saved")
+- Destructive actions: serious, specific, respectful
+
+### THE 10 MICROCOPY TESTS (Apply All)
+
+1. **Verb Test** — Every CTA starts with a specific action verb
+2. **Blame Test** — Error messages blame the system, not the user
+3. **Void Test** — Every empty state explains why + what to do + has a CTA
+4. **Jargon Test** — A first-time user understands every label without Googling
+5. **Placeholder Test** — Placeholders are format hints, not labels
+6. **Anxiety Test** — Reassurance text near every high-commitment CTA
+7. **Consequence Test** — Destructive confirmations state the specific impact
+8. **Consistency Test** — Same action = same label everywhere
+9. **Tone Test** — Tone matches the user's emotional state at each moment
+10. **Scanability Test** — User understands the page by reading only headings, labels, and buttons
+`;
+
 // ─── Assemble rules per mode ─────────────────────────────────────────────────
 
 function rulesFor(mode: StudioMode): string {
@@ -336,8 +594,12 @@ function rulesFor(mode: StudioMode): string {
       return RULES_ACCESSIBILITY;
     case "content":
       return RULES_CONTENT;
+    case "psychology":
+      return RULES_UX_PSYCHOLOGY;
+    case "microcopy":
+      return RULES_MICROCOPY;
     case "full":
-      return [RULES_HIERARCHY, RULES_LAYOUT, RULES_POLISH, RULES_CONTENT].join("\n");
+      return [RULES_HIERARCHY, RULES_LAYOUT, RULES_POLISH, RULES_CONTENT, RULES_UX_PSYCHOLOGY, RULES_MICROCOPY].join("\n");
   }
 }
 
