@@ -11,7 +11,7 @@ import { STUDIO_MODES, type StudioMode } from "@/lib/studio/prompts";
 import {
   Sparkles, Send, X, RotateCcw, Loader2, ChevronDown, ChevronUp,
   Wand2, LayoutGrid, Layers, Eye, AlignLeft, Brain, PenLine,
-  Zap, Check,
+  Zap, Check, Clock,
 } from "lucide-react";
 
 // Real page components (shown before any AI edit)
@@ -75,11 +75,61 @@ function clearOverride(key: PageKey) {
   try { localStorage.removeItem(LS_OVERRIDE(key)); } catch {}
 }
 
+// ─── Edit History ────────────────────────────────────────────────────────────
+const EDIT_HISTORY_KEY = "rize-edit-history";
+interface EditHistoryEntry { id: string; pageKey: string; pageLabel: string; prompt: string; code: string; timestamp: number; }
+
+function loadEditHistory(): EditHistoryEntry[] {
+  try { return JSON.parse(localStorage.getItem(EDIT_HISTORY_KEY) || "[]"); } catch { return []; }
+}
+function saveEditHistoryEntry(entry: EditHistoryEntry) {
+  try {
+    const all = loadEditHistory();
+    all.unshift(entry);
+    localStorage.setItem(EDIT_HISTORY_KEY, JSON.stringify(all.slice(0, 50)));
+  } catch {}
+}
+
 function stripFences(text: string): string {
   return text
-    .replace(/^```(?:jsx?|tsx?|typescript|javascript)?\n?/gm, "")
+    .replace(/^```(?:jsx?|tsx?|typescript|javascript|json)?\n?/gm, "")
     .replace(/^```\n?/gm, "")
     .trim();
+}
+
+/** Parse JSON patches from AI output and apply them to the original code */
+function applyClassNamePatches(originalCode: string, rawOutput: string): { code: string; patchCount: number } {
+  const cleaned = stripFences(rawOutput);
+  let patches: Array<{ find: string; replace: string }>;
+  try {
+    patches = JSON.parse(cleaned);
+  } catch {
+    // Try to extract JSON array from the output if there's extra text
+    const match = cleaned.match(/\[[\s\S]*\]/);
+    if (!match) throw new Error("The AI didn't return valid patches. Try again.");
+    patches = JSON.parse(match[0]);
+  }
+
+  if (!Array.isArray(patches) || patches.length === 0) {
+    throw new Error("No improvements found. The page may already be well-optimized.");
+  }
+
+  let result = originalCode;
+  let applied = 0;
+
+  for (const patch of patches) {
+    if (!patch.find || !patch.replace || patch.find === patch.replace) continue;
+    if (result.includes(patch.find)) {
+      result = result.replace(patch.find, patch.replace);
+      applied++;
+    }
+  }
+
+  if (applied === 0) {
+    throw new Error("None of the patches matched the code. Try again with a different mode.");
+  }
+
+  return { code: result, patchCount: applied };
 }
 
 async function consumeStream(
@@ -180,11 +230,30 @@ export default function EditPage() {
 
   // ─── Apply result ──────────────────────────────────────────────────────────
 
-  const applyResult = useCallback((accumulated: string) => {
+  const [editHistory, setEditHistory] = useState<EditHistoryEntry[]>([]);
+  const [showHistory, setShowHistory] = useState(false);
+
+  // Load edit history on mount
+  useEffect(() => {
+    setEditHistory(loadEditHistory());
+  }, []);
+
+  const applyResult = useCallback((accumulated: string, editPrompt?: string) => {
     const clean = normalizeCode(stripFences(accumulated));
     if (clean.length > 50) {
       setOverrides((prev) => ({ ...prev, [activePage]: clean }));
       saveOverride(activePage, clean);
+      // Save to history
+      const entry: EditHistoryEntry = {
+        id: Date.now().toString(),
+        pageKey: activePage,
+        pageLabel: PAGES.find((p) => p.key === activePage)?.label || activePage,
+        prompt: editPrompt || "Studio improvement",
+        code: clean,
+        timestamp: Date.now(),
+      };
+      saveEditHistoryEntry(entry);
+      setEditHistory(loadEditHistory());
     } else {
       throw new Error("The output was too short. Try again or use a different model.");
     }
@@ -216,7 +285,7 @@ export default function EditPage() {
         throw new Error(err.error || `HTTP ${res.status}`);
       }
       const accumulated = await consumeStream(res, setStreamingCode);
-      applyResult(accumulated);
+      applyResult(accumulated, userPrompt);
       setChatOpen(false);
     } catch (err) {
       setError(err instanceof Error ? err.message : "Something went wrong. Try again.");
@@ -251,7 +320,28 @@ export default function EditPage() {
         throw new Error(err.error || `HTTP ${res.status}`);
       }
       const accumulated = await consumeStream(res, setStreamingCode);
-      applyResult(accumulated);
+
+      // Patch-based: apply className patches to the current code (preserves structure)
+      const { code: patched, patchCount } = applyClassNamePatches(currentCode, accumulated);
+      const patchedNormalized = normalizeCode(patched);
+
+      setOverrides((prev) => ({ ...prev, [activePage]: patchedNormalized }));
+      saveOverride(activePage, patchedNormalized);
+
+      // Save to history
+      const modeLabel = STUDIO_MODES.find((m) => m.key === mode)?.label || mode;
+      const editPrompt = userPrompt ? `${modeLabel}: ${userPrompt}` : modeLabel;
+      const entry: EditHistoryEntry = {
+        id: Date.now().toString(),
+        pageKey: activePage,
+        pageLabel: PAGES.find((p) => p.key === activePage)?.label || activePage,
+        prompt: `${editPrompt} (${patchCount} patches)`,
+        code: patchedNormalized,
+        timestamp: Date.now(),
+      };
+      saveEditHistoryEntry(entry);
+      setEditHistory(loadEditHistory());
+
       setChatOpen(false);
     } catch (err) {
       setError(err instanceof Error ? err.message : "Something went wrong. Try again.");
@@ -260,7 +350,7 @@ export default function EditPage() {
       setStreamingCode("");
       setActiveStudioMode(null);
     }
-  }, [isGenerating, currentCode, pageConfig.label, model, apiKey, applyResult]);
+  }, [isGenerating, currentCode, activePage, pageConfig.label, model, apiKey]);
 
   const handleKeyDown = (e: React.KeyboardEvent) => {
     if (e.key === "Enter" && !e.shiftKey) {
@@ -294,13 +384,11 @@ export default function EditPage() {
   const progressLen = streamingCode.length;
   const progressText = isGenerating
     ? activeStudioMode
-      ? progressLen > 1200
-        ? "Finishing up — almost there..."
-        : progressLen > 600
-          ? `Refining ${pageConfig.label}...`
-          : progressLen > 200
-            ? `Applying ${studioModeLabel} rules...`
-            : `Analyzing ${pageConfig.label}...`
+      ? progressLen > 400
+        ? "Preparing patches — almost done..."
+        : progressLen > 100
+          ? `Finding ${studioModeLabel} improvements...`
+          : `Analyzing ${pageConfig.label}...`
       : progressLen > 800
         ? "Finishing up — almost there..."
         : progressLen > 300
@@ -354,15 +442,26 @@ export default function EditPage() {
             <div className="fixed inset-0 z-40" onClick={() => setShowModelPicker(false)} />
           )}
 
-          {/* ─── Floating trigger ──────────────────────────────────────────── */}
+          {/* ─── Floating triggers ─────────────────────────────────────────── */}
           {!chatOpen && (
-            <button
-              onClick={() => setChatOpen(true)}
-              aria-label="Open design studio"
-              className="fixed bottom-6 right-6 z-50 size-14 rounded-full bg-accent flex items-center justify-center shadow-[0_8px_32px_rgba(153,249,234,0.3)] hover:bg-accent-hover transition-all cursor-pointer hover:scale-105 active:scale-95 focus:outline-none focus:ring-2 focus:ring-accent/50 focus:ring-offset-2 focus:ring-offset-bg-primary"
-            >
-              <Wand2 size={20} className="text-accent-foreground" />
-            </button>
+            <div className="fixed bottom-6 right-6 z-50 flex items-center gap-2">
+              {editHistory.length > 0 && (
+                <button
+                  onClick={() => { setChatOpen(true); setShowHistory(true); }}
+                  aria-label="View edit history"
+                  className="size-11 rounded-full bg-bg-elevated border border-border-default flex items-center justify-center shadow-lg hover:border-border-accent/40 transition-all cursor-pointer hover:scale-105 active:scale-95 focus:outline-none focus:ring-2 focus:ring-accent/50"
+                >
+                  <Clock size={16} className="text-text-secondary" />
+                </button>
+              )}
+              <button
+                onClick={() => setChatOpen(true)}
+                aria-label="Open design studio"
+                className="size-14 rounded-full bg-accent flex items-center justify-center shadow-[0_8px_32px_rgba(153,249,234,0.3)] hover:bg-accent-hover transition-all cursor-pointer hover:scale-105 active:scale-95 focus:outline-none focus:ring-2 focus:ring-accent/50 focus:ring-offset-2 focus:ring-offset-bg-primary"
+              >
+                <Wand2 size={20} className="text-accent-foreground" />
+              </button>
+            </div>
           )}
 
           {/* ─── Panel ──────────────────────────────────────────────────────── */}
@@ -535,6 +634,82 @@ export default function EditPage() {
                 {/* Divider */}
                 {!isGenerating && (
                   <div className="border-t border-border-subtle" role="separator" />
+                )}
+
+                {/* History */}
+                {!isGenerating && (
+                  <div>
+                    <button
+                      onClick={() => { setShowHistory(!showHistory); setEditHistory(loadEditHistory()); }}
+                      className="flex items-center justify-between w-full text-[11px] text-text-tertiary hover:text-text-secondary transition-colors cursor-pointer focus:outline-none focus:underline"
+                    >
+                      <span className="flex items-center gap-1">
+                        <Clock size={11} />
+                        History
+                        {editHistory.length > 0 && <span className="text-[10px]">({editHistory.length})</span>}
+                      </span>
+                      {showHistory ? <ChevronUp size={11} /> : <ChevronDown size={11} />}
+                    </button>
+                    {showHistory && (
+                      <div className="mt-2 max-h-48 overflow-y-auto rounded-[var(--radius-md)] border border-border-subtle">
+                        {editHistory.length === 0 ? (
+                          <p className="px-3 py-4 text-[11px] text-text-tertiary text-center">No history yet. Edit a page to see it here.</p>
+                        ) : editHistory.map((entry) => (
+                          <div
+                            key={entry.id}
+                            className="group flex items-start gap-2 px-3 py-2 border-b border-border-subtle last:border-b-0 hover:bg-bg-surface-hover transition-colors"
+                          >
+                            <div className="flex-1 min-w-0">
+                              <p className="text-[11px] text-text-primary truncate">{entry.prompt}</p>
+                              <p className="text-[10px] text-text-tertiary mt-0.5">
+                                {entry.pageLabel} &middot; {(() => {
+                                  const diffMin = Math.floor((Date.now() - entry.timestamp) / 60000);
+                                  if (diffMin < 1) return "Just now";
+                                  if (diffMin < 60) return `${diffMin}m ago`;
+                                  const diffHr = Math.floor(diffMin / 60);
+                                  if (diffHr < 24) return `${diffHr}h ago`;
+                                  return new Date(entry.timestamp).toLocaleDateString(undefined, { month: "short", day: "numeric" });
+                                })()}
+                              </p>
+                            </div>
+                            <div className="flex items-center gap-1 shrink-0 opacity-0 group-hover:opacity-100 transition-opacity">
+                              <button
+                                onClick={() => {
+                                  setActivePage(entry.pageKey as PageKey);
+                                  setOverrides((prev) => ({ ...prev, [entry.pageKey]: entry.code }));
+                                  saveOverride(entry.pageKey as PageKey, entry.code);
+                                }}
+                                className="text-[10px] px-1.5 py-0.5 rounded bg-accent text-accent-foreground font-medium cursor-pointer hover:bg-accent-hover transition-colors"
+                              >
+                                Restore
+                              </button>
+                              <button
+                                onClick={() => {
+                                  const updated = editHistory.filter((e) => e.id !== entry.id);
+                                  setEditHistory(updated);
+                                  localStorage.setItem(EDIT_HISTORY_KEY, JSON.stringify(updated));
+                                }}
+                                className="text-text-tertiary hover:text-status-error cursor-pointer transition-colors p-0.5"
+                              >
+                                <X size={10} />
+                              </button>
+                            </div>
+                          </div>
+                        ))}
+                        {editHistory.length > 0 && (
+                          <button
+                            onClick={() => {
+                              setEditHistory([]);
+                              localStorage.removeItem(EDIT_HISTORY_KEY);
+                            }}
+                            className="w-full px-3 py-1.5 text-[10px] text-text-tertiary hover:text-status-error transition-colors cursor-pointer text-center"
+                          >
+                            Clear all history
+                          </button>
+                        )}
+                      </div>
+                    )}
+                  </div>
                 )}
 
                 {/* Prompt input */}

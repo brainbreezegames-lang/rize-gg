@@ -606,6 +606,11 @@ function rulesFor(mode: StudioMode): string {
 
 // ─── Build system prompt ─────────────────────────────────────────────────────
 
+/**
+ * Patch-based approach: The AI outputs a JSON array of className replacements.
+ * The client applies these patches to the ORIGINAL code — making it impossible
+ * to remove content, change text, or break layouts.
+ */
 export function buildStudioSystemPrompt(
   currentCode: string,
   pageName: string,
@@ -614,9 +619,9 @@ export function buildStudioSystemPrompt(
 ): string {
   const rules = rulesFor(mode);
 
-  return `You are a senior UI polisher. You receive a working React page and return an improved version.
+  return `You are a senior UI polisher. You receive a React page and output ONLY className patches as a JSON array.
 
-YOUR OUTPUT MUST BE 90%+ IDENTICAL TO THE INPUT. You are making TARGETED refinements, not a redesign.
+YOU DO NOT REWRITE THE CODE. You output a JSON array of find-and-replace operations on className strings.
 
 CURRENT CODE for the "${pageName}" page:
 
@@ -625,54 +630,55 @@ ${currentCode}
 \`\`\`
 ${userPrompt ? `\nUSER REQUEST: "${userPrompt}"\n` : ""}
 ═══════════════════════════════════════════════════════════════════
-WHAT YOU ARE ALLOWED TO CHANGE
+YOUR TASK
 ═══════════════════════════════════════════════════════════════════
 
-✅ ALLOWED (do these):
-- Modify Tailwind className strings (fix spacing, improve colors, add hover/transition)
-- Add hover:border-border-accent/30 and transition-colors to cards
-- Add cursor-pointer to clickable elements
-- Improve text sizing hierarchy (make titles bigger, metadata smaller)
-- Fix inconsistent spacing (standardize gaps to 4/6/8 scale)
-- Add small Lucide icons next to existing labels (e.g., <Clock size={14} /> next to time text)
-- Add Badge or StatusPill to enrich existing data that already has status/rank info
-- Add Divider components between existing sections
-- Improve the visual weight distribution (borders, backgrounds, padding)
-- Add missing hover states to interactive elements
+Analyze the code and identify className strings that can be improved.
+Output a JSON array of patches. Each patch replaces one className string.
 
-❌ FORBIDDEN (never do these):
-- Do NOT change any text content, headings, labels, or copy
-- Do NOT add new sections, cards, hero banners, or content blocks that don't exist in the original
-- Do NOT remove or reorder any sections
-- Do NOT invent text (no new headlines, slogans, taglines, descriptions, statistics, progress bars with made-up data)
-- Do NOT change component types (don't replace a div with HeroBanner, don't replace custom cards with SessionCard)
-- Do NOT modify data arrays or their contents
-- Do NOT remove any JSX elements, useState hooks, event handlers, or logic
-- Do NOT restructure the page layout (keep the same grid/flex structure)
-- Do NOT change the Sidebar, TopBar, or page shell
+FORMAT — output ONLY this JSON array, nothing else:
+[
+  {"find": "the exact current className value", "replace": "the improved className value"},
+  {"find": "another exact className value", "replace": "improved version"}
+]
 
-═══════════════════════════════════════════════════════════════════
-RULES FOR YOUR CHANGES
-═══════════════════════════════════════════════════════════════════
-${rules}
+RULES:
+1. "find" must be the EXACT className string value from the code (copy-paste it precisely)
+2. "replace" must be a valid Tailwind className string
+3. Only modify className values — never change text, JSX structure, component types, or data
+4. Each "find" string must be UNIQUE in the code (if duplicates exist, include enough surrounding context)
+5. Output 5-20 patches per improvement pass — focus on highest-impact changes
+6. Use design tokens, NEVER raw hex values
 
-═══════════════════════════════════════════════════════════════════
-CODE FORMAT
-═══════════════════════════════════════════════════════════════════
-- Component name: "GeneratedPage"
-- NO imports, NO exports (everything is already in scope)
-- NO comments explaining what you changed
-- Raw JSX only — no markdown fences
-- Copy ALL data arrays (const SESSIONS, GROUPS, etc.) character-for-character
-
-**Design tokens (NEVER raw hex):**
+**Design tokens:**
   BG: bg-bg-primary, bg-bg-secondary, bg-bg-card, bg-bg-surface, bg-bg-surface-hover, bg-bg-input, bg-bg-elevated
   Text: text-text-primary, text-text-secondary, text-text-tertiary, text-text-accent
   Accent: bg-accent, bg-accent-hover, bg-accent-muted, bg-accent-subtle
   Borders: border-border-default, border-border-subtle, border-border-accent
   Radius: rounded-[var(--radius-sm)], rounded-[var(--radius-md)], rounded-[var(--radius-lg)], rounded-[var(--radius-xl)]
 
-**StatusPill variants:** "registration_open" | "live" | "finished" | "playing" | "idle" | "recruiting" | "online" | "offline"
+═══════════════════════════════════════════════════════════════════
+WHAT TO IMPROVE (based on ${mode} mode)
+═══════════════════════════════════════════════════════════════════
+${rules}
 
-OUTPUT: Return ONLY the complete code. No markdown, no explanation.`;
+═══════════════════════════════════════════════════════════════════
+EXAMPLES
+═══════════════════════════════════════════════════════════════════
+
+Good patches:
+[
+  {"find": "grid grid-cols-2 gap-4", "replace": "grid grid-cols-2 md:grid-cols-4 gap-4"},
+  {"find": "text-sm text-text-primary", "replace": "text-lg font-semibold text-text-primary"},
+  {"find": "p-4 rounded-lg", "replace": "p-4 rounded-[var(--radius-lg)] border border-border-default hover:border-border-accent/30 transition-colors cursor-pointer"},
+  {"find": "bg-bg-primary", "replace": "bg-bg-primary min-h-screen"}
+]
+
+Bad patches (NEVER do these):
+- Changing text content: {"find": "Federations", "replace": "All Federations"} ← NO
+- Adding new elements: patches cannot add JSX, only modify className strings
+- Removing elements: patches cannot remove anything
+- Non-unique finds: if "flex gap-4" appears 10 times, use a longer unique substring
+
+OUTPUT: Return ONLY the JSON array. No markdown fences, no explanation, no other text.`;
 }

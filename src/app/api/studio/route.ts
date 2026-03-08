@@ -37,8 +37,8 @@ async function streamOpenRouter(options: {
     body: JSON.stringify({
       model: upstreamModel,
       stream: true,
-      temperature: 0.6,
-      max_tokens: 16384,
+      temperature: 0.3,
+      max_tokens: 8192,
       messages: [
         { role: "system", content: systemPrompt },
         { role: "user", content: prompt },
@@ -92,7 +92,7 @@ async function streamGemini(options: {
   const model = genAI.getGenerativeModel({
     model: "gemini-3.1-pro-preview",
     systemInstruction: systemPrompt,
-    generationConfig: { temperature: 0.6, maxOutputTokens: 16384 },
+    generationConfig: { temperature: 0.3, maxOutputTokens: 8192 },
   });
 
   const result = await model.generateContentStream({
@@ -126,8 +126,8 @@ async function streamLegacyChatCompletions(options: {
     body: JSON.stringify({
       model: upstreamModel,
       stream: true,
-      temperature: 0.6,
-      [tokenField]: 16384,
+      temperature: 0.3,
+      [tokenField]: 8192,
       messages: [
         { role: "system", content: systemPrompt },
         { role: "user", content: prompt },
