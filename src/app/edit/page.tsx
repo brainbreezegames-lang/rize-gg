@@ -9,9 +9,9 @@ import { EditContext } from "@/lib/edit-context";
 import { normalizeCode } from "@/lib/generate/normalize";
 import { STUDIO_MODES, type StudioMode } from "@/lib/studio/prompts";
 import {
-  Sparkles, Send, X, RotateCcw, Loader2, ChevronDown,
+  Sparkles, Send, X, RotateCcw, Loader2, ChevronDown, ChevronUp,
   Wand2, LayoutGrid, Layers, Eye, AlignLeft,
-  Zap, MessageSquare, ArrowLeft,
+  Zap,
 } from "lucide-react";
 
 // Real page components (shown before any AI edit)
@@ -47,20 +47,19 @@ const PAGES = [
 
 type PageKey = (typeof PAGES)[number]["key"];
 type Model = "claude-opus-4.6" | "gemini-3.1-pro" | "chatgpt-5.4";
-type PanelView = "home" | "studio" | "edit";
 
 const LS_OVERRIDE = (key: PageKey) => `rize-edit-${key}`;
 const LS_MODEL = "rize-edit-model";
 const LS_API_KEY = "rize-api-key";
 
-// Icon map for studio modes
+// Icon map for studio modes (skip "full" — it gets the hero button)
 const STUDIO_ICONS: Record<string, React.ReactNode> = {
-  Wand2:      <Wand2 size={14} />,
-  LayoutGrid: <LayoutGrid size={14} />,
-  Layers:     <Layers size={14} />,
-  Sparkles:   <Sparkles size={14} />,
-  Eye:        <Eye size={14} />,
-  AlignLeft:  <AlignLeft size={14} />,
+  Wand2:      <Wand2 size={13} />,
+  LayoutGrid: <LayoutGrid size={13} />,
+  Layers:     <Layers size={13} />,
+  Sparkles:   <Sparkles size={13} />,
+  Eye:        <Eye size={13} />,
+  AlignLeft:  <AlignLeft size={13} />,
 };
 
 // ─── Helpers ──────────────────────────────────────────────────────────────────
@@ -81,8 +80,6 @@ function stripFences(text: string): string {
     .replace(/^```\n?/gm, "")
     .trim();
 }
-
-// ─── Streaming helper ─────────────────────────────────────────────────────────
 
 async function consumeStream(
   res: Response,
@@ -131,13 +128,13 @@ export default function EditPage() {
 
   // Panel state
   const [chatOpen, setChatOpen] = useState(false);
-  const [panelView, setPanelView] = useState<PanelView>("home");
   const [prompt, setPrompt] = useState("");
   const [isGenerating, setIsGenerating] = useState(false);
   const [streamingCode, setStreamingCode] = useState("");
   const [error, setError] = useState<string | null>(null);
   const [showModelPicker, setShowModelPicker] = useState(false);
   const [activeStudioMode, setActiveStudioMode] = useState<StudioMode | null>(null);
+  const [showMoreRules, setShowMoreRules] = useState(false);
 
   const textareaRef = useRef<HTMLTextAreaElement>(null);
   const previewScope = useMemo(() => ({ ...liveScope, MEDIA_LIBRARY }), []);
@@ -162,7 +159,6 @@ export default function EditPage() {
   const pageConfig = PAGES.find((p) => p.key === activePage)!;
   const PageComponent = pageConfig.component;
 
-  // Navigation callback — sidebar items call this in edit mode
   const handleNavigate = useCallback((label: string) => {
     const page = PAGES.find((p) => p.label === label);
     if (page) setActivePage(page.key);
@@ -170,7 +166,7 @@ export default function EditPage() {
 
   const editContext = useMemo(() => ({ onNavigate: handleNavigate }), [handleNavigate]);
 
-  // ─── Apply result (shared by both edit and studio) ──────────────────────────
+  // ─── Apply result ──────────────────────────────────────────────────────────
 
   const applyResult = useCallback((accumulated: string) => {
     const clean = normalizeCode(stripFences(accumulated));
@@ -178,11 +174,11 @@ export default function EditPage() {
       setOverrides((prev) => ({ ...prev, [activePage]: clean }));
       saveOverride(activePage, clean);
     } else {
-      throw new Error("Generated output was too short — try again.");
+      throw new Error("Output was too short — try again.");
     }
   }, [activePage]);
 
-  // ─── Regular edit ───────────────────────────────────────────────────────────
+  // ─── Custom edit ───────────────────────────────────────────────────────────
 
   const handleEdit = useCallback(async () => {
     if (!prompt.trim() || isGenerating) return;
@@ -198,23 +194,19 @@ export default function EditPage() {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-          prompt: userPrompt,
-          currentCode,
-          pageName: pageConfig.label,
-          model,
+          prompt: userPrompt, currentCode,
+          pageName: pageConfig.label, model,
           apiKey: apiKey || undefined,
         }),
       });
-
       if (!res.ok) {
         const err = await res.json().catch(() => ({ error: `HTTP ${res.status}` }));
         throw new Error(err.error || `HTTP ${res.status}`);
       }
-
       const accumulated = await consumeStream(res, setStreamingCode);
       applyResult(accumulated);
     } catch (err) {
-      setError(err instanceof Error ? err.message : "Generation failed");
+      setError(err instanceof Error ? err.message : "Something went wrong");
     } finally {
       setIsGenerating(false);
       setStreamingCode("");
@@ -229,31 +221,26 @@ export default function EditPage() {
     setError(null);
     setStreamingCode("");
     setActiveStudioMode(mode);
-    setPanelView("home");
 
     try {
       const res = await fetch("/api/studio", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-          currentCode,
-          pageName: pageConfig.label,
-          mode,
-          model,
+          currentCode, pageName: pageConfig.label,
+          mode, model,
           apiKey: apiKey || undefined,
           userPrompt: userPrompt || undefined,
         }),
       });
-
       if (!res.ok) {
         const err = await res.json().catch(() => ({ error: `HTTP ${res.status}` }));
         throw new Error(err.error || `HTTP ${res.status}`);
       }
-
       const accumulated = await consumeStream(res, setStreamingCode);
       applyResult(accumulated);
     } catch (err) {
-      setError(err instanceof Error ? err.message : "Studio improvement failed");
+      setError(err instanceof Error ? err.message : "Something went wrong");
     } finally {
       setIsGenerating(false);
       setStreamingCode("");
@@ -264,7 +251,7 @@ export default function EditPage() {
   const handleKeyDown = (e: React.KeyboardEvent) => {
     if (e.key === "Enter" && !e.shiftKey) {
       e.preventDefault();
-      handleEdit();
+      if (prompt.trim()) handleEdit();
     }
   };
 
@@ -275,6 +262,7 @@ export default function EditPage() {
       delete next[activePage];
       return next;
     });
+    setError(null);
   };
 
   const handleModelChange = (m: Model) => {
@@ -283,37 +271,36 @@ export default function EditPage() {
     setShowModelPicker(false);
   };
 
-  // ─── Status text ────────────────────────────────────────────────────────────
+  // ─── Progress text (conversational, encouraging) ────────────────────────────
 
   const studioModeLabel = activeStudioMode
     ? STUDIO_MODES.find((m) => m.key === activeStudioMode)?.label
     : null;
 
-  const statusText = isGenerating
+  const progressPercent = streamingCode.length;
+  const progressText = isGenerating
     ? activeStudioMode
-      ? streamingCode.length > 800
-        ? `Applying ${studioModeLabel} improvements...`
-        : streamingCode.length > 300
-          ? `Redesigning with ${studioModeLabel}...`
-          : `Auditing page for ${studioModeLabel}...`
-      : streamingCode.length > 800
-        ? "Finalizing the edit..."
-        : streamingCode.length > 300
-          ? "Applying changes..."
-          : "Analyzing your request..."
-    : error
-      ? error
-      : activeOverride
-        ? "Page improved. Run again or prompt to keep iterating."
-        : "Choose an improvement or describe a custom edit.";
+      ? progressPercent > 1200
+        ? "Almost done — putting final touches on..."
+        : progressPercent > 600
+          ? `Rebuilding the ${pageConfig.label} page...`
+          : progressPercent > 200
+            ? `Applying ${studioModeLabel} rules...`
+            : `Scanning ${pageConfig.label} for improvements...`
+      : progressPercent > 800
+        ? "Wrapping up your changes..."
+        : progressPercent > 300
+          ? "Writing the new code..."
+          : "Working on it..."
+    : null;
 
-  // ─── Render ─────────────────────────────────────────────────────────────────
+  // Specific modes (exclude "full" — that's the hero button)
+  const specificModes = STUDIO_MODES.filter((m) => m.key !== "full");
+  const visibleModes = showMoreRules ? specificModes : specificModes.slice(0, 3);
 
   return (
     <EditContext.Provider value={editContext}>
       <div className="flex h-screen bg-bg-primary text-text-primary overflow-hidden relative">
-
-        {/* Page content — full page component with sidebar inside */}
         <div className="flex-1 overflow-hidden relative">
           {liveCode ? (
             <LiveProvider key={`${activePage}-${activeOverride?.length}`} code={liveCode} scope={previewScope} noInline>
@@ -331,79 +318,75 @@ export default function EditPage() {
           {/* Generating overlay */}
           {isGenerating && (
             <div className="absolute inset-0 bg-bg-primary/60 backdrop-blur-sm flex items-center justify-center pointer-events-none z-40">
-              <div className="flex flex-col items-center gap-3">
-                <Loader2 size={28} className="text-text-accent animate-spin" />
-                <p className="text-sm text-text-secondary">{statusText}</p>
+              <div className="flex flex-col items-center gap-4">
+                <div className="relative">
+                  <div className="size-12 rounded-full border-2 border-accent/20 flex items-center justify-center">
+                    <Loader2 size={24} className="text-text-accent animate-spin" />
+                  </div>
+                </div>
+                <div className="text-center">
+                  <p className="text-sm font-medium text-text-primary">{progressText}</p>
+                  <p className="text-xs text-text-tertiary mt-1">This usually takes 10-20 seconds</p>
+                </div>
               </div>
             </div>
           )}
 
-          {/* Click-outside to close model picker */}
           {showModelPicker && (
             <div className="fixed inset-0 z-40" onClick={() => setShowModelPicker(false)} />
           )}
 
-          {/* Floating chat bubble */}
+          {/* ─── Floating bubble ──────────────────────────────────────────── */}
           {!chatOpen && (
             <button
-              onClick={() => { setChatOpen(true); setPanelView("home"); }}
+              onClick={() => setChatOpen(true)}
               className="fixed bottom-6 right-6 z-50 size-14 rounded-full bg-accent flex items-center justify-center shadow-[0_8px_32px_rgba(153,249,234,0.3)] hover:bg-accent-hover transition-all cursor-pointer hover:scale-105 active:scale-95"
             >
-              <Sparkles size={20} className="text-accent-foreground" />
+              <Wand2 size={20} className="text-accent-foreground" />
             </button>
           )}
 
-          {/* ─── Panel ─────────────────────────────────────────────────────── */}
+          {/* ─── Panel (single unified view) ──────────────────────────────── */}
           {chatOpen && (
-            <div className="fixed bottom-6 right-6 z-50 w-[400px] rounded-[var(--radius-xl)] border border-border-default bg-bg-elevated shadow-[0_24px_64px_rgba(0,0,0,0.5)] flex flex-col overflow-hidden max-h-[calc(100vh-48px)]">
+            <div className="fixed bottom-6 right-6 z-50 w-[380px] rounded-[var(--radius-xl)] border border-border-default bg-bg-elevated shadow-[0_24px_64px_rgba(0,0,0,0.5)] flex flex-col overflow-hidden max-h-[calc(100vh-48px)]">
 
-              {/* Panel header */}
-              <div className="flex items-center justify-between px-4 py-3 border-b border-border-default shrink-0">
+              {/* Header */}
+              <div className="flex items-center justify-between px-4 py-2.5 border-b border-border-default shrink-0">
                 <div className="flex items-center gap-2">
-                  {panelView !== "home" && (
-                    <button
-                      onClick={() => setPanelView("home")}
-                      className="text-text-tertiary hover:text-text-secondary transition-colors cursor-pointer mr-1"
-                    >
-                      <ArrowLeft size={14} />
-                    </button>
-                  )}
-                  <div className="size-6 rounded-[var(--radius-sm)] bg-accent/15 flex items-center justify-center">
-                    <Sparkles size={12} className="text-text-accent" />
+                  <div className="size-5 rounded-[var(--radius-sm)] bg-accent/15 flex items-center justify-center">
+                    <Wand2 size={10} className="text-text-accent" />
                   </div>
                   <span className="text-xs font-semibold text-text-primary">
-                    {panelView === "studio" ? "Studio" : panelView === "edit" ? "Edit" : "Studio"} — {pageConfig.label}
+                    {pageConfig.label}
                   </span>
                   {activeOverride && (
-                    <span className="size-1.5 rounded-full bg-accent shrink-0" />
+                    <span className="text-[10px] text-text-accent font-medium">edited</span>
                   )}
                 </div>
-                <div className="flex items-center gap-2">
+                <div className="flex items-center gap-1.5">
                   {activeOverride && (
                     <button
                       onClick={handleReset}
-                      className="flex items-center gap-1 text-[10px] text-text-tertiary hover:text-text-secondary transition-colors cursor-pointer"
+                      className="flex items-center gap-1 text-[10px] text-text-tertiary hover:text-text-secondary transition-colors cursor-pointer px-1.5 py-0.5 rounded-[var(--radius-sm)] hover:bg-bg-surface-hover"
                     >
-                      <RotateCcw size={10} />
-                      Reset
+                      <RotateCcw size={9} />
+                      Undo all
                     </button>
                   )}
-                  {/* Model picker */}
                   <div className="relative">
                     <button
                       onClick={() => setShowModelPicker(!showModelPicker)}
-                      className="flex items-center gap-1 text-[10px] font-medium text-text-tertiary hover:text-text-secondary transition-colors cursor-pointer border border-border-default rounded-[var(--radius-sm)] px-2 py-1"
+                      className="text-[10px] font-medium text-text-tertiary hover:text-text-secondary transition-colors cursor-pointer border border-border-subtle rounded-[var(--radius-sm)] px-1.5 py-0.5"
                     >
-                      {model === "claude-opus-4.6" ? "Claude" : model === "gemini-3.1-pro" ? "Gemini" : "ChatGPT"}
-                      <ChevronDown size={10} />
+                      {model === "claude-opus-4.6" ? "Claude" : model === "gemini-3.1-pro" ? "Gemini" : "GPT"}
                     </button>
                     {showModelPicker && (
-                      <div className="absolute right-0 top-full mt-1 z-50 w-44 rounded-[var(--radius-md)] border border-border-default bg-bg-elevated shadow-xl">
+                      <div className="absolute right-0 top-full mt-1 z-50 w-40 rounded-[var(--radius-md)] border border-border-default bg-bg-elevated shadow-xl">
                         {(["claude-opus-4.6", "gemini-3.1-pro", "chatgpt-5.4"] as Model[]).map((m) => (
                           <button
                             key={m}
                             onClick={() => handleModelChange(m)}
-                            className={`w-full text-left px-3 py-2.5 text-xs transition-colors cursor-pointer first:rounded-t-[var(--radius-md)] last:rounded-b-[var(--radius-md)] ${
+                            className={`w-full text-left px-3 py-2 text-xs transition-colors cursor-pointer first:rounded-t-[var(--radius-md)] last:rounded-b-[var(--radius-md)] ${
                               model === m ? "text-text-accent bg-accent-subtle" : "text-text-secondary hover:bg-bg-surface-hover hover:text-text-primary"
                             }`}
                           >
@@ -415,201 +398,151 @@ export default function EditPage() {
                   </div>
                   <button
                     onClick={() => setChatOpen(false)}
-                    className="text-text-tertiary hover:text-text-secondary transition-colors cursor-pointer"
+                    className="text-text-tertiary hover:text-text-secondary transition-colors cursor-pointer p-0.5"
                   >
-                    <X size={14} />
+                    <X size={13} />
                   </button>
                 </div>
               </div>
 
-              {/* ─── HOME view: two big buttons ────────────────────────────── */}
-              {panelView === "home" && !isGenerating && (
-                <div className="p-4 flex flex-col gap-3">
-                  {/* Status */}
-                  <p className={`text-xs leading-relaxed ${error ? "text-red-400" : "text-text-secondary"}`}>
-                    {statusText}
-                  </p>
+              {/* Body */}
+              <div className="p-3 flex flex-col gap-3 overflow-y-auto">
 
-                  {/* Big Studio button — one click improve */}
+                {/* Error */}
+                {error && (
+                  <div className="px-3 py-2 rounded-[var(--radius-md)] bg-red-950/30 border border-red-900/30">
+                    <p className="text-xs text-red-400">{error}</p>
+                  </div>
+                )}
+
+                {/* Hero CTA — Improve This Page */}
+                {!isGenerating && (
                   <button
-                    onClick={() => handleStudioImprove("full")}
+                    onClick={() => handleStudioImprove("full", prompt.trim() || undefined)}
                     disabled={isGenerating}
-                    className="group w-full flex items-center gap-3 p-4 rounded-[var(--radius-lg)] bg-gradient-to-r from-accent/10 to-accent/5 border border-accent/20 hover:border-accent/40 transition-all cursor-pointer disabled:opacity-50"
+                    className="group w-full flex items-center gap-3 p-3.5 rounded-[var(--radius-lg)] bg-gradient-to-r from-accent/12 to-accent/4 border border-accent/20 hover:border-accent/40 hover:from-accent/18 hover:to-accent/8 transition-all cursor-pointer active:scale-[0.98]"
                   >
-                    <div className="size-10 rounded-[var(--radius-md)] bg-accent/15 flex items-center justify-center shrink-0 group-hover:bg-accent/25 transition-colors">
-                      <Wand2 size={18} className="text-text-accent" />
+                    <div className="size-9 rounded-[var(--radius-md)] bg-accent/20 flex items-center justify-center shrink-0 group-hover:bg-accent/30 transition-colors">
+                      <Wand2 size={16} className="text-text-accent" />
                     </div>
-                    <div className="text-left">
-                      <p className="text-sm font-semibold text-text-primary">Improve This Page</p>
-                      <p className="text-xs text-text-secondary mt-0.5">
-                        One-click design audit — fixes layout, hierarchy, polish, and more
+                    <div className="text-left flex-1">
+                      <p className="text-[13px] font-semibold text-text-primary">Improve this page</p>
+                      <p className="text-[11px] text-text-secondary mt-0.5">
+                        Redesign layout, fix hierarchy, add polish
                       </p>
                     </div>
-                    <Zap size={14} className="text-text-accent ml-auto shrink-0 opacity-0 group-hover:opacity-100 transition-opacity" />
+                    <Zap size={13} className="text-accent/40 group-hover:text-text-accent transition-colors shrink-0" />
                   </button>
+                )}
 
-                  {/* Specific improvements */}
-                  <button
-                    onClick={() => setPanelView("studio")}
-                    className="group w-full flex items-center gap-3 p-3 rounded-[var(--radius-lg)] bg-bg-surface/60 border border-border-subtle hover:border-border-default transition-all cursor-pointer"
-                  >
-                    <div className="size-8 rounded-[var(--radius-md)] bg-bg-surface flex items-center justify-center shrink-0">
-                      <Layers size={14} className="text-text-secondary" />
+                {/* Loading state (replaces hero CTA) */}
+                {isGenerating && (
+                  <div className="flex items-center gap-3 p-3.5 rounded-[var(--radius-lg)] bg-accent-subtle border border-accent/10">
+                    <Loader2 size={16} className="text-text-accent animate-spin shrink-0" />
+                    <div>
+                      <p className="text-xs font-medium text-text-primary">{progressText}</p>
+                      <p className="text-[10px] text-text-tertiary mt-0.5">~15 seconds</p>
                     </div>
-                    <div className="text-left">
-                      <p className="text-xs font-semibold text-text-primary">Pick Specific Improvement</p>
-                      <p className="text-[11px] text-text-tertiary mt-0.5">Layout, hierarchy, polish, accessibility, or content</p>
-                    </div>
-                  </button>
+                  </div>
+                )}
 
-                  {/* Custom edit */}
-                  <button
-                    onClick={() => { setPanelView("edit"); setTimeout(() => textareaRef.current?.focus(), 50); }}
-                    className="group w-full flex items-center gap-3 p-3 rounded-[var(--radius-lg)] bg-bg-surface/60 border border-border-subtle hover:border-border-default transition-all cursor-pointer"
-                  >
-                    <div className="size-8 rounded-[var(--radius-md)] bg-bg-surface flex items-center justify-center shrink-0">
-                      <MessageSquare size={14} className="text-text-secondary" />
-                    </div>
-                    <div className="text-left">
-                      <p className="text-xs font-semibold text-text-primary">Custom Edit</p>
-                      <p className="text-[11px] text-text-tertiary mt-0.5">Describe exactly what you want to change</p>
-                    </div>
-                  </button>
-
-                  {/* API key */}
-                  {!apiKey && (
-                    <div className="pt-2 border-t border-border-subtle">
-                      <p className="text-[10px] text-text-tertiary mb-1">OpenRouter API key (optional)</p>
-                      <input
-                        type="password"
-                        placeholder="sk-or-..."
-                        className="w-full bg-bg-input border border-border-default rounded-[var(--radius-sm)] px-2.5 py-1.5 text-xs text-text-primary outline-none placeholder:text-text-tertiary focus:border-border-accent"
-                        onChange={(e) => {
-                          const val = e.target.value;
-                          setApiKey(val);
-                          localStorage.setItem(LS_API_KEY, val);
-                        }}
-                      />
-                    </div>
-                  )}
-                  {apiKey && (
-                    <button
-                      onClick={() => { setApiKey(""); localStorage.removeItem(LS_API_KEY); }}
-                      className="text-[10px] text-text-tertiary hover:text-text-secondary transition-colors cursor-pointer self-start"
-                    >
-                      Clear API key
-                    </button>
-                  )}
-                </div>
-              )}
-
-              {/* ─── HOME view while generating (status only) ──────────────── */}
-              {panelView === "home" && isGenerating && (
-                <div className="p-4 flex flex-col items-center gap-3 py-8">
-                  <Loader2 size={24} className="text-text-accent animate-spin" />
-                  <p className="text-xs text-text-secondary text-center">{statusText}</p>
-                </div>
-              )}
-
-              {/* ─── STUDIO view: specific improvements ────────────────────── */}
-              {panelView === "studio" && (
-                <div className="p-3 flex flex-col gap-1.5 overflow-y-auto">
-                  <p className="text-[11px] text-text-tertiary px-1 pb-1">
-                    Pick a focus area — the AI will audit and fix issues automatically:
-                  </p>
-                  {STUDIO_MODES.map((mode) => (
-                    <button
-                      key={mode.key}
-                      onClick={() => handleStudioImprove(mode.key)}
-                      disabled={isGenerating}
-                      className="group w-full flex items-center gap-3 px-3 py-2.5 rounded-[var(--radius-md)] hover:bg-bg-surface-hover transition-all cursor-pointer disabled:opacity-50 text-left"
-                    >
-                      <div className="size-7 rounded-[var(--radius-sm)] bg-bg-surface flex items-center justify-center shrink-0 group-hover:bg-accent/10 transition-colors">
-                        <span className="text-text-secondary group-hover:text-text-accent transition-colors">
-                          {STUDIO_ICONS[mode.icon]}
-                        </span>
-                      </div>
-                      <div>
-                        <p className="text-xs font-medium text-text-primary">{mode.label}</p>
-                        <p className="text-[11px] text-text-tertiary mt-0.5 leading-snug">{mode.description}</p>
-                      </div>
-                    </button>
-                  ))}
-
-                  {/* Studio + custom prompt combo */}
-                  <div className="mt-2 pt-2 border-t border-border-subtle">
-                    <p className="text-[11px] text-text-tertiary px-1 mb-2">
-                      Or combine an improvement with a specific request:
+                {/* Specific rules — inline pills */}
+                {!isGenerating && (
+                  <div>
+                    <p className="text-[10px] font-medium text-text-tertiary uppercase tracking-wider mb-2 px-0.5">
+                      Or focus on one area
                     </p>
-                    <textarea
-                      ref={textareaRef}
-                      value={prompt}
-                      onChange={(e) => setPrompt(e.target.value)}
-                      placeholder={`e.g. "Focus on the hero section" or "Make the cards more compact"`}
-                      rows={2}
-                      disabled={isGenerating}
-                      className="w-full resize-none rounded-[var(--radius-md)] border border-border-default bg-bg-input px-3 py-2 text-xs leading-relaxed text-text-primary outline-none transition-colors placeholder:text-text-tertiary focus:border-border-accent disabled:opacity-50"
-                    />
-                    <div className="flex gap-1.5 mt-2 flex-wrap">
-                      {STUDIO_MODES.slice(0, 3).map((mode) => (
+                    <div className="flex flex-col gap-1">
+                      {visibleModes.map((mode) => (
                         <button
                           key={mode.key}
-                          onClick={() => {
-                            handleStudioImprove(mode.key, prompt.trim() || undefined);
-                            setPrompt("");
-                          }}
-                          disabled={isGenerating || !prompt.trim()}
-                          className="flex items-center gap-1 text-[10px] font-medium px-2 py-1 rounded-[var(--radius-sm)] border border-border-default text-text-secondary hover:text-text-accent hover:border-accent/30 transition-all cursor-pointer disabled:opacity-30 disabled:cursor-not-allowed"
+                          onClick={() => handleStudioImprove(mode.key, prompt.trim() || undefined)}
+                          disabled={isGenerating}
+                          className="group w-full flex items-center gap-2.5 px-3 py-2 rounded-[var(--radius-md)] hover:bg-bg-surface-hover transition-all cursor-pointer text-left"
                         >
-                          {STUDIO_ICONS[mode.icon]}
-                          {mode.label.split(" ").slice(0, 2).join(" ")}
+                          <span className="text-text-tertiary group-hover:text-text-accent transition-colors shrink-0">
+                            {STUDIO_ICONS[mode.icon]}
+                          </span>
+                          <div className="flex-1 min-w-0">
+                            <p className="text-xs font-medium text-text-primary">{mode.label}</p>
+                            <p className="text-[10px] text-text-tertiary leading-snug truncate">{mode.subtitle}</p>
+                          </div>
                         </button>
                       ))}
                     </div>
+                    {specificModes.length > 3 && (
+                      <button
+                        onClick={() => setShowMoreRules(!showMoreRules)}
+                        className="flex items-center gap-1 text-[10px] text-text-tertiary hover:text-text-secondary transition-colors cursor-pointer mt-1 px-3"
+                      >
+                        {showMoreRules ? <ChevronUp size={10} /> : <ChevronDown size={10} />}
+                        {showMoreRules ? "Show less" : `${specificModes.length - 3} more`}
+                      </button>
+                    )}
                   </div>
-                </div>
-              )}
+                )}
 
-              {/* ─── EDIT view: custom prompt ──────────────────────────────── */}
-              {panelView === "edit" && (
-                <div className="flex flex-col">
-                  {/* Status */}
-                  <div className="px-4 py-3 border-b border-border-subtle bg-bg-surface/40">
-                    <p className={`text-xs leading-relaxed ${error ? "text-red-400" : "text-text-secondary"}`}>
-                      {statusText}
-                    </p>
-                  </div>
+                {/* Divider */}
+                {!isGenerating && (
+                  <div className="border-t border-border-subtle" />
+                )}
 
-                  {/* Prompt input */}
-                  <div className="p-3 flex flex-col gap-2">
-                    <textarea
-                      ref={textareaRef}
-                      value={prompt}
-                      onChange={(e) => setPrompt(e.target.value)}
-                      onKeyDown={handleKeyDown}
-                      placeholder={`What would you like to change on the ${pageConfig.label} page?`}
-                      rows={3}
-                      disabled={isGenerating}
-                      className="w-full resize-none rounded-[var(--radius-md)] border border-border-default bg-bg-input px-3 py-2.5 text-sm leading-relaxed text-text-primary outline-none transition-colors placeholder:text-text-tertiary focus:border-border-accent disabled:opacity-50"
-                    />
-
-                    <div className="flex items-center justify-end gap-2">
+                {/* Prompt input — always visible */}
+                {!isGenerating && (
+                  <div>
+                    <div className="relative">
+                      <textarea
+                        ref={textareaRef}
+                        value={prompt}
+                        onChange={(e) => setPrompt(e.target.value)}
+                        onKeyDown={handleKeyDown}
+                        placeholder="Describe a specific change..."
+                        rows={2}
+                        disabled={isGenerating}
+                        className="w-full resize-none rounded-[var(--radius-md)] border border-border-default bg-bg-input pl-3 pr-10 py-2.5 text-xs leading-relaxed text-text-primary outline-none transition-colors placeholder:text-text-tertiary focus:border-border-accent disabled:opacity-50"
+                      />
                       <button
                         onClick={handleEdit}
                         disabled={isGenerating || !prompt.trim()}
-                        className="flex items-center gap-1.5 rounded-[var(--radius-sm)] bg-accent px-3 py-1.5 text-xs font-medium text-accent-foreground transition-colors hover:bg-accent-hover disabled:cursor-not-allowed disabled:opacity-30 cursor-pointer"
+                        className="absolute right-2 bottom-2 size-6 rounded-[var(--radius-sm)] bg-accent flex items-center justify-center transition-all hover:bg-accent-hover disabled:opacity-20 disabled:cursor-not-allowed cursor-pointer"
                       >
-                        {isGenerating ? (
-                          <><Loader2 size={12} className="animate-spin" /> Editing...</>
-                        ) : (
-                          <><Send size={12} /> Apply edit</>
-                        )}
+                        <Send size={11} className="text-accent-foreground" />
                       </button>
                     </div>
+                    <p className="text-[10px] text-text-tertiary mt-1.5 px-0.5">
+                      Press Enter to send, or click a button above
+                    </p>
                   </div>
-                </div>
-              )}
+                )}
 
+                {/* API key (collapsed) */}
+                {!isGenerating && !apiKey && (
+                  <details className="group">
+                    <summary className="text-[10px] text-text-tertiary hover:text-text-secondary cursor-pointer list-none flex items-center gap-1">
+                      <ChevronDown size={10} className="group-open:rotate-180 transition-transform" />
+                      Add API key (optional)
+                    </summary>
+                    <input
+                      type="password"
+                      placeholder="sk-or-..."
+                      className="mt-2 w-full bg-bg-input border border-border-default rounded-[var(--radius-sm)] px-2.5 py-1.5 text-xs text-text-primary outline-none placeholder:text-text-tertiary focus:border-border-accent"
+                      onChange={(e) => {
+                        const val = e.target.value;
+                        setApiKey(val);
+                        localStorage.setItem(LS_API_KEY, val);
+                      }}
+                    />
+                  </details>
+                )}
+                {!isGenerating && apiKey && (
+                  <button
+                    onClick={() => { setApiKey(""); localStorage.removeItem(LS_API_KEY); }}
+                    className="text-[10px] text-text-tertiary hover:text-text-secondary transition-colors cursor-pointer"
+                  >
+                    Remove API key
+                  </button>
+                )}
+              </div>
             </div>
           )}
         </div>

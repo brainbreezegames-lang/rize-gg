@@ -1,12 +1,11 @@
 /**
- * Studio-enhanced system prompts.
+ * Studio design improvement prompts.
  *
- * These inject design-audit knowledge (visual hierarchy, spacing, accessibility,
- * interaction design, etc.) into the code-generation prompt so the AI can
- * analyse a page *and* return the improved code in a single pass.
+ * Each mode injects deep, specialist-level design knowledge so the AI
+ * acts like a true expert in that domain — not surface-level checklists.
  */
 
-// ─── Improvement modes exposed to the UI ────────────────────────────────────
+// ─── Improvement modes ──────────────────────────────────────────────────────
 
 export type StudioMode =
   | "full"
@@ -19,203 +18,330 @@ export type StudioMode =
 export interface StudioModeConfig {
   key: StudioMode;
   label: string;
-  description: string;
-  icon: string; // lucide icon name
+  subtitle: string;
+  icon: string;
 }
 
 export const STUDIO_MODES: StudioModeConfig[] = [
   {
     key: "full",
     label: "Improve Everything",
-    description: "Full design audit — layout, hierarchy, polish, and accessibility in one pass",
+    subtitle: "Full redesign pass — layout, type, polish, and flow",
     icon: "Wand2",
   },
   {
     key: "layout",
-    label: "Fix Layout & Spacing",
-    description: "Alignment, spacing rhythm, grid consistency, and visual balance",
+    label: "Fix Spacing & Grid",
+    subtitle: "Align cards, fix gaps, balance visual weight",
     icon: "LayoutGrid",
   },
   {
     key: "hierarchy",
-    label: "Better Visual Hierarchy",
-    description: "Typography scale, contrast, size relationships, and reading flow",
+    label: "Sharpen Visual Hierarchy",
+    subtitle: "Make headings pop, CTAs stand out, text readable",
     icon: "Layers",
   },
   {
     key: "polish",
-    label: "Add Polish",
-    description: "Hover states, transitions, micro-interactions, and visual refinements",
+    label: "Add Interactions & Polish",
+    subtitle: "Hover states, transitions, loading states, micro-details",
     icon: "Sparkles",
   },
   {
     key: "accessibility",
-    label: "Improve Accessibility",
-    description: "Color contrast, focus states, semantic structure, and inclusive design",
+    label: "Fix Accessibility",
+    subtitle: "Contrast, focus states, semantic HTML, screen readers",
     icon: "Eye",
   },
   {
     key: "content",
-    label: "Optimize Content Flow",
-    description: "Information architecture, card density, reading path, and visual weight",
+    label: "Improve Content Flow",
+    subtitle: "Reorder sections, reduce clutter, guide the eye",
     icon: "AlignLeft",
   },
 ];
 
-// ─── Audit knowledge injected per mode ───────────────────────────────────────
+// ─── Deep specialist knowledge per mode ──────────────────────────────────────
 
-const AUDIT_LAYOUT = `
-LAYOUT & SPACING AUDIT — Apply these checks and FIX every violation:
+const RULES_LAYOUT = `
+## LAYOUT & SPACING — Deep Rules
 
-1. **Consistent spacing scale**: All gaps must use Tailwind spacing tokens (gap-2, gap-3, gap-4, gap-6, gap-8).
-   Never mix arbitrary values. Section gaps = gap-6 or gap-8. Component gaps = gap-3 or gap-4.
-2. **Alignment**: Every element must sit on a clear alignment axis. Left-align text blocks.
-   Ensure card grids use consistent column widths (grid-cols-2, grid-cols-3, grid-cols-4).
-3. **Visual rhythm**: Alternate content density — don't stack many same-sized cards without a visual break.
-   Use SectionHeader or Divider between groups.
-4. **Breathing room**: Cards need p-4 minimum. Sections need py-6 or py-8 vertical padding.
-   Never let content touch the edges of its container.
-5. **Responsive grid**: Prefer grid over flex for card layouts. Use gap-4 for card grids.
-6. **Container consistency**: All main content should have the same horizontal padding (px-6).
-7. **Visual balance**: If one column is heavier than another, redistribute content or add
-   visual weight (badges, icons, accent borders) to the lighter side.
+You are a layout specialist. Apply these rules with precision:
+
+### The 8px Grid
+Every spacing value must be a multiple of 4px. Use Tailwind's spacing scale:
+- gap-1 (4px): icon-to-label gaps
+- gap-2 (8px): related items within a component
+- gap-3 (12px): between form fields, small gaps
+- gap-4 (16px): standard card padding, grid gaps between cards
+- gap-6 (24px): between content groups
+- gap-8 (32px): between major sections
+- gap-12 (48px): between page-level sections
+
+### Gestalt Grouping (Proximity + Similarity)
+- Items that belong together must be CLOSER to each other than to unrelated items
+- Same-type cards must use identical padding, border radius, and spacing
+- Use Divider components or extra spacing (gap-8+) to separate unrelated groups
+- Headers must be closer to their content than to the previous section (mb-6 above header, mb-3 below it)
+
+### Grid Rules
+- Card grids: use CSS grid (grid grid-cols-2 lg:grid-cols-3 gap-4)
+- Never mix grid and flex for the same card layout
+- All cards in a row must be the same height (grid handles this automatically)
+- Sidebar layouts: use flex with the sidebar at fixed width, content at flex-1
+
+### Visual Balance
+- If one side is "heavier" (more content, darker colors), add visual weight to the lighter side
+- Hero/banner sections should span full width
+- Stats/metrics work best in a row of 3-4 equal-width StatCards
+- Don't stack more than 2 full-width sections without a visual break
+
+### Container Consistency
+- All main content: px-6 horizontal padding
+- Consistent max-width containers (max-w-6xl or match existing)
+- Cards: always p-4 internal padding, rounded-[var(--radius-lg)] border radius
+- Every card should have a visible border (border border-border-default) or distinct background (bg-bg-card)
+
+### Common Fixes
+- Random margins/padding → standardize to spacing scale
+- Cards touching edges → add proper padding
+- Uneven grid → switch to CSS grid with explicit columns
+- Crowded sections → add gap-8 between them
+- Floating elements → align to the same grid axis
 `;
 
-const AUDIT_HIERARCHY = `
-VISUAL HIERARCHY AUDIT — Apply these checks and FIX every violation:
+const RULES_HIERARCHY = `
+## VISUAL HIERARCHY — Deep Rules
 
-1. **Typography scale**: Page should have a clear size ladder:
-   - Page title: text-2xl or text-3xl font-bold
-   - Section title: text-lg or text-xl font-semibold
-   - Card title: text-base font-semibold
-   - Body / metadata: text-sm text-text-secondary
-   - Labels / captions: text-xs text-text-tertiary
-   Never use same size for both a heading and its body text.
+You are a typography and visual hierarchy specialist. Apply these rules:
 
-2. **Color contrast hierarchy**:
-   - Primary content: text-text-primary (white)
-   - Supporting content: text-text-secondary (#A2B4B1)
-   - Tertiary / disabled: text-text-tertiary (#5A6577)
-   - Accent / CTA: text-text-accent (#99F9EA)
-   Every piece of text must be at the RIGHT contrast level.
+### Type Scale (Strict Ladder)
+Each level must be visibly distinct from the next. Use this exact hierarchy:
+- Page title: text-2xl font-bold text-text-primary — the biggest text on the page
+- Section heading: text-lg font-semibold text-text-primary — clearly smaller than page title
+- Card title: text-base font-semibold text-text-primary — clearly smaller than section heading
+- Body text: text-sm text-text-secondary — noticeably quieter than titles
+- Caption/meta: text-xs text-text-tertiary — smallest, most muted
 
-3. **Size & weight emphasis**: The most important element on screen should be the largest
-   and boldest. Secondary info should be visually quieter. Ensure StatCards use text-2xl
-   or text-3xl for the value, not text-base.
+NEVER use the same size+weight+color for two different hierarchy levels.
 
-4. **Focal point**: Each section needs ONE clear focal element (a hero, a primary CTA,
-   a key stat). If everything looks the same weight, make the hero bigger.
+### The Von Restorff Effect (Make CTAs Pop)
+- The primary CTA on each screen must be the ONLY element using bg-accent
+- Don't use accent color on more than 1-2 elements per visible viewport
+- Secondary actions use variant="secondary" or variant="outline"
+- The eye should be immediately drawn to the ONE thing you want the user to do
 
-5. **Grouping**: Related items must look related (same card style, same spacing).
-   Unrelated items must look distinct (different card types, dividers, or spacing).
+### Anchoring (First Thing Sets Expectations)
+- The first visible element sets the visual tone — make it count
+- Hero sections, key stats, or a bold heading should appear above the fold
+- Don't start a page with a filter bar or secondary controls
 
-6. **Von Restorff effect**: CTAs and important actions should stand out with accent color
-   (bg-accent). Don't overuse accent — max 1-2 accent elements per visible screen.
+### Serial Position (First and Last Stick)
+- Put the most important content at the TOP of each section
+- Put the secondary CTA or summary at the BOTTOM
+- Middle items get the least attention — don't bury critical info there
+
+### Color Contrast Hierarchy
+- Primary content: text-text-primary (#FFFFFF) — high contrast, demands attention
+- Supporting info: text-text-secondary (#A2B4B1) — noticeable but quieter
+- Metadata/disabled: text-text-tertiary (#5A6577) — whisper-level
+- Accent highlights: text-text-accent (#99F9EA) — for links, key metrics, interactive text
+
+### Weight as Emphasis
+- font-bold (700): page titles, key metrics/numbers
+- font-semibold (600): section headings, card titles
+- font-medium (500): button labels, nav items, form labels
+- font-normal (400): body text, descriptions, metadata
+
+### Size as Importance
+- StatCard values: text-2xl or text-3xl — make numbers BIG
+- If everything looks the same weight/size, the page has no hierarchy — fix it
+- Headlines should be at minimum 1.5x the size of body text
 `;
 
-const AUDIT_POLISH = `
-POLISH & INTERACTION AUDIT — Apply these improvements:
+const RULES_POLISH = `
+## INTERACTIONS & POLISH — Deep Rules
 
-1. **Hover states on all interactive elements**:
-   - Cards: add hover:border-border-accent/30 transition-colors
-   - Buttons: already handled by Button component — verify they're using Button not raw <button>
-   - List items: hover:bg-bg-surface-hover
-   - Links: hover:text-text-primary
+You are an interaction design specialist. Apply these rules:
 
-2. **Transitions**: Every element with a hover state must have transition-colors or transition-all.
-   Duration should be default (150ms).
+### Every Interactive Element Needs States
+For each clickable element, verify it has:
+- **Default**: Normal appearance
+- **Hover**: Subtle visual change (brightness, border color, background shift)
+- **Active/Pressed**: Slightly different from hover (scale down slightly, darken)
+- **Focus**: Visible ring for keyboard users (focus:ring-2 focus:ring-accent/50)
+- **Disabled**: 50% opacity, cursor-not-allowed
 
-3. **Cursor**: All clickable elements need cursor-pointer.
+### Hover State Rules (Apply These)
+- Cards: hover:border-border-accent/30 — subtle accent border on hover
+- Buttons: handled by Button component — make sure you're using <Button>, not raw <button>
+- List items: hover:bg-bg-surface-hover — background highlight
+- Links/text buttons: hover:text-text-primary — brighten text
+- ALWAYS add transition-colors (or transition-all for transform changes)
+- ALWAYS add cursor-pointer on anything clickable
 
-4. **Card elevation**: Consider adding subtle border-border-subtle borders to cards that lack them.
-   Cards should have rounded-[var(--radius-lg)] consistently.
+### Transition Timing
+- Color changes: transition-colors duration-150 (150ms, fast and snappy)
+- Layout changes: transition-all duration-200 (200ms, smooth but quick)
+- Modal/panel entry: 300ms ease-out (elements appearing)
+- Modal/panel exit: 200ms ease-in (elements leaving — faster than entry)
+- NEVER use transitions longer than 500ms for UI elements
 
-5. **Visual refinements**:
-   - Add subtle gradient overlays on hero sections: bg-gradient-to-b from-transparent to-bg-primary/80
-   - Use backdrop-blur-sm on overlays
-   - StatusPill for any status indicators (don't use raw colored dots)
-   - Badge for rank/level indicators
+### Visual Polish Techniques
+- Card elevation: Add border border-border-default to cards that look flat
+- Gradient overlays: bg-gradient-to-b from-transparent to-bg-primary/80 on hero images
+- Backdrop blur: backdrop-blur-sm on overlays and elevated panels
+- Subtle shadows: shadow-lg on modals and dropdowns (sparingly)
+- Accent line: border-l-2 border-accent on highlighted/active items
 
-6. **Empty state awareness**: If a section could be empty, ensure it has a graceful empty state
-   with a message and an icon.
+### Component States to Add
+- Empty states: If a section could have zero items, add an icon + "No items yet" message
+- Loading indication: Where data loads, show skeleton-like placeholder or spinner
+- Status indicators: Use StatusPill for statuses, Badge for counts/ranks
+- Active nav items: Current page should be visually highlighted in navigation
 
-7. **Icon consistency**: Ensure icons match their context (use lucide-react, consistent sizes:
-   14px inline, 16px in buttons, 20px in nav).
+### Icon Polish
+- Consistent sizing: 14px inline with text, 16px in buttons, 20px in navigation
+- Icons should match their text color (text-text-secondary for muted icons)
+- Add icons next to labels where they add meaning (Calendar next to dates, MapPin next to locations)
+- Don't overuse icons — if every label has one, none stand out
+
+### Micro-details That Matter
+- Avatar components for user references (not just text names)
+- Badge components for counts, ranks, levels
+- Divider between distinct sections
+- SectionHeader with "View all" links for truncated lists
 `;
 
-const AUDIT_ACCESSIBILITY = `
-ACCESSIBILITY AUDIT — Apply these improvements:
+const RULES_ACCESSIBILITY = `
+## ACCESSIBILITY — Deep Rules
 
-1. **Color contrast**: All text must meet WCAG AA (4.5:1 for body, 3:1 for large text).
-   text-text-tertiary on bg-bg-primary is marginal — use text-text-secondary for anything
-   the user needs to read.
+You are an accessibility specialist. Apply these rules:
 
-2. **Focus indicators**: Interactive elements need visible focus styles.
-   Add focus:outline-none focus:ring-2 focus:ring-accent/50 to custom interactive elements.
+### Color Contrast (WCAG AA — Mandatory)
+- Body text (text-sm, text-base): 4.5:1 contrast ratio minimum
+- Large text (text-lg+ or text-base font-bold): 3:1 minimum
+- UI components (borders, icons): 3:1 minimum
+- text-text-tertiary on bg-bg-primary is marginal — use text-text-secondary for anything the user NEEDS to read
+- Never use color ALONE to convey meaning — pair with icons or text
 
-3. **Semantic structure**: Headings should use h1-h6 (not just styled divs).
-   Use <nav>, <main>, <section>, <article> where appropriate.
-   Lists of items should use <ul>/<li>.
+### Focus Management
+- Every interactive element needs a visible focus indicator
+- Add: focus:outline-none focus:ring-2 focus:ring-accent/50 focus:ring-offset-2 focus:ring-offset-bg-primary
+- Focus order must follow visual order (left-to-right, top-to-bottom)
+- Modals must trap focus inside them
+- When a modal closes, focus returns to the trigger element
 
-4. **Touch targets**: Clickable areas should be at least 44px on mobile.
-   Small buttons should have min-h-[44px] min-w-[44px] or adequate padding.
+### Semantic HTML (Critical)
+- Page structure: exactly one <h1> (page title), then <h2> for sections, <h3> for subsections
+- Never skip heading levels (h1 → h3 is wrong, must go h1 → h2 → h3)
+- Lists of cards/items: use <ul> with <li> wrappers
+- Navigation: wrap in <nav> with aria-label
+- Main content: wrap in <main>
+- Use <button> for actions, <a> for navigation — never the reverse
+- Use <section> with aria-label for distinct content areas
 
-5. **Alt text**: All <img> tags need meaningful alt text (not just "image").
-   MEDIA_LIBRARY images should have descriptive alt props.
+### Touch & Click Targets
+- Minimum clickable area: 44x44px (Apple HIG standard)
+- Small buttons: add min-h-[44px] min-w-[44px] or adequate padding
+- Spacing between adjacent targets: at least 8px
+- Icon-only buttons: must have aria-label or <span className="sr-only">Label</span>
 
-6. **Screen reader text**: Add sr-only labels for icon-only buttons.
-   Example: <span className="sr-only">Close menu</span>
+### Screen Reader Support
+- Images: meaningful alt text (describe the content, not "image")
+- Icon-only buttons: <span className="sr-only">Close</span> alongside the icon
+- Dynamic content: aria-live="polite" for updates that should be announced
+- Decorative elements: aria-hidden="true" or role="presentation"
+- Form inputs: always have associated <label> or aria-label
 
-7. **Reduced motion**: Animations should respect prefers-reduced-motion.
-   Use motion-safe: prefix for animations.
+### Motion & Animation
+- Wrap animations in motion-safe: prefix (motion-safe:animate-spin)
+- Respect prefers-reduced-motion — provide static alternatives
+- No auto-playing animations longer than 5s without pause controls
+- No flashing content (max 3 flashes per second)
+
+### Common Fixes
+- Raw <div onClick> → convert to <button> with proper role
+- Missing alt text → add descriptive alt props
+- Poor contrast tertiary text → bump to text-text-secondary
+- No focus styles → add focus:ring-2 classes
+- Click target too small → increase padding
 `;
 
-const AUDIT_CONTENT = `
-CONTENT FLOW AUDIT — Apply these improvements:
+const RULES_CONTENT = `
+## CONTENT FLOW — Deep Rules
 
-1. **Information architecture**: Content should flow top-to-bottom in order of importance.
-   Hero/banner → primary stats → active content → secondary content → archival.
+You are an information architecture specialist. Apply these rules:
 
-2. **Card density**: Don't show more than 6-8 cards in a single grid without pagination
-   or "View all" truncation. Dense grids overwhelm — show 3-4 with a SectionHeader link.
+### Nielsen's Heuristic #8: Aesthetic & Minimalist Design
+- Every piece of information competes for attention
+- If it's not helping the user's primary goal, consider removing or de-emphasizing it
+- Progressive disclosure: show summary first, details on demand
+- White space is a design tool — use it to create breathing room between sections (py-6 minimum)
 
-3. **Reading path**: Left-to-right, top-to-bottom. Key info (title, status, CTA) should be
-   in the top-left quadrant of each card.
+### Information Hierarchy (Top to Bottom)
+Structure each page in this priority order:
+1. **Hero/Context**: What page is this? What can I do here? (PageHeader, HeroBanner)
+2. **Primary Stats**: Key numbers/status at a glance (StatCard row)
+3. **Active/Live Content**: What's happening now? (SessionCards, live tournaments)
+4. **Browse/Discover**: All available content (card grids, tables)
+5. **Secondary Content**: Related info, history, settings
 
-4. **Visual weight balance**: If the page has a sidebar or multi-column layout, the primary
-   content column should carry more visual weight than the secondary column.
+### Hick's Law (Reduce Choices)
+- Don't show more than 5-7 options in a single view without grouping
+- Long card lists: show 3-4 with a "View all" SectionHeader link
+- Dense filter bars: start with 2-3 most-used filters, put rest in FilterDrawer
+- Tab navigation: max 5 tabs visible, more in overflow
 
-5. **Progressive disclosure**: Don't show everything at once. Use expandable sections,
-   "Show more" patterns, or tabbed content for secondary information.
+### Reading Path (F-Pattern / Z-Pattern)
+- Key info (title, status, primary CTA) should be in the top-left area of each card
+- Left column gets more attention in LTR layouts — put primary content there
+- In two-column layouts: main content left (wider), sidebar right (narrower, 280-320px)
+- Users scan headings first — make every heading informative, not generic
 
-6. **Whitespace as content**: Empty space is not wasted space. Ensure adequate spacing
-   between sections (py-6 minimum). A "breathing" layout feels more premium.
+### Chunking (Miller's Law — 7±2 Items)
+- Group related cards under clear SectionHeaders
+- Add Dividers between unrelated content groups
+- Break long forms into logical steps or sections
+- Stats work best in groups of 3-4 (not 1, not 7)
 
-7. **CTA placement**: Primary action should appear above the fold. Secondary actions
-   can appear later. Don't put two equally-weighted CTAs side by side — one should be
-   primary (bg-accent), the other secondary (variant="secondary" or "outline").
+### CTA Placement
+- Primary action above the fold, visually prominent (bg-accent, large button)
+- Don't place two equally-weighted CTAs side by side — one must be primary, other secondary
+- Repeated lists: put action within each card, not a single action for the whole list
+- Empty states: CTA should guide the user to create/add their first item
+
+### Content Density Balance
+- If a section looks too dense: increase gap from gap-3 to gap-4, add card borders, use bg-bg-card backgrounds
+- If a section looks too sparse: tighten spacing, add supplementary info (badges, meta, timestamps)
+- Alternating section density creates visual rhythm — a dense grid followed by a single hero, then stats
+
+### Social Proof & Trust Signals
+- Show player counts, member counts, match counts where relevant
+- Use Avatar/AvatarGroup to show community activity
+- Badge components for achievements, verified status, ranks
 `;
 
-// ─── Assemble the full prompt ────────────────────────────────────────────────
+// ─── Assemble rules per mode ─────────────────────────────────────────────────
 
-function auditBlocksFor(mode: StudioMode): string {
+function rulesFor(mode: StudioMode): string {
   switch (mode) {
     case "layout":
-      return AUDIT_LAYOUT;
+      return RULES_LAYOUT;
     case "hierarchy":
-      return AUDIT_HIERARCHY;
+      return RULES_HIERARCHY;
     case "polish":
-      return AUDIT_POLISH;
+      return RULES_POLISH;
     case "accessibility":
-      return AUDIT_ACCESSIBILITY;
+      return RULES_ACCESSIBILITY;
     case "content":
-      return AUDIT_CONTENT;
+      return RULES_CONTENT;
     case "full":
-      return [AUDIT_HIERARCHY, AUDIT_LAYOUT, AUDIT_POLISH, AUDIT_CONTENT, AUDIT_ACCESSIBILITY].join(
-        "\n"
-      );
+      return [RULES_HIERARCHY, RULES_LAYOUT, RULES_POLISH, RULES_CONTENT].join("\n");
   }
 }
+
+// ─── Build system prompt ─────────────────────────────────────────────────────
 
 export function buildStudioSystemPrompt(
   currentCode: string,
@@ -223,7 +349,7 @@ export function buildStudioSystemPrompt(
   mode: StudioMode,
   userPrompt?: string
 ): string {
-  const audits = auditBlocksFor(mode);
+  const rules = rulesFor(mode);
 
   return `You are the Rize.gg Design Studio — a world-class product designer that dramatically improves existing pages. You redesign layouts, restructure sections, upgrade visual hierarchy, add polish — making pages look and feel like a top-tier gaming platform. Go big. Make it look amazing.
 
@@ -279,9 +405,9 @@ CRITICAL RULES — BREAKING THESE = BROKEN PAGE
    - Return raw code only, no markdown fences
 
 ═══════════════════════════════════════════════════════════════════
-DESIGN IMPROVEMENT GUIDELINES:
+DESIGN RULES — Apply these with expertise:
 ═══════════════════════════════════════════════════════════════════
-${audits}
+${rules}
 
 ═══════════════════════════════════════════════════════════════════
 DESIGN SYSTEM REFERENCE
