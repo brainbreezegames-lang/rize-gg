@@ -867,24 +867,39 @@ export default function GeneratePage() {
 
               <div className="mt-3 flex items-center gap-3">
                 <span className="text-[10px] font-medium uppercase tracking-[0.24em] text-text-tertiary">API Key</span>
-                <div className="flex items-center gap-1 flex-1 rounded-[var(--radius-sm)] border border-border-default bg-bg-input px-2.5 py-1.5">
-                  <input
-                    type={showApiKey ? "text" : "password"}
-                    value={apiKey}
-                    onChange={(e) => {
-                      setApiKey(e.target.value);
-                      localStorage.setItem("rize-api-key", e.target.value);
-                    }}
-                    placeholder="sk-or-... (OpenRouter)"
-                    className="flex-1 bg-transparent text-[11px] text-text-primary outline-none placeholder:text-text-tertiary"
-                  />
-                  <button
-                    onClick={() => setShowApiKey(!showApiKey)}
-                    className="text-text-tertiary hover:text-text-secondary transition-colors cursor-pointer"
-                  >
-                    <Eye size={12} />
-                  </button>
-                </div>
+                {apiKey && !showApiKey ? (
+                  <div className="flex items-center gap-2 flex-1">
+                    <span className="flex items-center gap-1 text-[11px] text-green-400"><CheckCircle2 size={11} /> Key saved</span>
+                    <button
+                      onClick={() => setShowApiKey(true)}
+                      className="text-[10px] text-text-tertiary hover:text-text-secondary transition-colors cursor-pointer"
+                    >
+                      Change
+                    </button>
+                  </div>
+                ) : (
+                  <div className="flex items-center gap-1 flex-1 rounded-[var(--radius-sm)] border border-border-default bg-bg-input px-2.5 py-1.5">
+                    <input
+                      type="password"
+                      value={apiKey}
+                      onChange={(e) => {
+                        setApiKey(e.target.value);
+                        localStorage.setItem("rize-api-key", e.target.value);
+                      }}
+                      onBlur={() => { if (apiKey) setShowApiKey(false); }}
+                      placeholder="sk-or-... (OpenRouter)"
+                      className="flex-1 bg-transparent text-[11px] text-text-primary outline-none placeholder:text-text-tertiary"
+                    />
+                    {apiKey && (
+                      <button
+                        onClick={() => setShowApiKey(false)}
+                        className="text-green-400 hover:text-green-300 transition-colors cursor-pointer"
+                      >
+                        <CheckCircle2 size={12} />
+                      </button>
+                    )}
+                  </div>
+                )}
               </div>
 
               <div className="mt-4">
