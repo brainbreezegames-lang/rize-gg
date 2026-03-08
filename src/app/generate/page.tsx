@@ -793,7 +793,9 @@ export default function GeneratePage() {
 
   const activeRules = DESIGN_SKILLS.filter((skill) => activeSkills.includes(skill.id));
   const generationActiveStep = generationSteps.findIndex((step) => !step.done);
-  const generationNarrative = isGenerating
+  const generationNarrative = isGeneratingImage
+    ? "Generating image with Gemini Flash... This takes 10-30 seconds."
+    : isGenerating
     ? (streamingCode?.length || 0) > 900
       ? "Polishing responsive behavior and final details."
       : (streamingCode?.length || 0) > 350
@@ -801,6 +803,8 @@ export default function GeneratePage() {
         : (streamingCode?.length || 0) > 80
           ? "Shaping the main composition and component hierarchy."
           : "Reading the brief and locking onto the right visual direction."
+    : generatedImage
+      ? "Image generated. Download it or convert to code."
     : code
       ? "Preview updated. Refine the brief or switch models to compare directions."
       : "Describe the screen you want, and the preview will grow from the brief.";
@@ -811,7 +815,9 @@ export default function GeneratePage() {
       : referenceImage
         ? "Strong brief. Your reference image is attached and will guide the art direction."
         : "Strong brief. Add a reference image only if you want tighter visual matching.";
-  const friendlyError = error
+  const friendlyError = imageError
+    ? `Image generation failed: ${imageError}`
+    : error
     ? /429|quota|billing/i.test(error)
       ? "That model is unavailable right now. Switch models or try again in a moment."
       : "Generation paused before the preview finished. Try again or tighten the brief."
@@ -1031,18 +1037,24 @@ export default function GeneratePage() {
           </main>
         ) : (
           <div className="flex-1 flex flex-col overflow-hidden">
-            {generatedImage || isGeneratingImage ? (
+            {generatedImage || isGeneratingImage || imageError ? (
               <div className="flex-1 flex flex-col items-center justify-center overflow-auto bg-[#060909] p-6">
                 {isGeneratingImage ? (
                   <div className="flex flex-col items-center gap-4">
                     <Loader2 size={32} className="animate-spin text-accent" />
-                    <p className="text-sm text-text-secondary">Generating image...</p>
+                    <p className="text-sm text-text-secondary">Generating image with Gemini Flash...</p>
                     <p className="text-xs text-text-tertiary">This may take 10-30 seconds</p>
                   </div>
                 ) : imageError ? (
-                  <div className="flex flex-col items-center gap-3">
+                  <div className="flex flex-col items-center gap-4">
                     <XCircle size={32} className="text-status-error" />
-                    <p className="text-sm text-status-error">{imageError}</p>
+                    <p className="text-sm text-status-error max-w-md text-center">{imageError}</p>
+                    <button
+                      onClick={() => setImageError(null)}
+                      className="rounded-[var(--radius-sm)] border border-border-default bg-bg-surface px-4 py-2 text-xs font-medium text-text-primary transition-colors hover:bg-bg-surface-hover cursor-pointer"
+                    >
+                      Dismiss
+                    </button>
                   </div>
                 ) : generatedImage ? (
                   <div className="flex flex-col items-center gap-4 w-full max-w-4xl">
