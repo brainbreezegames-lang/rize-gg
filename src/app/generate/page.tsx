@@ -13,6 +13,7 @@ import {
   Star, Globe, Shield, Crown, Swords, Target, Monitor,
   LayoutGrid, MousePointer, Heart, Layers, ChevronDown, ChevronUp,
   ImageIcon, X, RefreshCw, ArrowRight, Smartphone, Maximize2, Minimize2,
+  Wand2, DownloadCloud, ArrowRightLeft,
 } from "lucide-react";
 import { DESIGN_SKILLS } from "@/lib/generate/skills";
 import {
@@ -646,6 +647,9 @@ export default function GeneratePage() {
     DESIGN_SKILLS.filter((s) => s.defaultOn).map((s) => s.id)
   );
   const [referenceImage, setReferenceImage] = useState<{ base64: string; mimeType: string; preview: string } | null>(null);
+  const [generatedImage, setGeneratedImage] = useState<string | null>(null);
+  const [isGeneratingImage, setIsGeneratingImage] = useState(false);
+  const [imageError, setImageError] = useState<string | null>(null);
   const { code, streamingCode, isGenerating, error, violations, generate, setCode } = useGenerate();
   const previewScope = useMemo(() => ({ ...liveScope, MEDIA_LIBRARY }), []);
   const liveProviderKey = `${previewViewport}-${isPreviewExpanded ? "expanded" : "docked"}-${code.length}`;
@@ -694,6 +698,59 @@ export default function GeneratePage() {
     const img = referenceImage ? { base64: referenceImage.base64, mimeType: referenceImage.mimeType } : null;
     setReferenceImage(null);
     await generate(prompt.trim(), selectedModel, activeSkills, img, apiKey || undefined);
+  };
+
+  const handleGenerateImage = async () => {
+    if (!prompt.trim() || isGenerating || isGeneratingImage) return;
+    setLastPrompt(prompt.trim());
+    const currentPrompt = prompt.trim();
+    setPrompt("");
+    setIsGeneratingImage(true);
+    setImageError(null);
+    setGeneratedImage(null);
+    setCode("");
+
+    try {
+      const res = await fetch("/api/generate-image", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ prompt: currentPrompt, apiKey: apiKey || undefined }),
+      });
+
+      const data = await res.json();
+
+      if (!res.ok) {
+        throw new Error(data.error || `HTTP ${res.status}`);
+      }
+
+      if (data.imageDataUri) {
+        setGeneratedImage(data.imageDataUri);
+      } else {
+        throw new Error("No image returned");
+      }
+    } catch (err) {
+      setImageError(err instanceof Error ? err.message : "Image generation failed");
+    } finally {
+      setIsGeneratingImage(false);
+    }
+  };
+
+  const handleDownloadImage = () => {
+    if (!generatedImage) return;
+    const link = document.createElement("a");
+    link.download = `rize-design-${Date.now()}.png`;
+    link.href = generatedImage;
+    link.click();
+  };
+
+  const handleConvertToCode = async () => {
+    if (!generatedImage) return;
+    setGeneratedImage(null);
+    const img = { base64: generatedImage.split(",")[1], mimeType: "image/png" };
+    const convertPrompt = lastPrompt
+      ? `Recreate this UI design exactly as shown in the reference image. The design shows: ${lastPrompt}. Match the layout, colors, typography, and spacing precisely.`
+      : "Recreate this UI design exactly as shown in the reference image. Match the layout, colors, typography, and spacing precisely.";
+    await generate(convertPrompt, selectedModel, activeSkills, img, apiKey || undefined);
   };
 
   const handleKeyDown = (e: React.KeyboardEvent) => {
@@ -845,13 +902,24 @@ export default function GeneratePage() {
                     {prompt.length > 0 ? `${prompt.length} chars` : "Start typing"}
                   </span>
                 </div>
-                <button
-                  onClick={handleGenerate}
-                  disabled={isGenerating || !prompt.trim()}
-                  className="rounded-[var(--radius-sm)] bg-accent px-4 py-2 text-xs font-medium text-accent-foreground transition-colors hover:bg-accent-hover disabled:cursor-not-allowed disabled:opacity-30"
-                >
-                  {isGenerating ? "Generating..." : "Generate"}
-                </button>
+                <div className="flex items-center gap-2">
+                  <button
+                    onClick={handleGenerateImage}
+                    disabled={isGenerating || isGeneratingImage || !prompt.trim()}
+                    className="flex items-center gap-1.5 rounded-[var(--radius-sm)] border border-border-default bg-bg-surface px-3 py-2 text-xs font-medium text-text-primary transition-colors hover:bg-bg-surface-hover disabled:cursor-not-allowed disabled:opacity-30 cursor-pointer"
+                    title="Generate as image using AI"
+                  >
+                    <ImageIcon size={12} />
+                    {isGeneratingImage ? "Generating..." : "Image"}
+                  </button>
+                  <button
+                    onClick={handleGenerate}
+                    disabled={isGenerating || isGeneratingImage || !prompt.trim()}
+                    className="rounded-[var(--radius-sm)] bg-accent px-4 py-2 text-xs font-medium text-accent-foreground transition-colors hover:bg-accent-hover disabled:cursor-not-allowed disabled:opacity-30 cursor-pointer"
+                  >
+                    {isGenerating ? "Generating..." : "Generate"}
+                  </button>
+                </div>
               </div>
 
               {referenceImage && (
@@ -963,7 +1031,57 @@ export default function GeneratePage() {
           </main>
         ) : (
           <div className="flex-1 flex flex-col overflow-hidden">
-            {showCode ? (
+            {generatedImage || isGeneratingImage ? (
+              <div className="flex-1 flex flex-col items-center justify-center overflow-auto bg-[#060909] p-6">
+                {isGeneratingImage ? (
+                  <div className="flex flex-col items-center gap-4">
+                    <Loader2 size={32} className="animate-spin text-accent" />
+                    <p className="text-sm text-text-secondary">Generating image...</p>
+                    <p className="text-xs text-text-tertiary">This may take 10-30 seconds</p>
+                  </div>
+                ) : imageError ? (
+                  <div className="flex flex-col items-center gap-3">
+                    <XCircle size={32} className="text-status-error" />
+                    <p className="text-sm text-status-error">{imageError}</p>
+                  </div>
+                ) : generatedImage ? (
+                  <div className="flex flex-col items-center gap-4 w-full max-w-4xl">
+                    <div className="relative w-full rounded-[var(--radius-lg)] overflow-hidden border border-border-default">
+                      {/* eslint-disable-next-line @next/next/no-img-element */}
+                      <img
+                        src={generatedImage}
+                        alt="Generated UI design"
+                        className="w-full h-auto"
+                      />
+                    </div>
+                    <div className="flex items-center gap-3">
+                      <button
+                        onClick={handleDownloadImage}
+                        className="flex items-center gap-2 rounded-[var(--radius-sm)] border border-border-default bg-bg-surface px-4 py-2 text-xs font-medium text-text-primary transition-colors hover:bg-bg-surface-hover cursor-pointer"
+                      >
+                        <DownloadCloud size={14} />
+                        Download Image
+                      </button>
+                      <button
+                        onClick={handleConvertToCode}
+                        disabled={isGenerating}
+                        className="flex items-center gap-2 rounded-[var(--radius-sm)] bg-accent px-4 py-2 text-xs font-medium text-accent-foreground transition-colors hover:bg-accent-hover disabled:cursor-not-allowed disabled:opacity-30 cursor-pointer"
+                      >
+                        <ArrowRightLeft size={14} />
+                        {isGenerating ? "Converting..." : "Convert to Code"}
+                      </button>
+                      <button
+                        onClick={() => setGeneratedImage(null)}
+                        className="flex items-center gap-1 rounded-[var(--radius-sm)] px-3 py-2 text-xs text-text-tertiary transition-colors hover:text-text-secondary cursor-pointer"
+                      >
+                        <X size={12} />
+                        Dismiss
+                      </button>
+                    </div>
+                  </div>
+                ) : null}
+              </div>
+            ) : showCode ? (
               <div className="flex-1 overflow-auto">
                 <pre className="p-4 text-xs text-text-secondary font-mono leading-relaxed whitespace-pre-wrap">{isGenerating ? streamingCode : code || "// No code generated yet"}</pre>
               </div>
