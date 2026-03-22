@@ -11,7 +11,7 @@ import { STUDIO_MODES, type StudioMode } from "@/lib/studio/prompts";
 import {
   Sparkles, Send, X, RotateCcw, Loader2, ChevronDown, ChevronUp,
   Wand2, LayoutGrid, Layers, Eye, AlignLeft, Brain, PenLine,
-  Zap, Check, Clock,
+  Zap, Check, Clock, CheckCircle2,
 } from "lucide-react";
 
 // Real page components (shown before any AI edit)
@@ -176,6 +176,7 @@ export default function EditPage() {
   const [overrides, setOverrides] = useState<Partial<Record<PageKey, string>>>({});
   const [model, setModel] = useState<Model>("gemini-3.1-pro");
   const [apiKey, setApiKey] = useState("");
+  const [showApiKeyInput, setShowApiKeyInput] = useState(false);
 
   // Panel state
   const [chatOpen, setChatOpen] = useState(false);
@@ -743,35 +744,52 @@ export default function EditPage() {
                 )}
 
                 {/* API key */}
-                {!isGenerating && !apiKey && (
-                  <details className="group">
-                    <summary className="text-[11px] text-text-tertiary hover:text-text-secondary cursor-pointer list-none flex items-center gap-1 focus:outline-none focus:underline">
-                      <ChevronDown size={11} className="group-open:rotate-180 transition-transform" />
-                      Use your own API key
-                    </summary>
-                    <p className="text-[11px] text-text-tertiary mt-1.5 mb-1.5 leading-relaxed">
-                      Connect an OpenRouter key to use Claude or GPT directly.
-                    </p>
-                    <input
-                      type="password"
-                      placeholder="sk-or-..."
-                      aria-label="OpenRouter API key"
-                      className="w-full bg-bg-input border border-border-default rounded-[var(--radius-sm)] px-2.5 py-2 text-xs text-text-primary outline-none placeholder:text-text-tertiary focus:border-border-accent focus:ring-2 focus:ring-accent/20"
-                      onChange={(e) => {
-                        const val = e.target.value;
-                        setApiKey(val);
-                        localStorage.setItem(LS_API_KEY, val);
-                      }}
-                    />
-                  </details>
-                )}
-                {!isGenerating && apiKey && (
-                  <button
-                    onClick={() => { setApiKey(""); localStorage.removeItem(LS_API_KEY); }}
-                    className="text-[11px] text-text-tertiary hover:text-text-secondary transition-colors cursor-pointer focus:outline-none focus:underline"
-                  >
-                    Disconnect API key
-                  </button>
+                {!isGenerating && (
+                  <div className="flex items-center gap-2 mt-1">
+                    <span className="text-[10px] font-medium uppercase tracking-[0.24em] text-text-tertiary shrink-0">API Key</span>
+                    {apiKey && !showApiKeyInput ? (
+                      <div className="flex items-center gap-2 flex-1">
+                        <span className="flex items-center gap-1 text-[11px] text-green-400"><CheckCircle2 size={11} /> Connected</span>
+                        <button
+                          onClick={() => setShowApiKeyInput(true)}
+                          className="text-[10px] text-text-tertiary hover:text-text-secondary transition-colors cursor-pointer focus:outline-none focus:underline"
+                        >
+                          Change
+                        </button>
+                        <button
+                          onClick={() => { setApiKey(""); localStorage.removeItem(LS_API_KEY); setShowApiKeyInput(false); }}
+                          className="text-[10px] text-status-error/70 hover:text-status-error transition-colors cursor-pointer focus:outline-none focus:underline"
+                        >
+                          Reset
+                        </button>
+                      </div>
+                    ) : (
+                      <div className="flex items-center gap-1 flex-1 rounded-[var(--radius-sm)] border border-border-default bg-bg-input px-2.5 py-1.5">
+                        <input
+                          type="password"
+                          value={apiKey}
+                          onChange={(e) => {
+                            const val = e.target.value;
+                            setApiKey(val);
+                            localStorage.setItem(LS_API_KEY, val);
+                          }}
+                          onBlur={() => { if (apiKey) setShowApiKeyInput(false); }}
+                          placeholder="sk-or-... (OpenRouter)"
+                          aria-label="OpenRouter API key"
+                          className="flex-1 bg-transparent text-[11px] text-text-primary outline-none placeholder:text-text-tertiary"
+                        />
+                        {apiKey && (
+                          <button
+                            onClick={() => setShowApiKeyInput(false)}
+                            aria-label="Save API key"
+                            className="text-green-400 hover:text-green-300 transition-colors cursor-pointer focus:outline-none focus:ring-2 focus:ring-accent/50 rounded"
+                          >
+                            <CheckCircle2 size={12} />
+                          </button>
+                        )}
+                      </div>
+                    )}
+                  </div>
                 )}
               </div>
             </div>

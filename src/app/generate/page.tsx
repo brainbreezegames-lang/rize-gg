@@ -1068,6 +1068,12 @@ Look at the reference image and recreate EVERY section, card, list item, stat, a
                     >
                       Change
                     </button>
+                    <button
+                      onClick={() => { setApiKey(""); localStorage.removeItem("rize-api-key"); setShowApiKey(false); }}
+                      className="text-[10px] text-status-error/70 hover:text-status-error transition-colors cursor-pointer focus:outline-none focus:underline"
+                    >
+                      Reset
+                    </button>
                   </div>
                 ) : (
                   <div className="flex items-center gap-1 flex-1 rounded-[var(--radius-sm)] border border-border-default bg-bg-input px-2.5 py-1.5">

@@ -1,7 +1,7 @@
 import { GoogleGenerativeAI } from "@google/generative-ai";
 import { buildStudioSystemPrompt, type StudioMode } from "@/lib/studio/prompts";
 
-const GOOGLE_API_KEY = process.env.GOOGLE_API_KEY || "AIzaSyD8sNXhfWietyPEEn67xSMoXoRHA5shDH8";
+const GOOGLE_API_KEY = process.env.GOOGLE_API_KEY;
 const OPENROUTER_BASE = "https://openrouter.ai/api/v1";
 const AIMLAPI_KEY = process.env.AIMLAPI_KEY;
 const AIMLAPI_BASE = "https://api.aimlapi.com/v1";

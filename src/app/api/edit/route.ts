@@ -4,8 +4,7 @@ const OPENROUTER_API_KEY = process.env.OPENROUTER_API_KEY;
 const OPENROUTER_BASE = "https://openrouter.ai/api/v1";
 const AIMLAPI_KEY = process.env.AIMLAPI_KEY;
 const AIMLAPI_BASE = "https://api.aimlapi.com/v1";
-// Fallback Google key for /edit testing — does not affect /generate
-const GOOGLE_API_KEY = process.env.GOOGLE_API_KEY || "AIzaSyD8sNXhfWietyPEEn67xSMoXoRHA5shDH8";
+const GOOGLE_API_KEY = process.env.GOOGLE_API_KEY;
 const OPENAI_API_KEY = process.env.OPENAI_API_KEY;
 
 type SupportedModel = "claude-opus-4.6" | "gemini-3.1-pro" | "chatgpt-5.4";
