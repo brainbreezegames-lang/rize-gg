@@ -26,11 +26,14 @@ function pilePosition(
   grime?: "illusion" | "elemental" | "temporal"
 ): [number, number, number] {
   const jitter = () => (rand() - 0.5) * 0.4;
-  // First 30 (recipe) scatter across table + three floor piles
-  if (index < 30) {
-    if (index < 8) {
-      return [-3.1 + (index % 4) * 0.35 + jitter() * 0.3, 1.0 + Math.floor(index / 4) * 0.12, -0.2 + jitter() * 0.5];
-    }
+  // First recipe dishes spawn near the sink front so the player finds them
+    if (index < 30) {
+      if (index === 0) {
+        return [-1.2, 0.2, 1.2]; // first dish front-and-center
+      }
+      if (index < 8) {
+        return [-3.1 + (index % 4) * 0.35 + jitter() * 0.3, 1.0 + Math.floor(index / 4) * 0.12, -0.2 + jitter() * 0.5];
+      }
     // Soft-sort floor piles by grime family for readability (still mixed)
     if (grime === "illusion" || index % 3 === 0) {
       return [-1.7 + jitter(), 0.14 + (index % 4) * 0.05, 1.5 + jitter()];

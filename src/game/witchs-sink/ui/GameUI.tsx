@@ -101,7 +101,7 @@ export function TitleScreen() {
         </div>
 
         <p className="text-[#5a4a6a] text-xs">
-          Drag to look · Click dirty dishes · Drop into Moonwater / Sunfire / Still · Place on the board
+          Drag to look · Gold marker = next recipe dish · Click dish → basin (1/2/3) → Place (E)
         </p>
       </div>
     </div>

@@ -88,23 +88,41 @@ export function DishMesh({
           hoverDish(null);
         }}
       />
-      {outlineColor && (
-        <mesh>
-          <sphereGeometry args={[0.28, 8, 8]} />
-          <meshBasicMaterial color={outlineColor} transparent opacity={0.15} depthWrite={false} />
-        </mesh>
+      {(highlight || chainGlow) && (
+        <>
+          <mesh position={[0, 0.55, 0]}>
+            <coneGeometry args={[0.12, 0.28, 4]} />
+            <meshStandardMaterial
+              color="#FFD700"
+              emissive="#FFD700"
+              emissiveIntensity={2}
+              flatShading
+            />
+          </mesh>
+          <mesh position={[0, 0.2, 0]}>
+            <cylinderGeometry args={[0.02, 0.02, 0.5, 4]} />
+            <meshBasicMaterial color="#FFD700" transparent opacity={0.5} />
+          </mesh>
+          <pointLight color="#FFD700" intensity={2.5} distance={2.5} position={[0, 0.4, 0]} />
+        </>
       )}
       {outlineColor && (
-        <pointLight color={outlineColor} intensity={0.8} distance={1.2} />
+        <mesh>
+          <sphereGeometry args={[highlight || chainGlow ? 0.42 : 0.28, 8, 8]} />
+          <meshBasicMaterial color={outlineColor} transparent opacity={highlight || chainGlow ? 0.28 : 0.15} depthWrite={false} />
+        </mesh>
+      )}
+      {scentGlow && !highlight && (
+        <pointLight color={GRIME_COLORS[grime]} intensity={1.2} distance={1.4} />
       )}
       {/* Grime drip particles when dirty */}
       {dirty && (
         <mesh position={[0.05, 0.15, 0]}>
-          <boxGeometry args={[0.04, 0.08, 0.04]} />
+          <boxGeometry args={[0.05, 0.1, 0.05]} />
           <meshStandardMaterial
             color={GRIME_COLORS[grime]}
             emissive={GRIME_COLORS[grime]}
-            emissiveIntensity={0.6}
+            emissiveIntensity={0.9}
           />
         </mesh>
       )}
