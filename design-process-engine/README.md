@@ -1,75 +1,64 @@
 # Design Process Engine
 
-**A strict senior design lead inside whatever AI coding agent you already run.**
+**Stateful MCP that turns any AI coding agent into a disciplined designer.**
 
-Stateful MCP + companion skill. Tools are the steps of the process. Knowledge (playbooks + pattern guides) is injected at the moment of need. A Factory produces that knowledge; this Engine serves it.
-
-## Pipeline
+This is the product from the PRD — not a prompt generator.
 
 ```
 start_task → get_playbook → submit_plan → get_pattern_guide*
 → (build → review)* → final_check
 ```
 
-| Tool | Job |
-|------|-----|
-| `start_task` | Classify Create / Edit / Recreate; return mode contract |
-| `get_playbook` | Flow intelligence before planning |
-| `submit_plan` | Critique + approve → **session contract** |
-| `get_pattern_guide` | On-demand pattern prescription while building |
-| `review` | After every stage: defects, drift, slop |
-| `final_check` | Whole-deliverable audit + finishing commands |
-| `register_brand_rules` / `get_session` / `list_knowledge` | Helpers |
+The approved plan is a **server-side contract**. Skipping steps fails. Knowledge is injected at the moment of need.
 
-## Install
+## Ship / install for users
 
-```bash
-cd design-process-engine
-npm install
-npm run build
-npm test
-```
+### Remote MCP (recommended)
 
-### MCP config (Cursor / Claude Code)
+Point Cursor (or any URL-capable MCP client) at the hosted endpoint:
 
 ```json
 {
   "mcpServers": {
     "design-process-engine": {
-      "command": "npx",
-      "args": ["tsx", "/absolute/path/to/design-process-engine/src/index.ts"],
-      "env": {
-        "DESIGN_ENGINE_API_KEY": "dpe_free_local"
-      }
+      "url": "https://YOUR_HOST/mcp"
     }
   }
 }
 ```
 
-Pro: set `DESIGN_ENGINE_API_KEY=dpe_pro_<your-key>` or `DESIGN_ENGINE_TIER=pro`.
+Live host URL is written to `website/runtime.json` when the HTTP server is tunneled/deployed.
 
-Companion skill: [`skill/SKILL.md`](./skill/SKILL.md)
-
-## Tiers
-
-| | Free | Pro (~$19/mo) |
-|--|------|----------------|
-| Process pipeline | ✓ | ✓ |
-| Starter playbooks (2) + patterns (20) | ✓ | ✓ |
-| Full playbooks (10) + patterns (100) | | ✓ |
-| Monthly slop catalog in `final_check` | | ✓ |
-
-## Knowledge
+### Local stdio
 
 ```bash
-npm run knowledge:generate   # regenerate playbooks/patterns/slop JSON
+cd design-process-engine
+npm install && npm run build
 ```
 
-Library lives in `knowledge/` (10 playbooks, 100 patterns, monthly slop).
+```json
+{
+  "mcpServers": {
+    "design-process-engine": {
+      "command": "node",
+      "args": ["/absolute/path/to/design-process-engine/dist/index.js"]
+    }
+  }
+}
+```
+
+### Companion skill
+
+Install [`skill/SKILL.md`](./skill/SKILL.md) so the pipeline is default agent behavior.
+
+## Run the HTTP product yourself
+
+```bash
+npm run build
+npm run start:http   # http://0.0.0.0:8787/mcp
+```
 
 ## Factory (Product A)
-
-Semi-automated capture → draft → human curate pipeline:
 
 ```bash
 npm run factory:capture
@@ -77,28 +66,28 @@ npm run factory:draft
 npm run factory:status
 ```
 
-See [`factory/README.md`](./factory/README.md).
+## Knowledge
 
-## Public site
+- 10 playbooks · 100 pattern guides · monthly slop catalog  
+- Free: process + starters · Pro: full library (`dpe_pro_*` / `DESIGN_ENGINE_TIER=pro`)
+
+```bash
+npm run knowledge:generate
+```
+
+## Site
 
 ```bash
 npx serve website
-# or open website/index.html
 ```
 
-Landing, pricing, docs, install — [`website/`](./website/).
+Install-first marketing site (not a toy demo).
 
-## Develop
+## Tests
 
 ```bash
-npm run dev       # stdio MCP
 npm test
-npm run build
 ```
-
-## Thesis
-
-Enforcement + right-time knowledge beats `design.md`. Blind designer preference target: ≥ 80%.
 
 ## License
 

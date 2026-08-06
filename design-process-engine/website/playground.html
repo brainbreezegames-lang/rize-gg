@@ -3,10 +3,10 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>Try it — Design Process Engine</title>
+    <title>Demo — Design Process Engine</title>
     <meta
       name="description"
-      content="Get a design brief you can paste into ChatGPT, Claude, or Cursor."
+      content="Tiny demo of the process. The real product is a stateful MCP that enforces design while your AI builds."
     />
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
@@ -38,8 +38,9 @@
           <span class="sr-only">Menu</span>
         </button>
         <nav class="nav" id="site-nav" data-nav>
-          <a href="./playground.html" aria-current="page">Try it</a>
-          <a href="./docs.html">How it works</a>
+          <a href="./playground.html" aria-current="page">Demo</a>
+          <a href="./docs.html">The real product</a>
+          <a href="./install.html">Install MCP</a>
           <a href="./pricing.html">Pricing</a>
         </nav>
       </div>
@@ -47,23 +48,27 @@
 
     <main class="page shell easy">
       <section class="easy-hero" data-reveal>
-        <p class="section-label">What this is for</p>
-        <h1 class="section-title">Get a better prompt for your AI</h1>
+        <p class="section-label">Honest label</p>
+        <h1 class="section-title">This page is only a tiny demo</h1>
         <p class="section-lede">
-          Tell us what you want to build. We turn it into a clear design brief.
-          Then you <strong>copy that brief</strong> and paste it into ChatGPT,
-          Claude, or Cursor so the AI builds something less generic.
+          Your PRD is <strong>not</strong> “make one prompt.” The real product is a
+          <strong>stateful MCP</strong> that sits inside Cursor / Claude Code and
+          <em>forces</em> classify → plan → staged build → review → final check
+          while the AI codes — and refuses to let it skip.
         </p>
-        <ol class="easy-howto">
-          <li>Type what you want</li>
-          <li>Click the button</li>
-          <li>Copy the brief</li>
-          <li>Paste it into your AI chat</li>
-        </ol>
+        <p class="section-lede">
+          This demo only shows the <em>shape</em> of that process in a browser,
+          because installing an MCP needs a coding tool. Don’t judge the PRD by
+          this page alone.
+        </p>
+        <p>
+          <a class="btn btn--primary" href="./docs.html">Read what you actually built</a>
+          <a class="btn btn--ghost" href="./install.html">Install the real Engine</a>
+        </p>
       </section>
 
       <form id="easy-form" class="easy-form" data-reveal>
-        <label for="wish" class="easy-label">What do you want to build?</label>
+        <label for="wish" class="easy-label">Demo: what would you build?</label>
         <textarea
           id="wish"
           rows="3"
@@ -72,14 +77,13 @@
         ></textarea>
         <div id="examples" class="chips" aria-label="Examples"></div>
         <button id="btn-go" class="btn btn--primary" type="submit">
-          Make my brief
+          Run demo process
         </button>
       </form>
 
       <div id="result" class="easy-result" hidden></div>
-
       <details id="process-details" class="easy-details" hidden>
-        <summary>Optional: see how we built this brief</summary>
+        <summary>Demo process trail</summary>
         <div id="steps" class="easy-steps" aria-live="polite"></div>
       </details>
     </main>

@@ -5,7 +5,8 @@
   "type": "module",
   "main": "dist/index.js",
   "bin": {
-    "design-process-engine": "dist/index.js"
+    "design-process-engine": "dist/index.js",
+    "design-process-engine-http": "dist/http.js"
   },
   "scripts": {
     "build": "tsc",
@@ -18,7 +19,9 @@
     "factory:status": "node factory/scripts/run-pipeline.mjs status",
     "knowledge:generate": "node scripts/generate-knowledge.mjs",
     "website:sync-knowledge": "rm -rf website/knowledge && cp -r knowledge website/knowledge",
-    "deploy": "npm run website:sync-knowledge && npx vercel deploy website --prod --yes"
+    "deploy": "npm run website:sync-knowledge && npx vercel deploy website --prod --yes",
+    "start:http": "node dist/http.js",
+    "dev:http": "tsx src/http.ts"
   },
   "keywords": [
     "mcp",
@@ -42,5 +45,12 @@
     "typescript": "^5.9.2",
     "vercel": "^58.7.1",
     "vitest": "^4.1.10"
-  }
+  },
+  "files": [
+    "dist",
+    "knowledge",
+    "skill",
+    "README.md",
+    "PRD.md"
+  ]
 }

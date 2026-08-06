@@ -25,18 +25,9 @@ import { critiquePlan, planIsApprovable } from "./process/plan-critique.js";
 import { formatDefectChecklistForAgent } from "./process/review-defects.js";
 import { remainingStages, reviewStage } from "./process/review-engine.js";
 import {
-  approvePlan,
-  getSession,
-  markFinalCheck,
-  recordPatternGuide,
-  recordReview,
-  requireSession,
-  resetSession,
   SessionError,
-  setBrandRules,
-  setPendingPlan,
-  setPlaybookId,
-  startSession,
+  SessionStore,
+  defaultStore,
 } from "./session/store.js";
 import type { DesignMode, DesignPlan, ReviewSubmission } from "./session/types.js";
 import {
@@ -53,7 +44,7 @@ function accessFromArgs(apiKey?: string) {
   return resolveAccess(apiKey);
 }
 
-export function createServer(): McpServer {
+export function createServer(store: SessionStore = defaultStore): McpServer {
   const server = new McpServer({
     name: "design-process-engine",
     version: "1.0.0",
@@ -82,12 +73,12 @@ export function createServer(): McpServer {
     },
     async (args) => {
       try {
-        if (args.reset || getSession()) resetSession();
+        if (args.reset || store.getSession()) store.resetSession();
         const access = accessFromArgs(args.api_key);
         const context = args.context ?? "";
         const mode = classifyMode(args.task, context, args.mode as DesignMode | undefined);
         const modeContract = getModeContract(mode);
-        const session = startSession({
+        const session = store.startSession({
           task: args.task,
           context,
           mode,
@@ -139,7 +130,7 @@ export function createServer(): McpServer {
     },
     async (args) => {
       try {
-        const session = setBrandRules(args);
+        const session = store.setBrandRules(args);
         return ok({ sessionId: session.id, brandRules: session.brandRules });
       } catch (e) {
         if (e instanceof SessionError) return fail(e.message, { code: e.code });
@@ -161,7 +152,7 @@ export function createServer(): McpServer {
     },
     async (args) => {
       try {
-        const session = requireSession();
+        const session = store.requireSession();
         const access = resolveAccess(undefined);
         // session tier wins if start_task set it
         const tier = session.tier ?? access.tier;
@@ -201,7 +192,7 @@ export function createServer(): McpServer {
           });
         }
 
-        setPlaybookId(pb.id);
+        store.setPlaybookId(pb.id);
 
         return ok({
           found: true,
@@ -234,7 +225,7 @@ export function createServer(): McpServer {
     },
     async (args) => {
       try {
-        const session = requireSession();
+        const session = store.requireSession();
         if (!session.mode || !session.modeContract) {
           return fail("Session missing mode. Call start_task.");
         }
@@ -281,7 +272,7 @@ export function createServer(): McpServer {
           }
         }
 
-        setPendingPlan(plan, critique);
+        store.setPendingPlan(plan, critique);
 
         if (!planIsApprovable(critique)) {
           return ok({
@@ -293,7 +284,7 @@ export function createServer(): McpServer {
           });
         }
 
-        approvePlan(plan);
+        store.approvePlan(plan);
 
         return ok({
           approved: true,
@@ -331,7 +322,7 @@ export function createServer(): McpServer {
     },
     async (args) => {
       try {
-        const session = requireSession();
+        const session = store.requireSession();
         if (!session.approvedPlan) {
           return fail("Approve a plan with submit_plan before pulling pattern guides.", {
             code: "no_plan",
@@ -376,7 +367,7 @@ export function createServer(): McpServer {
           });
         }
 
-        recordPatternGuide(guide.id);
+        store.recordPatternGuide(guide.id);
 
         return ok({
           guide: patternDigest(guide),
@@ -403,7 +394,7 @@ export function createServer(): McpServer {
     },
     async (args) => {
       try {
-        const session = requireSession();
+        const session = store.requireSession();
         if (!session.approvedPlan) {
           return fail("No approved plan.", { code: "no_plan" });
         }
@@ -424,14 +415,14 @@ export function createServer(): McpServer {
           session.reviewedStages
         );
 
-        recordReview({
+        store.recordReview({
           stageId: args.stageId,
           submittedAt: new Date().toISOString(),
           passed,
           findings,
         });
 
-        const s = requireSession();
+        const s = store.requireSession();
         const remaining = remainingStages(s.approvedPlan!, s.reviewedStages);
 
         return ok({
@@ -476,7 +467,7 @@ export function createServer(): McpServer {
     },
     async (args) => {
       try {
-        const session = requireSession();
+        const session = store.requireSession();
         if (!session.approvedPlan) {
           return fail("No approved plan.", { code: "no_plan" });
         }
@@ -504,7 +495,7 @@ export function createServer(): McpServer {
             });
 
         const passed = !findings.some((f) => f.severity === "blocker");
-        markFinalCheck(passed);
+        store.markFinalCheck(passed);
 
         return ok({
           passed,
@@ -536,7 +527,7 @@ export function createServer(): McpServer {
       _: z.boolean().optional(),
     },
     async () => {
-      const session = getSession();
+      const session = store.getSession();
       if (!session) {
         return fail("No active session. Call start_task.", { code: "no_session" });
       }
@@ -569,7 +560,7 @@ export function createServer(): McpServer {
       kind: z.enum(["playbooks", "patterns", "all"]).optional(),
     },
     async (args) => {
-      const session = getSession();
+      const session = store.getSession();
       const tier = session?.tier ?? resolveAccess().tier;
       const kind = args.kind ?? "all";
       const payload: Record<string, unknown> = { yourTier: tier };

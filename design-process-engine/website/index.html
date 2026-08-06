@@ -3,15 +3,15 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>Design Process Engine</title>
+    <title>Design Process Engine — MCP for AI agents</title>
     <meta
       name="description"
-      content="A strict senior design lead, rented into whatever AI coding agent you already run."
+      content="Stateful MCP that forces AI coding agents to classify, plan, build in stages, and review — with playbooks injected at the right moment."
     />
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link
-      href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600&family=Syne:wght@600;700;800&display=swap"
+      href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:wght@400;500;600&family=Syne:wght@600;700;800&display=swap"
       rel="stylesheet"
     />
     <link rel="stylesheet" href="./styles.css" />
@@ -23,26 +23,18 @@
 
     <header class="site-header">
       <div class="site-header__inner">
-        <a class="brand" href="./index.html" aria-label="Design Process Engine home">
+        <a class="brand" href="./index.html">
           <span class="brand__mark">◆</span>
           <span class="brand__name">Design Process Engine</span>
         </a>
-        <button
-          class="nav-toggle"
-          type="button"
-          data-nav-toggle
-          aria-expanded="false"
-          aria-controls="site-nav"
-        >
-          <span></span>
-          <span class="sr-only">Menu</span>
+        <button class="nav-toggle" type="button" data-nav-toggle aria-expanded="false" aria-controls="site-nav">
+          <span></span><span class="sr-only">Menu</span>
         </button>
         <nav class="nav" id="site-nav" data-nav>
-          <a href="./playground.html">Try it</a>
-          <a href="./docs.html">Docs</a>
           <a href="./install.html">Install</a>
+          <a href="./docs.html">Pipeline</a>
           <a href="./pricing.html">Pricing</a>
-          <a href="./playground.html">Try it</a>
+          <a href="./install.html" class="nav-cta">Get MCP</a>
         </nav>
       </div>
     </header>
@@ -54,27 +46,45 @@
           <span class="accent-word">Engine</span>
         </h1>
         <p class="hero__headline">
-          Enforcement for AI design work — not another pile of references.
+          A senior design lead inside Cursor, Claude Code, and any MCP client.
         </p>
         <p class="hero__lede">
-          Classify, plan, build in stages, review every stage. The approved plan
-          is the contract.
+          Not a prompt. Not a markdown file. A <strong>stateful MCP</strong> that
+          refuses junk: classify → playbook → plan-as-contract → pattern guides →
+          stage review → final check.
         </p>
         <div class="cta-row">
-          <a class="btn btn--primary" href="./playground.html">Try it free</a>
-          <a class="btn btn--ghost" href="./pricing.html">See pricing</a>
+          <a class="btn btn--primary" href="./install.html">Install the MCP</a>
+          <a class="btn btn--ghost" href="./docs.html">See the pipeline</a>
         </div>
         <div class="hero-rule" aria-hidden="true"></div>
+      </section>
+
+      <section class="shell product-strip">
+        <h2>What users actually get</h2>
+        <div class="product-grid">
+          <article>
+            <h3>Enforcement</h3>
+            <p>Server remembers the approved plan and blocks skipping. design.md can’t do this.</p>
+          </article>
+          <article>
+            <h3>Knowledge on demand</h3>
+            <p>10 flow playbooks + 100 pattern guides, loaded at the moment of need — not dumped into context.</p>
+          </article>
+          <article>
+            <h3>Review + final_check</h3>
+            <p>Defect hunt, drift vs plan, monthly slop signatures. No stage ends unreviewed.</p>
+          </article>
+        </div>
       </section>
     </main>
 
     <footer class="site-footer">
       <div class="site-footer__inner">
-        <span>Design Process Engine · MCP + skill</span>
-        <a href="./docs.html">Pipeline docs</a>
+        <span>Design Process Engine · Product B (Engine) + Product A (Factory)</span>
+        <a href="./install.html">Install</a>
       </div>
     </footer>
-
     <script src="./main.js" defer></script>
   </body>
 </html>
