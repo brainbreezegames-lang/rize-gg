@@ -1,0 +1,33 @@
+{
+  "id": "settings-page",
+  "title": "Settings Page",
+  "category": "settings",
+  "tier": "free",
+  "structure": [
+    "settings-page-root",
+    "settings-page-section-nav",
+    "settings-page-group",
+    "settings-page-control",
+    "settings-page-save"
+  ],
+  "requiredStates": [
+    "default",
+    "dirty",
+    "saving",
+    "saved",
+    "error",
+    "read-only"
+  ],
+  "codeExample": "```tsx\nexport function SettingsPageExample() {\n  // Minimal Settings Page pattern\n  return (\n    <section aria-label=\"Settings Page\" data-pattern=\"settings-page\">\n      <header>\n        <h2>Settings Page</h2>\n      </header>\n      <div className=\"pattern-body\">\n        {/* Implement required states: default + interactive variants */}\n      </div>\n    </section>\n  );\n}\n```",
+  "mistakes": [
+    "Autosave with no confirmation of what changed",
+    "Dangerous actions adjacent to benign toggles",
+    "Read-only SSO fields looking editable",
+    "Treating Settings Page as decoration without dirty state"
+  ],
+  "relatedPatterns": [
+    "cookie-consent",
+    "invite-team",
+    "role-matrix"
+  ]
+}

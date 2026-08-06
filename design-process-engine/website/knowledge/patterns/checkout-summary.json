@@ -1,0 +1,33 @@
+{
+  "id": "checkout-summary",
+  "title": "Checkout Summary",
+  "category": "commerce",
+  "tier": "pro",
+  "structure": [
+    "checkout-summary-root",
+    "checkout-summary-offer-summary",
+    "checkout-summary-price",
+    "checkout-summary-cta",
+    "checkout-summary-trust-signals"
+  ],
+  "requiredStates": [
+    "default",
+    "selected",
+    "loading",
+    "sold-out",
+    "discounted",
+    "error"
+  ],
+  "codeExample": "```tsx\nexport function CheckoutSummaryExample() {\n  // Minimal Checkout Summary pattern\n  return (\n    <section aria-label=\"Checkout Summary\" data-pattern=\"checkout-summary\">\n      <header>\n        <h2>Checkout Summary</h2>\n      </header>\n      <div className=\"pattern-body\">\n        {/* Implement required states: default + interactive variants */}\n      </div>\n    </section>\n  );\n}\n```",
+  "mistakes": [
+    "Price without currency or tax clarity",
+    "CTA that does not restate the commitment",
+    "Hiding fees until the last step",
+    "Treating Checkout Summary as decoration without selected state"
+  ],
+  "relatedPatterns": [
+    "paywall",
+    "pricing-table",
+    "cart-drawer"
+  ]
+}

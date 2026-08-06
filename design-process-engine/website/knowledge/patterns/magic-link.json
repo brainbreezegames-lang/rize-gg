@@ -1,0 +1,33 @@
+{
+  "id": "magic-link",
+  "title": "Magic Link",
+  "category": "auth",
+  "tier": "pro",
+  "structure": [
+    "magic-link-root",
+    "magic-link-identity-input",
+    "magic-link-verify",
+    "magic-link-error",
+    "magic-link-success"
+  ],
+  "requiredStates": [
+    "default",
+    "pending",
+    "success",
+    "error",
+    "locked",
+    "expired"
+  ],
+  "codeExample": "```tsx\nexport function MagicLinkExample() {\n  // Minimal Magic Link pattern\n  return (\n    <section aria-label=\"Magic Link\" data-pattern=\"magic-link\">\n      <header>\n        <h2>Magic Link</h2>\n      </header>\n      <div className=\"pattern-body\">\n        {/* Implement required states: default + interactive variants */}\n      </div>\n    </section>\n  );\n}\n```",
+  "mistakes": [
+    "No rate-limit messaging on OTP",
+    "Password rules shown only after failure",
+    "Losing deep-link context after verify",
+    "Treating Magic Link as decoration without pending state"
+  ],
+  "relatedPatterns": [
+    "otp-input",
+    "password-field",
+    "age-gate"
+  ]
+}

@@ -1,0 +1,33 @@
+{
+  "id": "audit-log",
+  "title": "Audit Log",
+  "category": "settings",
+  "tier": "pro",
+  "structure": [
+    "audit-log-root",
+    "audit-log-section-nav",
+    "audit-log-group",
+    "audit-log-control",
+    "audit-log-save"
+  ],
+  "requiredStates": [
+    "default",
+    "dirty",
+    "saving",
+    "saved",
+    "error",
+    "read-only"
+  ],
+  "codeExample": "```tsx\nexport function AuditLogExample() {\n  // Minimal Audit Log pattern\n  return (\n    <section aria-label=\"Audit Log\" data-pattern=\"audit-log\">\n      <header>\n        <h2>Audit Log</h2>\n      </header>\n      <div className=\"pattern-body\">\n        {/* Implement required states: default + interactive variants */}\n      </div>\n    </section>\n  );\n}\n```",
+  "mistakes": [
+    "Autosave with no confirmation of what changed",
+    "Dangerous actions adjacent to benign toggles",
+    "Read-only SSO fields looking editable",
+    "Treating Audit Log as decoration without dirty state"
+  ],
+  "relatedPatterns": [
+    "settings-page",
+    "cookie-consent",
+    "invite-team"
+  ]
+}

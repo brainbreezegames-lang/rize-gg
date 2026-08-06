@@ -1,0 +1,33 @@
+{
+  "id": "breadcrumbs",
+  "title": "Breadcrumbs",
+  "category": "navigation",
+  "tier": "free",
+  "structure": [
+    "breadcrumbs-root",
+    "breadcrumbs-container",
+    "breadcrumbs-primary-items",
+    "breadcrumbs-overflow",
+    "breadcrumbs-active-indicator"
+  ],
+  "requiredStates": [
+    "default",
+    "active",
+    "hover",
+    "collapsed",
+    "open",
+    "disabled"
+  ],
+  "codeExample": "```tsx\nexport function BreadcrumbsExample() {\n  // Minimal Breadcrumbs pattern\n  return (\n    <section aria-label=\"Breadcrumbs\" data-pattern=\"breadcrumbs\">\n      <header>\n        <h2>Breadcrumbs</h2>\n      </header>\n      <div className=\"pattern-body\">\n        {/* Implement required states: default + interactive variants */}\n      </div>\n    </section>\n  );\n}\n```",
+  "mistakes": [
+    "No current-location indicator",
+    "Icons without text labels on primary destinations",
+    "Drawer open state not escapable via keyboard",
+    "Treating Breadcrumbs as decoration without active state"
+  ],
+  "relatedPatterns": [
+    "nav-drawer",
+    "top-nav",
+    "bottom-tabs"
+  ]
+}

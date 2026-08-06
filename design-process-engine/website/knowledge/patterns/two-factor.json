@@ -1,0 +1,33 @@
+{
+  "id": "two-factor",
+  "title": "Two Factor",
+  "category": "auth",
+  "tier": "pro",
+  "structure": [
+    "two-factor-root",
+    "two-factor-identity-input",
+    "two-factor-verify",
+    "two-factor-error",
+    "two-factor-success"
+  ],
+  "requiredStates": [
+    "default",
+    "pending",
+    "success",
+    "error",
+    "locked",
+    "expired"
+  ],
+  "codeExample": "```tsx\nexport function TwoFactorExample() {\n  // Minimal Two Factor pattern\n  return (\n    <section aria-label=\"Two Factor\" data-pattern=\"two-factor\">\n      <header>\n        <h2>Two Factor</h2>\n      </header>\n      <div className=\"pattern-body\">\n        {/* Implement required states: default + interactive variants */}\n      </div>\n    </section>\n  );\n}\n```",
+  "mistakes": [
+    "No rate-limit messaging on OTP",
+    "Password rules shown only after failure",
+    "Losing deep-link context after verify",
+    "Treating Two Factor as decoration without pending state"
+  ],
+  "relatedPatterns": [
+    "otp-input",
+    "password-field",
+    "age-gate"
+  ]
+}

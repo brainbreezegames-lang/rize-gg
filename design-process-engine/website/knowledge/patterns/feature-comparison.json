@@ -1,0 +1,33 @@
+{
+  "id": "feature-comparison",
+  "title": "Feature Comparison",
+  "category": "commerce",
+  "tier": "pro",
+  "structure": [
+    "feature-comparison-root",
+    "feature-comparison-offer-summary",
+    "feature-comparison-price",
+    "feature-comparison-cta",
+    "feature-comparison-trust-signals"
+  ],
+  "requiredStates": [
+    "default",
+    "selected",
+    "loading",
+    "sold-out",
+    "discounted",
+    "error"
+  ],
+  "codeExample": "```tsx\nexport function FeatureComparisonExample() {\n  // Minimal Feature Comparison pattern\n  return (\n    <section aria-label=\"Feature Comparison\" data-pattern=\"feature-comparison\">\n      <header>\n        <h2>Feature Comparison</h2>\n      </header>\n      <div className=\"pattern-body\">\n        {/* Implement required states: default + interactive variants */}\n      </div>\n    </section>\n  );\n}\n```",
+  "mistakes": [
+    "Price without currency or tax clarity",
+    "CTA that does not restate the commitment",
+    "Hiding fees until the last step",
+    "Treating Feature Comparison as decoration without selected state"
+  ],
+  "relatedPatterns": [
+    "paywall",
+    "pricing-table",
+    "checkout-summary"
+  ]
+}

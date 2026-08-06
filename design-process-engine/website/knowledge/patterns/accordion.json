@@ -1,0 +1,33 @@
+{
+  "id": "accordion",
+  "title": "Accordion",
+  "category": "content",
+  "tier": "pro",
+  "structure": [
+    "accordion-root",
+    "accordion-header",
+    "accordion-body",
+    "accordion-media",
+    "accordion-actions"
+  ],
+  "requiredStates": [
+    "default",
+    "loading",
+    "empty",
+    "expanded",
+    "editing",
+    "error"
+  ],
+  "codeExample": "```tsx\nexport function AccordionExample() {\n  // Minimal Accordion pattern\n  return (\n    <section aria-label=\"Accordion\" data-pattern=\"accordion\">\n      <header>\n        <h2>Accordion</h2>\n      </header>\n      <div className=\"pattern-body\">\n        {/* Implement required states: default + interactive variants */}\n      </div>\n    </section>\n  );\n}\n```",
+  "mistakes": [
+    "Unbounded nested threads with no collapse",
+    "Media without aspect-ratio reservation",
+    "Timestamps without relative/absolute toggle when needed",
+    "Treating Accordion as decoration without loading state"
+  ],
+  "relatedPatterns": [
+    "chat-list",
+    "chat-composer",
+    "comment-thread"
+  ]
+}

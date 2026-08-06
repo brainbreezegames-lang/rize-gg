@@ -1,0 +1,32 @@
+{
+  "id": "infinite-scroll",
+  "title": "Infinite Scroll",
+  "category": "mobile-patterns",
+  "tier": "pro",
+  "structure": [
+    "infinite-scroll-root",
+    "infinite-scroll-gesture-target",
+    "infinite-scroll-sheet-or-overlay",
+    "infinite-scroll-safe-area",
+    "infinite-scroll-haptics-cue"
+  ],
+  "requiredStates": [
+    "default",
+    "dragging",
+    "refreshing",
+    "offline",
+    "permission-denied"
+  ],
+  "codeExample": "```tsx\nexport function InfiniteScrollExample() {\n  // Minimal Infinite Scroll pattern\n  return (\n    <section aria-label=\"Infinite Scroll\" data-pattern=\"infinite-scroll\">\n      <header>\n        <h2>Infinite Scroll</h2>\n      </header>\n      <div className=\"pattern-body\">\n        {/* Implement required states: default + interactive variants */}\n      </div>\n    </section>\n  );\n}\n```",
+  "mistakes": [
+    "Gesture-only actions with no button fallback",
+    "Ignoring safe-area insets",
+    "Pull-to-refresh fighting nested scroll",
+    "Treating Infinite Scroll as decoration without dragging state"
+  ],
+  "relatedPatterns": [
+    "permissions-prompt",
+    "offline-state",
+    "pull-to-refresh"
+  ]
+}

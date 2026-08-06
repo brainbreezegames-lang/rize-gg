@@ -1,0 +1,33 @@
+{
+  "id": "chat-composer",
+  "title": "Chat Composer",
+  "category": "content",
+  "tier": "pro",
+  "structure": [
+    "chat-composer-root",
+    "chat-composer-header",
+    "chat-composer-body",
+    "chat-composer-media",
+    "chat-composer-actions"
+  ],
+  "requiredStates": [
+    "default",
+    "loading",
+    "empty",
+    "expanded",
+    "editing",
+    "error"
+  ],
+  "codeExample": "```tsx\nexport function ChatComposerExample() {\n  // Minimal Chat Composer pattern\n  return (\n    <section aria-label=\"Chat Composer\" data-pattern=\"chat-composer\">\n      <header>\n        <h2>Chat Composer</h2>\n      </header>\n      <div className=\"pattern-body\">\n        {/* Implement required states: default + interactive variants */}\n      </div>\n    </section>\n  );\n}\n```",
+  "mistakes": [
+    "Unbounded nested threads with no collapse",
+    "Media without aspect-ratio reservation",
+    "Timestamps without relative/absolute toggle when needed",
+    "Treating Chat Composer as decoration without loading state"
+  ],
+  "relatedPatterns": [
+    "chat-list",
+    "comment-thread",
+    "notification-center"
+  ]
+}

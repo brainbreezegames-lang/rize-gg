@@ -1,0 +1,33 @@
+{
+  "id": "coupon-field",
+  "title": "Coupon Field",
+  "category": "commerce",
+  "tier": "pro",
+  "structure": [
+    "coupon-field-root",
+    "coupon-field-offer-summary",
+    "coupon-field-price",
+    "coupon-field-cta",
+    "coupon-field-trust-signals"
+  ],
+  "requiredStates": [
+    "default",
+    "selected",
+    "loading",
+    "sold-out",
+    "discounted",
+    "error"
+  ],
+  "codeExample": "```tsx\nexport function CouponFieldExample() {\n  // Minimal Coupon Field pattern\n  return (\n    <section aria-label=\"Coupon Field\" data-pattern=\"coupon-field\">\n      <header>\n        <h2>Coupon Field</h2>\n      </header>\n      <div className=\"pattern-body\">\n        {/* Implement required states: default + interactive variants */}\n      </div>\n    </section>\n  );\n}\n```",
+  "mistakes": [
+    "Price without currency or tax clarity",
+    "CTA that does not restate the commitment",
+    "Hiding fees until the last step",
+    "Treating Coupon Field as decoration without selected state"
+  ],
+  "relatedPatterns": [
+    "paywall",
+    "pricing-table",
+    "checkout-summary"
+  ]
+}

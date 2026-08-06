@@ -1,0 +1,33 @@
+{
+  "id": "pricing-table",
+  "title": "Pricing Table",
+  "category": "commerce",
+  "tier": "free",
+  "structure": [
+    "pricing-table-root",
+    "pricing-table-offer-summary",
+    "pricing-table-price",
+    "pricing-table-cta",
+    "pricing-table-trust-signals"
+  ],
+  "requiredStates": [
+    "default",
+    "selected",
+    "loading",
+    "sold-out",
+    "discounted",
+    "error"
+  ],
+  "codeExample": "```tsx\nexport function PricingTableExample() {\n  // Minimal Pricing Table pattern\n  return (\n    <section aria-label=\"Pricing Table\" data-pattern=\"pricing-table\">\n      <header>\n        <h2>Pricing Table</h2>\n      </header>\n      <div className=\"pattern-body\">\n        {/* Implement required states: default + interactive variants */}\n      </div>\n    </section>\n  );\n}\n```",
+  "mistakes": [
+    "Price without currency or tax clarity",
+    "CTA that does not restate the commitment",
+    "Hiding fees until the last step",
+    "Treating Pricing Table as decoration without selected state"
+  ],
+  "relatedPatterns": [
+    "paywall",
+    "checkout-summary",
+    "cart-drawer"
+  ]
+}

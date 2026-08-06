@@ -1,0 +1,33 @@
+{
+  "id": "filters",
+  "title": "Filters",
+  "category": "data",
+  "tier": "free",
+  "structure": [
+    "filters-root",
+    "filters-toolbar",
+    "filters-content-grid",
+    "filters-empty",
+    "filters-loading"
+  ],
+  "requiredStates": [
+    "default",
+    "loading",
+    "empty",
+    "error",
+    "filtered",
+    "sorted"
+  ],
+  "codeExample": "```tsx\nexport function FiltersExample() {\n  // Minimal Filters pattern\n  return (\n    <section aria-label=\"Filters\" data-pattern=\"filters\">\n      <header>\n        <h2>Filters</h2>\n      </header>\n      <div className=\"pattern-body\">\n        {/* Implement required states: default + interactive variants */}\n      </div>\n    </section>\n  );\n}\n```",
+  "mistakes": [
+    "Tables without empty or loading states",
+    "Filters that reset scroll position unexpectedly",
+    "Sort with no affordance of current order",
+    "Treating Filters as decoration without loading state"
+  ],
+  "relatedPatterns": [
+    "data-table",
+    "leaderboard",
+    "stats-cards"
+  ]
+}

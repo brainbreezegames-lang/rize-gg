@@ -1,0 +1,32 @@
+{
+  "id": "floating-action-button",
+  "title": "Floating Action Button",
+  "category": "mobile-patterns",
+  "tier": "pro",
+  "structure": [
+    "floating-action-button-root",
+    "floating-action-button-gesture-target",
+    "floating-action-button-sheet-or-overlay",
+    "floating-action-button-safe-area",
+    "floating-action-button-haptics-cue"
+  ],
+  "requiredStates": [
+    "default",
+    "dragging",
+    "refreshing",
+    "offline",
+    "permission-denied"
+  ],
+  "codeExample": "```tsx\nexport function FloatingActionButtonExample() {\n  // Minimal Floating Action Button pattern\n  return (\n    <section aria-label=\"Floating Action Button\" data-pattern=\"floating-action-button\">\n      <header>\n        <h2>Floating Action Button</h2>\n      </header>\n      <div className=\"pattern-body\">\n        {/* Implement required states: default + interactive variants */}\n      </div>\n    </section>\n  );\n}\n```",
+  "mistakes": [
+    "Gesture-only actions with no button fallback",
+    "Ignoring safe-area insets",
+    "Pull-to-refresh fighting nested scroll",
+    "Treating Floating Action Button as decoration without dragging state"
+  ],
+  "relatedPatterns": [
+    "infinite-scroll",
+    "permissions-prompt",
+    "offline-state"
+  ]
+}

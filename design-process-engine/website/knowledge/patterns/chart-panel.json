@@ -1,0 +1,33 @@
+{
+  "id": "chart-panel",
+  "title": "Chart Panel",
+  "category": "data",
+  "tier": "pro",
+  "structure": [
+    "chart-panel-root",
+    "chart-panel-toolbar",
+    "chart-panel-content-grid",
+    "chart-panel-empty",
+    "chart-panel-loading"
+  ],
+  "requiredStates": [
+    "default",
+    "loading",
+    "empty",
+    "error",
+    "filtered",
+    "sorted"
+  ],
+  "codeExample": "```tsx\nexport function ChartPanelExample() {\n  // Minimal Chart Panel pattern\n  return (\n    <section aria-label=\"Chart Panel\" data-pattern=\"chart-panel\">\n      <header>\n        <h2>Chart Panel</h2>\n      </header>\n      <div className=\"pattern-body\">\n        {/* Implement required states: default + interactive variants */}\n      </div>\n    </section>\n  );\n}\n```",
+  "mistakes": [
+    "Tables without empty or loading states",
+    "Filters that reset scroll position unexpectedly",
+    "Sort with no affordance of current order",
+    "Treating Chart Panel as decoration without loading state"
+  ],
+  "relatedPatterns": [
+    "filters",
+    "data-table",
+    "leaderboard"
+  ]
+}
