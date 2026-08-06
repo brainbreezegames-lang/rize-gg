@@ -40,6 +40,7 @@ interface GameState {
   missorts: number;
   playerPos: [number, number, number];
   playerFacing: number;
+  moveTarget: [number, number] | null;
   jumpUntil: number;
   servantBusy: boolean;
   heartAwakened: boolean;
@@ -49,6 +50,7 @@ interface GameState {
   setPhase: (p: GamePhase) => void;
   tick: (dt: number) => void;
   setPlayerPos: (pos: [number, number, number], facing: number) => void;
+  setMoveTarget: (t: [number, number] | null) => void;
   tryPickup: (itemId: string) => boolean;
   pickupNearest: (pos: [number, number, number], radius?: number) => boolean;
   selectInventory: (index: number) => void;
@@ -97,6 +99,7 @@ export const useGameStore = create<GameState>((set, get) => ({
   missorts: 0,
   playerPos: [0, 0, 3],
   playerFacing: Math.PI,
+  moveTarget: null,
   jumpUntil: 0,
   servantBusy: false,
   heartAwakened: false,
@@ -123,6 +126,7 @@ export const useGameStore = create<GameState>((set, get) => ({
       missorts: 0,
       playerPos: [0, 0, 3],
       playerFacing: Math.PI,
+      moveTarget: null,
       jumpUntil: 0,
       servantBusy: false,
       heartAwakened: false,
@@ -140,6 +144,7 @@ export const useGameStore = create<GameState>((set, get) => ({
   },
 
   setPlayerPos: (pos, facing) => set({ playerPos: pos, playerFacing: facing }),
+  setMoveTarget: (t) => set({ moveTarget: t }),
 
   tryPickup: (itemId) => {
     const s = get();

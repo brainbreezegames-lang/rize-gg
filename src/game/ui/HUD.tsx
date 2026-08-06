@@ -260,7 +260,7 @@ function InventoryBar() {
           })}
         </div>
         <p className="mt-1.5 text-center text-[10px] text-[#6a5528]">
-          Click a shelf pad or press F near it · [ ] cycle selection · E pickup
+          Click floor to walk · Click shelf / F to place · [ ] cycle · E pickup
         </p>
       </div>
     </div>
@@ -384,7 +384,7 @@ function Toasts() {
 function ControlsHint() {
   return (
     <div className="absolute bottom-36 left-4 hidden text-[10px] text-[#e8d5a8]/70 md:block">
-      WASD move · E / click pickup · Click shelf to place · 1–5 spells
+      WASD or click floor to move · E / click pickup · Click shelf to place · 1–5 spells
     </div>
   );
 }

@@ -3,7 +3,7 @@
 import { useRef } from "react";
 import * as THREE from "three";
 import { useFrame } from "@react-three/fiber";
-import { Text } from "@react-three/drei";
+import { Html } from "@react-three/drei";
 import type { ShelfDef } from "../types";
 import { VoxelItem } from "./VoxelItem";
 import type { GameItem } from "../types";
@@ -64,16 +64,20 @@ export function Shelf({
           emissiveIntensity={0.05}
         />
       </mesh>
-      <Text
-        position={[0, 3.05, 0.28]}
-        fontSize={0.22}
-        color="#1a1208"
-        anchorX="center"
-        anchorY="middle"
-        font={undefined}
-      >
-        {`${SHELF_NUM[shelf.id]}. ${shelf.name}`}
-      </Text>
+      <Html position={[0, 3.05, 0.5]} center distanceFactor={10} style={{ pointerEvents: "none" }}>
+        <div
+          style={{
+            fontFamily: "Oxanium, sans-serif",
+            fontWeight: 700,
+            fontSize: 14,
+            color: "#1a1208",
+            whiteSpace: "nowrap",
+            textShadow: "0 1px 0 rgba(255,255,255,0.35)",
+          }}
+        >
+          {`${SHELF_NUM[shelf.id]}. ${shelf.name}`}
+        </div>
+      </Html>
 
       {/* Slot silhouettes + placed items */}
       {Array.from({ length: shelf.slots }).map((_, slot) => {

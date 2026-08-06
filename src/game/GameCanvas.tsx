@@ -7,7 +7,7 @@ import { DungeonHeartCrystal } from "./meshes/DungeonHeartCrystal";
 import { Shelf } from "./meshes/Shelf";
 import { PlayerController } from "./meshes/Player";
 import { FloorItems } from "./meshes/FloorItems";
-import { SHELVES } from "./constants";
+import { SHELVES, ROOM_RADIUS } from "./constants";
 import { useGameStore } from "./store";
 import { sfx } from "./audio";
 
@@ -105,15 +105,46 @@ export function GameCanvas() {
     <Canvas
       shadows
       dpr={[1, 1.75]}
-      camera={{ position: [0, 11, 14], fov: 42, near: 0.1, far: 80 }}
+      camera={{ position: [2.5, 12, 15.5], fov: 40, near: 0.1, far: 80 }}
       gl={{ antialias: true, toneMapping: 3 }}
       style={{ width: "100%", height: "100%", background: "#1a1510" }}
+      tabIndex={0}
+      onCreated={({ gl }) => {
+        gl.domElement.tabIndex = 0;
+        gl.domElement.style.outline = "none";
+        gl.domElement.focus();
+      }}
       onPointerMissed={() => {
         document.body.style.cursor = "default";
+      }}
+      onPointerDown={() => {
+        // Keep keyboard focus on canvas
+        const canvas = document.querySelector("canvas");
+        canvas?.focus();
       }}
     >
       <fog attach="fog" args={["#1a1510", 18, 36]} />
       <SceneContents />
+      <FloorClickPlane />
     </Canvas>
+  );
+}
+
+function FloorClickPlane() {
+  const setMoveTarget = useGameStore((s) => s.setMoveTarget);
+  const phase = useGameStore((s) => s.phase);
+  if (phase !== "playing") return null;
+  return (
+    <mesh
+      rotation={[-Math.PI / 2, 0, 0]}
+      position={[0, 0.05, 0]}
+      onClick={(e) => {
+        e.stopPropagation();
+        setMoveTarget([e.point.x, e.point.z]);
+      }}
+    >
+      <circleGeometry args={[ROOM_RADIUS - 0.5, 48]} />
+      <meshBasicMaterial transparent opacity={0} />
+    </mesh>
   );
 }
