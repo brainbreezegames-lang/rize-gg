@@ -293,11 +293,14 @@ export function KitchenEnvironment() {
         intensity={0.35}
         color={PALETTE.moon}
       />
-      {/* Room fill lamps */}
-      <pointLight position={[0, 3.2, 0]} color="#FFCC88" intensity={2.2} distance={14} decay={2} />
-      <pointLight position={[-2, 2.5, -3]} color="#FFAA66" intensity={1.6} distance={10} decay={2} />
-      <pointLight position={[3, 2.5, -3]} color="#FFAA66" intensity={1.6} distance={10} decay={2} />
-      <pointLight position={[0, 2.5, 4]} color="#FFBB77" intensity={1.4} distance={10} decay={2} />
+      {/* Room fill lamps — cover cupboard walls so navigation stays readable */}
+      <pointLight position={[0, 3.2, 0]} color="#FFCC88" intensity={2.4} distance={16} decay={2} />
+      <pointLight position={[-2, 2.5, -3]} color="#FFAA66" intensity={2.0} distance={12} decay={2} />
+      <pointLight position={[3, 2.5, -3]} color="#FFAA66" intensity={2.0} distance={12} decay={2} />
+      <pointLight position={[0, 2.5, 4]} color="#FFBB77" intensity={1.8} distance={12} decay={2} />
+      <pointLight position={[-2, 2.8, 5]} color="#FFCC99" intensity={1.6} distance={10} decay={2} />
+      <pointLight position={[5, 2.6, -1]} color="#FFCC99" intensity={1.5} distance={10} decay={2} />
+      <pointLight position={[-6, 2.4, 0]} color="#CCD8FF" intensity={1.2} distance={10} decay={2} />
 
       {/* Soft night fog — keep depth without burying the room */}
       <fog attach="fog" args={["#1A1520", 16, 36]} />

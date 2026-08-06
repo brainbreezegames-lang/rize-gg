@@ -21,6 +21,31 @@ const bounds = {
   maxZ: 6.2,
 };
 
+/** Simple AABB obstacles so you can't walk inside cupboards / tables */
+const OBSTACLES: { minX: number; maxX: number; minZ: number; maxZ: number }[] =
+  CUPBOARDS.map((c) => {
+    const hw = c.size[0] / 2 + 0.25;
+    const hd = c.size[2] / 2 + 0.45;
+    // axis-aligned approx (good enough for navigation)
+    return {
+      minX: c.position[0] - hw,
+      maxX: c.position[0] + hw,
+      minZ: c.position[2] - hd,
+      maxZ: c.position[2] + hd,
+    };
+  }).concat([
+    { minX: -3.9, maxX: 3.9, minZ: 0.7, maxZ: 2.3 }, // feast table
+    { minX: -7.2, maxX: -5.8, minZ: -3.9, maxZ: -3.1 }, // side table
+    { minX: 6.8, maxX: 8.2, minZ: -3.4, maxZ: -0.6 }, // pantry
+  ]);
+
+function collides(x: number, z: number): boolean {
+  for (const o of OBSTACLES) {
+    if (x > o.minX && x < o.maxX && z > o.minZ && z < o.maxZ) return true;
+  }
+  return false;
+}
+
 export function PlayerController() {
   const { camera, gl, scene } = useThree();
   const keys = useRef<Record<string, boolean>>({});
@@ -66,6 +91,11 @@ export function PlayerController() {
       }
 
       if (e.code === "KeyR") store.rotateSelected();
+      if (e.code === "Home" || e.code === "KeyH") {
+        camera.position.set(0.2, PLAYER_HEIGHT, 2.8);
+        euler.current.set(-0.15, 0.15, 0);
+        store.setMessage("Returned to the hearth.");
+      }
       if (e.code === "KeyQ") {
         const heldId = store.inventory[store.selectedSlot];
         if (heldId) {
@@ -313,16 +343,26 @@ export function PlayerController() {
     if (wish.lengthSq() > 0) wish.normalize().multiplyScalar(MOVE_SPEED);
 
     velocity.current.lerp(wish, 1 - Math.pow(0.001, dt));
-    camera.position.x += velocity.current.x * dt;
-    camera.position.z += velocity.current.z * dt;
-    camera.position.x = Math.max(
-      bounds.minX,
-      Math.min(bounds.maxX, camera.position.x)
-    );
-    camera.position.z = Math.max(
-      bounds.minZ,
-      Math.min(bounds.maxZ, camera.position.z)
-    );
+    const nextX = camera.position.x + velocity.current.x * dt;
+    const nextZ = camera.position.z + velocity.current.z * dt;
+    const clampedX = Math.max(bounds.minX, Math.min(bounds.maxX, nextX));
+    const clampedZ = Math.max(bounds.minZ, Math.min(bounds.maxZ, nextZ));
+    // Slide along obstacles on each axis
+    if (!collides(clampedX, camera.position.z)) {
+      camera.position.x = clampedX;
+    } else {
+      velocity.current.x = 0;
+    }
+    if (!collides(camera.position.x, clampedZ)) {
+      camera.position.z = clampedZ;
+    } else {
+      velocity.current.z = 0;
+    }
+    // Soft unstick if somehow inside
+    if (collides(camera.position.x, camera.position.z)) {
+      camera.position.x = 0.2;
+      camera.position.z = 2.8;
+    }
     camera.position.y = PLAYER_HEIGHT;
 
     // Hand follows camera
