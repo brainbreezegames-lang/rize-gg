@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Pricing — Design Process Engine</title>
+    <meta
+      name="description"
+      content="Free process engine and starter guides, or Pro with full playbooks, review depth, and monthly slop updates."
+    />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600&family=Syne:wght@600;700;800&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="./styles.css" />
+  </head>
+  <body>
+    <div class="atmosphere" aria-hidden="true">
+      <div class="atmosphere__grid"></div>
+    </div>
+
+    <header class="site-header">
+      <div class="site-header__inner">
+        <a class="brand" href="./index.html">
+          <span class="brand__mark">◆</span>
+          <span class="brand__name">Design Process Engine</span>
+        </a>
+        <button
+          class="nav-toggle"
+          type="button"
+          data-nav-toggle
+          aria-expanded="false"
+          aria-controls="site-nav"
+        >
+          <span></span>
+          <span class="sr-only">Menu</span>
+        </button>
+        <nav class="nav" id="site-nav" data-nav>
+          <a href="./docs.html">Docs</a>
+          <a href="./install.html">Install</a>
+          <a href="./pricing.html" aria-current="page">Pricing</a>
+          <a href="./install.html">Get started</a>
+        </nav>
+      </div>
+    </header>
+
+    <main class="page shell">
+      <p class="section-label" data-reveal>Pricing</p>
+      <h1 class="section-title" data-reveal>Free to enforce. Pro to know.</h1>
+      <p class="section-lede" data-reveal>
+        The process engine is the product. Knowledge is optional fuel — starter
+        on Free, full depth on Pro.
+      </p>
+
+      <div class="pricing-grid" data-reveal>
+        <article class="plan">
+          <div>
+            <h2 class="plan__name">Free</h2>
+            <p class="plan__price">$0 <span>/ forever</span></p>
+            <p class="plan__desc">
+              Process engine + starter guides. Enough to prove enforcement beats
+              a design.md.
+            </p>
+          </div>
+          <ul>
+            <li>Full MCP process: start_task → plan → review</li>
+            <li>Companion skill for agent default behavior</li>
+            <li>Create / Edit / Recreate mode contracts</li>
+            <li>Starter playbooks &amp; pattern guides (free tier)</li>
+            <li>Local session state — your machine, your contract</li>
+          </ul>
+          <a class="btn btn--ghost" href="./install.html">Install free</a>
+        </article>
+
+        <article class="plan plan--featured">
+          <div>
+            <h2 class="plan__name">Pro</h2>
+            <p class="plan__price">$19 <span>/ month</span></p>
+            <p class="plan__desc">
+              Full playbooks, deeper review, and monthly slop-signature updates
+              from the Factory.
+            </p>
+          </div>
+          <ul>
+            <li>Everything in Free</li>
+            <li>Full playbook library (product × flow)</li>
+            <li>Pattern guides with required states &amp; mistakes</li>
+            <li>Review depth: drift, brand bans, slop signatures</li>
+            <li>Monthly slop updates from captured journeys</li>
+            <li>final_check before ship</li>
+          </ul>
+          <a class="btn btn--primary" href="./install.html">Start Pro install</a>
+        </article>
+      </div>
+    </main>
+
+    <footer class="site-footer">
+      <div class="site-footer__inner">
+        <span>Design Process Engine · MCP + skill</span>
+        <a href="./docs.html">Pipeline docs</a>
+      </div>
+    </footer>
+
+    <script src="./main.js" defer></script>
+  </body>
+</html>

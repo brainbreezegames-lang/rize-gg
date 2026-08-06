@@ -1,0 +1,331 @@
+[
+  {
+    "id": "revolut-onboarding-2026-03",
+    "app": {
+      "name": "Revolut",
+      "productType": "fintech",
+      "platform": "ios",
+      "url": "https://www.revolut.com"
+    },
+    "flowType": "fintech-onboarding",
+    "flow": "onboarding",
+    "capturedAt": "2026-03-12T14:22:00.000Z",
+    "capturer": "operator-a",
+    "notes": "Progressive KYC; soft verify before funding.",
+    "steps": [
+      {
+        "index": 0,
+        "name": "welcome-value-prop",
+        "screen": "Welcome",
+        "intent": "Communicate value before account creation",
+        "screenshotRef": "fixtures/shots/revolut/00-welcome.png",
+        "states": [{ "name": "default" }],
+        "patterns": ["hero", "cta-band"],
+        "copySignals": ["Get started in minutes"]
+      },
+      {
+        "index": 1,
+        "name": "account-type-select",
+        "screen": "Personal or Business",
+        "intent": "Route into correct KYC track",
+        "screenshotRef": "fixtures/shots/revolut/01-account-type.png",
+        "states": [{ "name": "default" }, { "name": "selected" }],
+        "patterns": ["wizard"]
+      },
+      {
+        "index": 2,
+        "name": "email-phone-verify",
+        "screen": "Verify phone",
+        "intent": "Prove ownership of contact channel",
+        "screenshotRef": "fixtures/shots/revolut/02-otp.png",
+        "states": [
+          { "name": "default" },
+          { "name": "pending" },
+          { "name": "error", "notes": "Wrong code" },
+          { "name": "locked", "notes": "Too many attempts" }
+        ],
+        "patterns": ["otp-input", "phone-verify"]
+      },
+      {
+        "index": 3,
+        "name": "kyc-document-upload",
+        "screen": "Scan ID",
+        "intent": "Capture government ID",
+        "screenshotRef": "fixtures/shots/revolut/03-kyc.png",
+        "states": [
+          { "name": "default" },
+          { "name": "pending" },
+          { "name": "error", "notes": "Blur / wrong side" },
+          { "name": "success" }
+        ],
+        "patterns": ["kyc-upload", "file-upload"]
+      },
+      {
+        "index": 4,
+        "name": "soft-credit-or-risk-check",
+        "screen": "Checking eligibility",
+        "intent": "Soft risk screen without hard pull framing",
+        "screenshotRef": "fixtures/shots/revolut/04-risk.png",
+        "states": [{ "name": "pending" }, { "name": "success" }, { "name": "manual-review" }],
+        "patterns": ["spinner", "skeleton"]
+      },
+      {
+        "index": 5,
+        "name": "link-funding-source",
+        "screen": "Add money",
+        "intent": "Connect card or bank",
+        "screenshotRef": "fixtures/shots/revolut/05-funding.png",
+        "states": [{ "name": "default" }, { "name": "error", "notes": "Card declined" }],
+        "patterns": ["billing-portal"]
+      },
+      {
+        "index": 6,
+        "name": "first-deposit",
+        "screen": "First top-up",
+        "intent": "Fund account for aha",
+        "screenshotRef": "fixtures/shots/revolut/06-deposit.png",
+        "states": [{ "name": "default" }, { "name": "success" }],
+        "patterns": ["receipt"]
+      },
+      {
+        "index": 7,
+        "name": "home-dashboard-aha",
+        "screen": "Home",
+        "intent": "First useful balance view",
+        "screenshotRef": "fixtures/shots/revolut/07-home.png",
+        "states": [{ "name": "default" }, { "name": "empty" }],
+        "patterns": ["stats-cards", "bottom-tabs"]
+      }
+    ],
+    "forgottenStates": [
+      "KYC rejected with clear retry path",
+      "Document blur / wrong side resubmit",
+      "Pending manual review holding funds"
+    ],
+    "strategiesObserved": [
+      "Progressive KYC",
+      "Instant soft-verify + deferred hard KYC"
+    ],
+    "antiPatterns": [
+      "Ask for SSN/NIN before explaining why",
+      "Show a generic error on KYC failure"
+    ]
+  },
+  {
+    "id": "chime-onboarding-2026-02",
+    "app": {
+      "name": "Chime",
+      "productType": "fintech",
+      "platform": "android",
+      "url": "https://www.chime.com"
+    },
+    "flowType": "fintech-onboarding",
+    "flow": "onboarding",
+    "capturedAt": "2026-02-18T09:05:00.000Z",
+    "capturer": "operator-b",
+    "notes": "Bank-link first signal; deposit is the aha.",
+    "steps": [
+      {
+        "index": 0,
+        "name": "welcome-value-prop",
+        "screen": "Banking that works for you",
+        "intent": "Value prop + trust",
+        "screenshotRef": "fixtures/shots/chime/00-welcome.png",
+        "states": [{ "name": "default" }],
+        "patterns": ["hero", "social-proof"]
+      },
+      {
+        "index": 1,
+        "name": "email-phone-verify",
+        "screen": "Create account",
+        "intent": "Email + phone OTP",
+        "screenshotRef": "fixtures/shots/chime/01-verify.png",
+        "states": [
+          { "name": "default" },
+          { "name": "pending" },
+          { "name": "error" },
+          { "name": "expired" }
+        ],
+        "patterns": ["otp-input", "email-verify", "phone-verify"]
+      },
+      {
+        "index": 2,
+        "name": "account-type-select",
+        "screen": "How you'll use Chime",
+        "intent": "Light personalization",
+        "screenshotRef": "fixtures/shots/chime/02-type.png",
+        "states": [{ "name": "default" }],
+        "patterns": ["wizard"]
+      },
+      {
+        "index": 3,
+        "name": "link-funding-source",
+        "screen": "Link your paycheck",
+        "intent": "Direct deposit / bank link early",
+        "screenshotRef": "fixtures/shots/chime/03-link.png",
+        "states": [
+          { "name": "default" },
+          { "name": "pending" },
+          { "name": "error", "notes": "Funding source declined mid-link" }
+        ],
+        "patterns": ["billing-portal"]
+      },
+      {
+        "index": 4,
+        "name": "kyc-document-upload",
+        "screen": "Verify your identity",
+        "intent": "Hard KYC after funding intent",
+        "screenshotRef": "fixtures/shots/chime/04-kyc.png",
+        "states": [
+          { "name": "default" },
+          { "name": "error" },
+          { "name": "success" },
+          { "name": "manual-review" }
+        ],
+        "patterns": ["kyc-upload"]
+      },
+      {
+        "index": 5,
+        "name": "soft-credit-or-risk-check",
+        "screen": "Almost there",
+        "intent": "Eligibility wait state",
+        "screenshotRef": "fixtures/shots/chime/05-check.png",
+        "states": [{ "name": "pending" }, { "name": "success" }],
+        "patterns": ["spinner"]
+      },
+      {
+        "index": 6,
+        "name": "first-deposit",
+        "screen": "Get your first deposit",
+        "intent": "Activate funded account",
+        "screenshotRef": "fixtures/shots/chime/06-deposit.png",
+        "states": [{ "name": "default" }, { "name": "success" }, { "name": "empty" }],
+        "patterns": ["receipt", "empty-state"]
+      },
+      {
+        "index": 7,
+        "name": "home-dashboard-aha",
+        "screen": "Home",
+        "intent": "Spendable balance + early paycheck teaser",
+        "screenshotRef": "fixtures/shots/chime/07-home.png",
+        "states": [{ "name": "default" }],
+        "patterns": ["stats-cards", "bottom-tabs"]
+      }
+    ],
+    "forgottenStates": [
+      "Funding source declined mid-link",
+      "Region not supported after signup",
+      "Session timeout during multi-step KYC"
+    ],
+    "strategiesObserved": [
+      "Bank-link first, KYC second",
+      "Progressive KYC"
+    ],
+    "antiPatterns": [
+      "Hide fee disclosure until after deposit",
+      "Use dark patterns to force biometric consent"
+    ]
+  },
+  {
+    "id": "cashapp-onboarding-2026-01",
+    "app": {
+      "name": "Cash App",
+      "productType": "fintech",
+      "platform": "ios",
+      "url": "https://cash.app"
+    },
+    "flowType": "fintech-onboarding",
+    "flow": "onboarding",
+    "capturedAt": "2026-01-28T18:40:00.000Z",
+    "capturer": "operator-a",
+    "notes": "Invite-gated feel on some cohorts; fast path to send/receive.",
+    "steps": [
+      {
+        "index": 0,
+        "name": "welcome-value-prop",
+        "screen": "Send. Spend. Save.",
+        "intent": "Brand-forward welcome",
+        "screenshotRef": "fixtures/shots/cashapp/00-welcome.png",
+        "states": [{ "name": "default" }],
+        "patterns": ["hero"]
+      },
+      {
+        "index": 1,
+        "name": "email-phone-verify",
+        "screen": "Enter mobile number",
+        "intent": "Phone-first identity",
+        "screenshotRef": "fixtures/shots/cashapp/01-phone.png",
+        "states": [
+          { "name": "default" },
+          { "name": "pending" },
+          { "name": "error" },
+          { "name": "success" }
+        ],
+        "patterns": ["otp-input", "phone-verify"]
+      },
+      {
+        "index": 2,
+        "name": "account-type-select",
+        "screen": "$cashtag",
+        "intent": "Claim handle as identity",
+        "screenshotRef": "fixtures/shots/cashapp/02-cashtag.png",
+        "states": [{ "name": "default" }, { "name": "error", "notes": "Taken" }],
+        "patterns": ["wizard"]
+      },
+      {
+        "index": 3,
+        "name": "kyc-document-upload",
+        "screen": "Verify to unlock limits",
+        "intent": "Deferred hard KYC with clear caps",
+        "screenshotRef": "fixtures/shots/cashapp/03-kyc.png",
+        "states": [
+          { "name": "default" },
+          { "name": "pending" },
+          { "name": "error" },
+          { "name": "success" }
+        ],
+        "patterns": ["kyc-upload", "paywall"]
+      },
+      {
+        "index": 4,
+        "name": "link-funding-source",
+        "screen": "Add debit card",
+        "intent": "Enable send/receive",
+        "screenshotRef": "fixtures/shots/cashapp/04-card.png",
+        "states": [{ "name": "default" }, { "name": "error" }, { "name": "success" }],
+        "patterns": ["billing-portal"]
+      },
+      {
+        "index": 5,
+        "name": "first-deposit",
+        "screen": "Add cash",
+        "intent": "Small first fund",
+        "screenshotRef": "fixtures/shots/cashapp/05-add-cash.png",
+        "states": [{ "name": "default" }, { "name": "success" }],
+        "patterns": ["receipt"]
+      },
+      {
+        "index": 6,
+        "name": "home-dashboard-aha",
+        "screen": "Activity",
+        "intent": "Send to contact as aha",
+        "screenshotRef": "fixtures/shots/cashapp/06-home.png",
+        "states": [{ "name": "default" }, { "name": "empty" }],
+        "patterns": ["activity-feed", "bottom-tabs", "empty-state"]
+      }
+    ],
+    "forgottenStates": [
+      "KYC rejected with clear retry path",
+      "Pending manual review holding funds",
+      "Region not supported after signup"
+    ],
+    "strategiesObserved": [
+      "Instant soft-verify + deferred hard KYC",
+      "Invite-code gated waitlist"
+    ],
+    "antiPatterns": [
+      "Skip accessibility labels on document camera UI",
+      "Show a generic error on KYC failure"
+    ]
+  }
+]

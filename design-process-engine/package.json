@@ -12,7 +12,11 @@
     "start": "node dist/index.js",
     "dev": "tsx src/index.ts",
     "test": "vitest run",
-    "test:watch": "vitest"
+    "test:watch": "vitest",
+    "factory:capture": "node factory/scripts/run-pipeline.mjs capture --input=factory/fixtures/sample-journeys.json",
+    "factory:draft": "node factory/scripts/run-pipeline.mjs draft --flow=fintech-onboarding",
+    "factory:status": "node factory/scripts/run-pipeline.mjs status",
+    "knowledge:generate": "node scripts/generate-knowledge.mjs"
   },
   "keywords": [
     "mcp",

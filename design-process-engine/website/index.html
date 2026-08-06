@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Design Process Engine</title>
+    <meta
+      name="description"
+      content="A strict senior design lead, rented into whatever AI coding agent you already run."
+    />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600&family=Syne:wght@600;700;800&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="./styles.css" />
+  </head>
+  <body>
+    <div class="atmosphere" aria-hidden="true">
+      <div class="atmosphere__grid"></div>
+    </div>
+
+    <header class="site-header">
+      <div class="site-header__inner">
+        <a class="brand" href="./index.html" aria-label="Design Process Engine home">
+          <span class="brand__mark">◆</span>
+          <span class="brand__name">Design Process Engine</span>
+        </a>
+        <button
+          class="nav-toggle"
+          type="button"
+          data-nav-toggle
+          aria-expanded="false"
+          aria-controls="site-nav"
+        >
+          <span></span>
+          <span class="sr-only">Menu</span>
+        </button>
+        <nav class="nav" id="site-nav" data-nav>
+          <a href="./docs.html">Docs</a>
+          <a href="./install.html">Install</a>
+          <a href="./pricing.html">Pricing</a>
+          <a href="./install.html">Get started</a>
+        </nav>
+      </div>
+    </header>
+
+    <main>
+      <section class="hero shell">
+        <h1 class="hero__brand">
+          Design Process<br />
+          <span class="accent-word">Engine</span>
+        </h1>
+        <p class="hero__headline">
+          Enforcement for AI design work — not another pile of references.
+        </p>
+        <p class="hero__lede">
+          Classify, plan, build in stages, review every stage. The approved plan
+          is the contract.
+        </p>
+        <div class="cta-row">
+          <a class="btn btn--primary" href="./install.html">Install free</a>
+          <a class="btn btn--ghost" href="./pricing.html">See pricing</a>
+        </div>
+        <div class="hero-rule" aria-hidden="true"></div>
+      </section>
+    </main>
+
+    <footer class="site-footer">
+      <div class="site-footer__inner">
+        <span>Design Process Engine · MCP + skill</span>
+        <a href="./docs.html">Pipeline docs</a>
+      </div>
+    </footer>
+
+    <script src="./main.js" defer></script>
+  </body>
+</html>
