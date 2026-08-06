@@ -1,7 +1,6 @@
 "use client";
 
 import { create } from "zustand";
-import { persist } from "zustand/middleware";
 import type {
   AbilityId,
   Achievement,
@@ -131,9 +130,7 @@ function pushToast(get: () => GameState, set: (p: Partial<GameState>) => void, t
   }, 4200);
 }
 
-export const useGameStore = create<GameState>()(
-  persist(
-    (set, get) => ({
+export const useGameStore = create<GameState>()((set, get) => ({
       phase: "title",
       mode: "normal",
       dishes: [],
@@ -504,13 +501,7 @@ export const useGameStore = create<GameState>()(
       dismissToast: (id) => set({ toasts: get().toasts.filter((t) => t.id !== id) }),
       advanceTutorial: () => set({ tutorialStep: Math.min(3, get().tutorialStep + 1) }),
       clearWashFx: () => set({ washFx: null }),
-    }),
-    {
-      name: "witchs-sink-save",
-      partialize: (s) => ({ achievements: s.achievements }),
-    }
-  )
-);
+}));
 
 function unlockAchievement(
   get: () => GameState,

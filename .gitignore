@@ -6,6 +6,7 @@
 .DS_Store
 .env*
 # env files (can opt-in for committing if needed)
+game-web/dist/
 # misc
 /.next/
 next-env.d.ts

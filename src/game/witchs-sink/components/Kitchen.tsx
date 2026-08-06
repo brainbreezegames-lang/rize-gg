@@ -7,36 +7,35 @@ import { boxVoxels, PALETTE, VoxelMesh, type Voxel } from "../utils/voxels";
 
 function buildRoom(): Voxel[] {
   const v: Voxel[] = [];
-  // Floor — warmer readable stone
-  for (let x = -40; x <= 40; x++) {
-    for (let z = -30; z <= 30; z++) {
-      const checker = (x + z) % 2 === 0 ? "#2e343c" : "#3a424c";
+  // Floor (every other cell — still reads as stone checker)
+  for (let x = -40; x <= 40; x += 2) {
+    for (let z = -30; z <= 30; z += 2) {
+      const checker = ((x + z) / 2) % 2 === 0 ? "#2e343c" : "#3a424c";
       v.push({ x, y: 0, z, color: checker });
     }
   }
   // Back wall
-  for (let x = -40; x <= 40; x++) {
-    for (let y = 1; y <= 28; y++) {
+  for (let x = -40; x <= 40; x += 1) {
+    for (let y = 1; y <= 28; y += 1) {
       const c = (x + y) % 3 === 0 ? "#4a5560" : "#3a424c";
       if (x >= -28 && x <= -16 && y >= 10 && y <= 22) continue;
       v.push({ x, y, z: -28, color: c });
     }
   }
   // Ceiling beams
-  for (let x = -38; x <= 38; x++) {
+  for (let x = -38; x <= 38; x += 2) {
     v.push({ x, y: 28, z: -20, color: PALETTE.woodDark });
     v.push({ x, y: 28, z: -8, color: PALETTE.woodDark });
     v.push({ x, y: 28, z: 4, color: PALETTE.woodDark });
   }
-  // Left wall
-  for (let z = -28; z <= 28; z++) {
-    for (let y = 1; y <= 28; y++) {
+  // Left / right walls (thinned)
+  for (let z = -28; z <= 28; z += 1) {
+    for (let y = 1; y <= 28; y += 1) {
       v.push({ x: -40, y, z, color: (z + y) % 2 === 0 ? "#3a424c" : "#2a3038" });
     }
   }
-  // Right wall
-  for (let z = -28; z <= 16; z++) {
-    for (let y = 1; y <= 28; y++) {
+  for (let z = -28; z <= 16; z += 1) {
+    for (let y = 1; y <= 28; y += 1) {
       v.push({ x: 40, y, z, color: "#3a424c" });
     }
   }
@@ -310,7 +309,6 @@ export function KitchenEnvironment({
 }: {
   effects: string[];
 }) {
-  const room = useMemo(() => buildRoom(), []);
   const windowFrame = useMemo(() => buildWindowFrame(), []);
   const sink = useMemo(() => buildSinkBody(), []);
   const furniture = useMemo(() => buildFurniture(), []);
@@ -318,19 +316,40 @@ export function KitchenEnvironment({
 
   return (
     <group>
-      <VoxelMesh voxels={room} size={size} castShadow={false} />
+      {/* Fast room shells (avoids huge voxel merges that stall WebGL on host) */}
+      <mesh rotation={[-Math.PI / 2, 0, 0]} position={[0, 0, 0]} receiveShadow>
+        <planeGeometry args={[10, 8]} />
+        <meshStandardMaterial color="#2e343c" flatShading roughness={0.95} />
+      </mesh>
+      <mesh position={[0, 1.7, -3.36]} receiveShadow>
+        <boxGeometry args={[10, 3.4, 0.2]} />
+        <meshStandardMaterial color="#3a424c" flatShading />
+      </mesh>
+      <mesh position={[-4.8, 1.7, 0]} receiveShadow>
+        <boxGeometry args={[0.2, 3.4, 8]} />
+        <meshStandardMaterial color="#2a3038" flatShading />
+      </mesh>
+      <mesh position={[4.8, 1.7, -0.8]} receiveShadow>
+        <boxGeometry args={[0.2, 3.4, 5]} />
+        <meshStandardMaterial color="#3a424c" flatShading />
+      </mesh>
+      {[-2.4, -1, 0.5].map((z) => (
+        <mesh key={z} position={[0, 3.3, z]}>
+          <boxGeometry args={[9.5, 0.15, 0.15]} />
+          <meshStandardMaterial color={PALETTE.woodDark} flatShading />
+        </mesh>
+      ))}
+
       <VoxelMesh voxels={windowFrame} size={size} />
       <VoxelMesh voxels={sink} size={size} position={[0, 0, 0]} />
       <VoxelMesh voxels={furniture} size={size} />
       <NightSky />
       <FloatingSparkles />
 
-      {/* Basin waters — world positions matching voxel sink */}
       <MagicalWater position={[-0.96, 1.05, -0.24]} color="#6B2FD4" emissive="#9B59F5" />
       <MagicalWater position={[0, 1.05, -0.24]} color="#FF8C22" emissive="#FFAA33" />
       <MagicalWater position={[0.96, 1.05, -0.24]} color="#2ECCF0" emissive="#5ED4FF" />
 
-      {/* Basin icon markers */}
       <BasinSign position={[-0.96, 1.55, -0.75]} color="#9B59F5" kind="moon" label="Moonwater" />
       <BasinSign position={[0, 1.55, -0.75]} color="#FF8C22" kind="sun" label="Sunfire" />
       <BasinSign position={[0.96, 1.55, -0.75]} color="#2ECCF0" kind="drop" label="Still" />
@@ -339,7 +358,6 @@ export function KitchenEnvironment({
       <Candle position={[3.5, 2.1, -1.15]} />
       <Candle position={[-3.8, 1.5, 1.1]} />
 
-      {/* Purple rug */}
       <mesh position={[2.6, 0.13, 1.2]} rotation={[-Math.PI / 2, 0, 0]} receiveShadow>
         <planeGeometry args={[1.4, 1]} />
         <meshStandardMaterial color={PALETTE.purpleRug} flatShading />
@@ -349,7 +367,6 @@ export function KitchenEnvironment({
         <meshStandardMaterial color={PALETTE.gold} emissive={PALETTE.gold} emissiveIntensity={0.3} />
       </mesh>
 
-      {/* Moonlight shaft when unlocked */}
       {effects.includes("moonlight") && (
         <mesh position={[-2.4, 1.8, -1.5]} rotation={[0.4, 0.2, 0]}>
           <planeGeometry args={[1.2, 2.5]} />
@@ -357,12 +374,10 @@ export function KitchenEnvironment({
         </mesh>
       )}
 
-      {/* Hearth glow */}
       {effects.includes("hearth") && (
         <pointLight position={[-3.5, 1.2, -2]} color="#6688ff" intensity={2} distance={5} />
       )}
 
-      {/* Ambient kitchen fill — brighter for readable voxels */}
       <ambientLight intensity={0.55} color="#3a2a48" />
       <hemisphereLight args={["#6a5080", "#1a1018", 0.7]} />
       <directionalLight
@@ -373,7 +388,6 @@ export function KitchenEnvironment({
         shadow-mapSize-width={1024}
         shadow-mapSize-height={1024}
       />
-      {/* Moon light through window */}
       <spotLight
         position={[-2.5, 2.8, -1.5]}
         angle={0.55}
@@ -382,7 +396,6 @@ export function KitchenEnvironment({
         color="#c8b8ff"
         castShadow
       />
-      {/* Fill from front so dishes read clearly */}
       <pointLight position={[0, 3, 3]} color="#ffcc99" intensity={0.9} distance={12} />
       <pointLight position={[-2, 2, 2]} color="#8866aa" intensity={0.5} distance={8} />
     </group>

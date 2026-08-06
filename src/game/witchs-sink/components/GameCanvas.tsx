@@ -27,17 +27,14 @@ function Scene() {
     <>
       <color attach="background" args={["#140a1c"]} />
       <fog attach="fog" args={["#1a0e24", 10, 28]} />
+      {/* Always show the kitchen — menu floats over it */}
       <KitchenEnvironment effects={effects} />
-      {phase !== "title" && (
-        <>
-          <DishField />
-          <InteractiveSink />
-          <ServingBoard3D />
-          <RecipeScroll3D />
-          <DrainSprite />
-          <WashParticles />
-        </>
-      )}
+      <DishField />
+      <InteractiveSink />
+      <ServingBoard3D />
+      <RecipeScroll3D />
+      <DrainSprite />
+      <WashParticles />
       <GameTicker />
       <OrbitControls
         enablePan={false}
@@ -48,6 +45,7 @@ function Scene() {
         target={[0, 1, 0]}
         enableDamping
         dampingFactor={0.08}
+        enabled={phase !== "title"}
       />
     </>
   );

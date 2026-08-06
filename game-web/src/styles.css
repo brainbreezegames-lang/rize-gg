@@ -1,0 +1,8 @@
+@import "tailwindcss";
+@source "../../src/game/**/*.{ts,tsx}";
+@source "./App.tsx";
+
+/* Minimal theme so UI colors exist even without full design tokens */
+@theme {
+  --font-sans: "Oxanium", system-ui, sans-serif;
+}

@@ -107,8 +107,8 @@ export function generateDishes(seed = 42): DishDef[] {
     });
   });
 
-  // 50 extra dishes for Spotless Spirit / practice
-  for (let i = 0; i < 50; i++) {
+  // 20 extra dishes for Spotless Spirit / practice (kept lighter for WebGL)
+  for (let i = 0; i < 20; i++) {
     const shape = SHAPES[Math.floor(rand() * SHAPES.length)];
     const material = MATERIALS[Math.floor(rand() * MATERIALS.length)];
     const grime = GRIMES[Math.floor(rand() * GRIMES.length)];

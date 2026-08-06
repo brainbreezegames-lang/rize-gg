@@ -48,7 +48,7 @@ export function TitleScreen() {
   ];
 
   return (
-    <div className="absolute inset-0 z-20 flex items-center justify-center bg-gradient-to-b from-[#0a0612]/95 via-[#12081c]/90 to-[#0a0612]/95 pointer-events-auto">
+    <div className="absolute inset-0 z-20 flex items-center justify-center bg-[#0a0612]/55 backdrop-blur-[2px] pointer-events-auto">
       <div className="max-w-3xl w-full mx-4 flex flex-col gap-6 text-center">
         <div className="flex flex-col gap-2">
           <p className="text-[#c4a574] text-sm tracking-[0.25em] uppercase">A Sudsy Sorting Spell</p>
@@ -63,6 +63,17 @@ export function TitleScreen() {
             Sort magical grime, wash in the true basin, and cook a spell with soap and order.
           </p>
         </div>
+
+        <button
+          type="button"
+          onClick={() => {
+            sfx.click();
+            startGame("normal");
+          }}
+          className="mx-auto px-10 py-4 rounded-xl bg-[#7B3FE4] hover:bg-[#9B59F5] text-white text-lg font-bold cursor-pointer shadow-[0_0_30px_rgba(123,63,228,0.5)] transition-all"
+        >
+          Enter the Kitchen
+        </button>
 
         <div className="grid gap-3 sm:grid-cols-2">
           {modes.map((m) => (

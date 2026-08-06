@@ -3,7 +3,6 @@
 import { useRef } from "react";
 import { useFrame } from "@react-three/fiber";
 import * as THREE from "three";
-import { Text } from "@react-three/drei";
 import { useGameStore } from "../store/gameStore";
 import type { BasinId } from "../types";
 import { BASIN_COLORS } from "../types";
@@ -20,7 +19,6 @@ export function InteractiveSink() {
   const washFx = useGameStore((s) => s.washFx);
   const dishes = useGameStore((s) => s.dishes);
   const held = dishes.find((d) => d.id === heldDishId);
-  const cleanReady = dishes.some((d) => d.status === "clean");
 
   return (
     <group>
@@ -34,30 +32,6 @@ export function InteractiveSink() {
           onWash={() => washInBasin(b.id)}
         />
       ))}
-      {held && (
-        <Text
-          position={[0, 2.1, 0.5]}
-          fontSize={0.12}
-          color="#e8dcc8"
-          anchorX="center"
-          outlineWidth={0.008}
-          outlineColor="#000"
-        >
-          Drop into matching basin
-        </Text>
-      )}
-      {cleanReady && !held && (
-        <Text
-          position={[2.4, 1.9, 0]}
-          fontSize={0.1}
-          color="#99F9EA"
-          anchorX="center"
-          outlineWidth={0.006}
-          outlineColor="#000"
-        >
-          Place on Serving Board →
-        </Text>
-      )}
     </group>
   );
 }
@@ -131,14 +105,15 @@ export function ServingBoard3D() {
 
   return (
     <group position={[2.5, 1.15, -0.5]}>
-      {/* Chalkboard */}
       <mesh position={[0, 0.45, -0.35]}>
         <boxGeometry args={[1.4, 1, 0.08]} />
         <meshStandardMaterial color="#1a1a14" flatShading />
       </mesh>
-      <Text position={[0, 0.95, -0.3]} fontSize={0.09} color="#e8dcc8" anchorX="center">
-        SERVING BOARD
-      </Text>
+      {/* Title bar */}
+      <mesh position={[0, 0.95, -0.3]}>
+        <boxGeometry args={[1.0, 0.12, 0.04]} />
+        <meshStandardMaterial color="#c4a574" flatShading />
+      </mesh>
       {[0, 1, 2, 3].map((i) => {
         const filled = boardSlots[i];
         const isNext = sequenceIndex % 4 === i && hasClean;
@@ -164,9 +139,6 @@ export function ServingBoard3D() {
                 flatShading
               />
             </mesh>
-            <Text position={[0, 0, 0.04]} fontSize={0.08} color="#ccc" anchorX="center" anchorY="middle">
-              {String(i + 1)}
-            </Text>
           </group>
         );
       })}
@@ -177,24 +149,7 @@ export function ServingBoard3D() {
 export function RecipeScroll3D() {
   const recipe = useGameStore((s) => s.recipe);
   const sequenceIndex = useGameStore((s) => s.sequenceIndex);
-  const window = recipe.slice(sequenceIndex, sequenceIndex + 4);
-
-  const icon = (grime: string) => {
-    if (grime === "illusion") return "☾";
-    if (grime === "elemental") return "☀";
-    return "💧";
-  };
-  const shapeIcon = (shape: string) => {
-    const map: Record<string, string> = {
-      plate: "🍽",
-      bowl: "🥣",
-      goblet: "🏆",
-      cauldron: "🍲",
-      cup: "☕",
-      spoon: "🥄",
-    };
-    return map[shape] ?? "•";
-  };
+  const windowSteps = recipe.slice(sequenceIndex, sequenceIndex + 4);
 
   return (
     <group position={[0, 2.35, -0.9]}>
@@ -206,14 +161,17 @@ export function RecipeScroll3D() {
         <boxGeometry args={[2.0, 0.55, 0.02]} />
         <meshStandardMaterial color="#e8d5b0" flatShading />
       </mesh>
-      <Text position={[0, 0.2, 0.05]} fontSize={0.08} color="#5a3a1a" anchorX="center">
-        RECIPE ORDER
-      </Text>
-      <Text position={[0, -0.02, 0.05]} fontSize={0.11} color="#3a2810" anchorX="center">
-        {window.length === 0
-          ? "✦ COMPLETE ✦"
-          : window.map((s, i) => `${shapeIcon(s.shape)}${icon(s.grime)}${i < window.length - 1 ? " → " : ""}`).join("")}
-      </Text>
+      {/* Pictogram blocks for upcoming recipe */}
+      {windowSteps.map((step, i) => {
+        const color =
+          step.grime === "illusion" ? "#9B59F5" : step.grime === "elemental" ? "#FF8C22" : "#2ECCF0";
+        return (
+          <mesh key={`${step.dishId}-${i}`} position={[-0.7 + i * 0.45, -0.02, 0.06]}>
+            <boxGeometry args={[0.28, 0.28, 0.06]} />
+            <meshStandardMaterial color={color} emissive={color} emissiveIntensity={0.5} flatShading />
+          </mesh>
+        );
+      })}
     </group>
   );
 }
