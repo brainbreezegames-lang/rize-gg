@@ -1,5 +1,15 @@
 This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
 
+## Design Process Engine (MCP)
+
+Phase 1 of the **Design Process Engine** lives in [`design-process-engine/`](./design-process-engine/). It is a stateful MCP + companion skill that forces classify → plan → staged build → review so agents stop shipping UI slop.
+
+```bash
+cd design-process-engine && npm install && npm test
+```
+
+See that folder’s README for MCP client wiring and [`skill/SKILL.md`](./design-process-engine/skill/SKILL.md) for the agent-facing pipeline rules.
+
 ## Getting Started
 
 Create a local env file first:
