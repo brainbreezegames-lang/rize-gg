@@ -22,6 +22,6 @@ const WitchFeastGame = dynamic(() => import("@/game/WitchFeastGame"), {
   ),
 });
 
-export default function HomePage() {
+export default function GamePage() {
   return <WitchFeastGame />;
 }

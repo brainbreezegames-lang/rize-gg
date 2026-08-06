@@ -8,8 +8,9 @@ const oxanium = Oxanium({
 });
 
 export const metadata: Metadata = {
-  title: "Rize.gg",
-  description: "Find your team. Compete. Rise.",
+  title: "Cupboard Tidy Up: The Witch's Feast",
+  description:
+    "A cozy first-person sorting game. Put every dish back by set and size before the coven feast.",
 };
 
 export default function RootLayout({
