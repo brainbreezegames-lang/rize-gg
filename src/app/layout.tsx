@@ -8,8 +8,9 @@ const oxanium = Oxanium({
 });
 
 export const metadata: Metadata = {
-  title: "Rize.gg",
-  description: "Find your team. Compete. Rise.",
+  title: "Dungeon Heart — Sort. Restore. Awaken.",
+  description:
+    "A cozy 3D sorting adventure. Organize relics into ancient shelves and awaken the Dungeon Heart.",
 };
 
 export default function RootLayout({
@@ -19,7 +20,9 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en" className="dark">
-      <body className={`${oxanium.variable} font-[family-name:var(--font-oxanium)] antialiased`}>
+      <body
+        className={`${oxanium.variable} font-[family-name:var(--font-oxanium)] antialiased overflow-hidden`}
+      >
         {children}
       </body>
     </html>

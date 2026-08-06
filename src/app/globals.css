@@ -130,3 +130,57 @@ body {
 ::-webkit-scrollbar-thumb:hover {
   background: var(--color-text-tertiary);
 }
+
+/* ——— Dungeon Heart UI ——— */
+.panel {
+  border: 2px solid #c9a227;
+  border-radius: 6px;
+  background:
+    linear-gradient(180deg, rgba(245, 230, 190, 0.97), rgba(220, 190, 140, 0.95));
+  box-shadow:
+    0 4px 0 #5a4018,
+    0 8px 24px rgba(0, 0, 0, 0.45),
+    inset 0 1px 0 rgba(255, 255, 255, 0.35);
+  padding: 12px 14px;
+  color: #2a1a08;
+}
+
+.panel-title {
+  font-weight: 700;
+  font-size: 14px;
+  color: #3a2a10;
+  margin-bottom: 4px;
+  letter-spacing: 0.02em;
+}
+
+.btn-wood {
+  cursor: pointer;
+  border: 2px solid #c9a227;
+  border-radius: 6px;
+  background: linear-gradient(180deg, #efe0b0, #c9a870);
+  color: #2a1a08;
+  font-weight: 600;
+  padding: 6px 12px;
+  box-shadow: 0 2px 0 #5a4018;
+  transition: filter 0.15s, transform 0.1s;
+}
+
+.btn-wood:hover {
+  filter: brightness(1.06);
+}
+
+.btn-wood:active {
+  transform: translateY(1px);
+  box-shadow: 0 1px 0 #5a4018;
+}
+
+@keyframes fadeUp {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
