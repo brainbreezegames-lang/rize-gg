@@ -21,23 +21,24 @@ const bounds = {
   maxZ: 6.2,
 };
 
-/** Simple AABB obstacles so you can't walk inside cupboards / tables */
-const OBSTACLES: { minX: number; maxX: number; minZ: number; maxZ: number }[] =
-  CUPBOARDS.map((c) => {
-    const hw = c.size[0] / 2 + 0.25;
-    const hd = c.size[2] / 2 + 0.45;
-    // axis-aligned approx (good enough for navigation)
-    return {
-      minX: c.position[0] - hw,
-      maxX: c.position[0] + hw,
-      minZ: c.position[2] - hd,
-      maxZ: c.position[2] + hd,
-    };
-  }).concat([
-    { minX: -3.9, maxX: 3.9, minZ: 0.7, maxZ: 2.3 }, // feast table
-    { minX: -7.2, maxX: -5.8, minZ: -3.9, maxZ: -3.1 }, // side table
-    { minX: 6.8, maxX: 8.2, minZ: -3.4, maxZ: -0.6 }, // pantry
-  ]);
+/** Thin AABB shells — block walking *into* cabinets, keep front aisle free */
+const OBSTACLES: { minX: number; maxX: number; minZ: number; maxZ: number }[] = [
+  // Back-wall cupboards (face +Z): block only the cabinet body
+  { minX: -3.5, maxX: -0.9, minZ: -4.65, maxZ: -3.95 }, // plates
+  { minX: 1.3, maxX: 3.7, minZ: -4.65, maxZ: -3.95 }, // bowls
+  // Cookware (faces -Z / south)
+  { minX: -3.7, maxX: -0.3, minZ: 4.5, maxZ: 5.5 },
+  // Cups (faces -X)
+  { minX: 4.7, maxX: 5.7, minZ: -2.5, maxZ: -0.5 },
+  // Cutlery (faces +X)
+  { minX: -5.9, maxX: -4.5, minZ: 0.6, maxZ: 2.4 },
+  // Jars
+  { minX: 6.0, maxX: 7.4, minZ: -4.4, maxZ: -2.6 },
+  // Feast table / props
+  { minX: -3.6, maxX: 3.6, minZ: 0.85, maxZ: 2.15 },
+  { minX: -7.1, maxX: -5.9, minZ: -3.85, maxZ: -3.15 },
+  { minX: 7.0, maxX: 8.1, minZ: -3.3, maxZ: -0.7 },
+];
 
 function collides(x: number, z: number): boolean {
   for (const o of OBSTACLES) {
@@ -91,6 +92,10 @@ export function PlayerController() {
       }
 
       if (e.code === "KeyR") store.rotateSelected();
+      if (e.code === "KeyF" || e.code === "KeyE") {
+        // Keyboard place — same as RMB (friendlier than right-click)
+        tryInteract("place");
+      }
       if (e.code === "Home" || e.code === "KeyH") {
         camera.position.set(0.2, PLAYER_HEIGHT, 2.8);
         euler.current.set(-0.15, 0.15, 0);
@@ -252,54 +257,76 @@ export function PlayerController() {
 
       // Place into nearest valid slot in look direction
       const held = store.getHeldItem();
-      if (!held) return;
+      if (!held) {
+        store.setMessage("Pick up a dish first (LMB).");
+        return;
+      }
+
+      lookTarget.current
+        .set(0, 0, -1)
+        .applyQuaternion(camera.quaternion)
+        .normalize();
 
       let bestSlot: string | null = null;
       let bestScore = Infinity;
 
       for (const slot of store.slots) {
         if (store.items.some((i) => i.placedSlotId === slot.id)) continue;
+        // Only consider same-category cupboards (or chaos mode anything)
+        if (!store.chaosMode && slot.category !== held.category) continue;
+
         const cupboard = CUPBOARDS.find((c) => c.id === slot.cupboardId);
         if (!cupboard) continue;
         const wp = slotWorldPosition(cupboard, slot);
-        const dist = camera.position.distanceTo(
-          new THREE.Vector3(wp[0], wp[1], wp[2])
-        );
-        if (dist > REACH + 0.8) continue;
+        const slotPos = new THREE.Vector3(wp[0], wp[1], wp[2]);
+        const dist = camera.position.distanceTo(slotPos);
+        if (dist > REACH + 2.2) continue;
 
-        // Prefer slots matching held item and in look direction
-        lookTarget.current
-          .set(0, 0, -1)
-          .applyQuaternion(camera.quaternion)
-          .normalize();
-        const toSlot = new THREE.Vector3(wp[0], wp[1], wp[2])
-          .sub(camera.position)
-          .normalize();
+        const toSlot = slotPos.clone().sub(camera.position).normalize();
         const align = lookTarget.current.dot(toSlot);
-        if (align < 0.35) continue;
+        if (align < 0.15) continue;
 
-        const matchBonus =
-          held.category === slot.category &&
+        const exact =
           held.setId === slot.setId &&
           held.size === slot.size &&
-          !!held.isLid === !!slot.isLidSlot
-            ? -2
-            : held.category === slot.category && held.setId === slot.setId
-              ? -0.5
-              : 0;
+          !!held.isLid === !!slot.isLidSlot;
+        const sameSet =
+          held.setId === slot.setId && !!held.isLid === !!slot.isLidSlot;
 
-        const score = dist + (1 - align) * 2 + matchBonus;
+        // Heavily prefer the correct slot so RMB "just works" when facing the cupboard
+        const matchBonus = exact ? -8 : sameSet ? -3 : 0;
+        const score = dist * 0.6 + (1 - align) * 3 + matchBonus;
         if (score < bestScore) {
           bestScore = score;
           bestSlot = slot.id;
         }
       }
 
+      // Last resort: snap to exact matching free slot if player is near that cupboard
+      if (!bestSlot) {
+        const exact = store.slots.find((s) => {
+          if (store.items.some((i) => i.placedSlotId === s.id)) return false;
+          if (s.category !== held.category) return false;
+          if (s.setId !== held.setId || s.size !== held.size) return false;
+          if (!!s.isLidSlot !== !!held.isLid) return false;
+          const cupboard = CUPBOARDS.find((c) => c.id === s.cupboardId);
+          if (!cupboard) return false;
+          return (
+            camera.position.distanceTo(
+              new THREE.Vector3(...cupboard.position)
+            ) < 5.5
+          );
+        });
+        if (exact) bestSlot = exact.id;
+      }
+
       if (bestSlot) {
         store.placeIntoSlot(bestSlot);
-        setTimeout(() => store.clearFeedback(), 600);
+        setTimeout(() => store.clearFeedback(), 700);
       } else {
-        store.setMessage("Look at a cupboard shelf to place.");
+        store.setMessage(
+          `Walk closer to the ${held.category.toUpperCase()} cupboard and look at a shelf.`
+        );
       }
     };
 

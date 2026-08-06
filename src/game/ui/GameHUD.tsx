@@ -493,8 +493,8 @@ function PlayingHUD() {
         }}
       >
         <div>🖱 LMB — PICK UP</div>
-        <div>🖱 RMB — PLACE</div>
-        <div>R — ROTATE</div>
+        <div>🖱 RMB / E — PLACE</div>
+        <div>R — ROTATE · H — HOME</div>
         <div style={{ opacity: 0.6 }}>ESC — Pause</div>
       </div>
 
