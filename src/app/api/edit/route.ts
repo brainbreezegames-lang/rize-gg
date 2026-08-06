@@ -39,7 +39,7 @@ STRICT RULES:
 7. Keep ALL existing functionality and data that is NOT being changed
 8. Keep all existing data arrays (CLUBS_DATA, PLAYERS, SESSIONS etc.) intact unless the edit requires changing them
 9. Preserve the overall page structure (Sidebar + TopBar + main content)
-10. Use rounded-[var(--radius-sm/md/lg/xl)] for border radius
+10. Use rounded-[var(--radius-sm)], rounded-[var(--radius-md)], rounded-[var(--radius-lg)], or rounded-[var(--radius-xl)] for border radius
 
 Return the raw JSX/JS code only — no markdown fences, no explanation, just the code.`;
 }
