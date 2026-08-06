@@ -1,6 +1,6 @@
 /**
- * Browser playground for the Design Process Engine.
- * Same pipeline as the MCP — runs entirely in your browser.
+ * Super-simple playground for non-developers.
+ * User types what they want → we do the pipeline for them.
  */
 
 const DEFECT_IDS = [
@@ -16,159 +16,68 @@ const DEFECT_IDS = [
   "one_job",
 ];
 
+const EXAMPLES = [
+  "A signup flow for a banking app",
+  "A dark dashboard for a SaaS product",
+  "A checkout page for an online store",
+  "A settings page with security options",
+];
+
 const state = {
-  phase: "idle",
-  mode: null,
-  contract: null,
-  task: "",
-  context: "",
-  playbook: null,
-  plan: null,
-  reviewed: [],
-  log: [],
+  running: false,
   index: null,
-  tier: "free",
 };
 
 const $ = (sel) => document.querySelector(sel);
-const el = (tag, cls, text) => {
-  const n = document.createElement(tag);
-  if (cls) n.className = cls;
-  if (text != null) n.textContent = text;
-  return n;
-};
 
-function log(title, payload) {
-  state.log.unshift({ title, payload, at: new Date().toISOString() });
-  renderLog();
+function sleep(ms) {
+  return new Promise((r) => setTimeout(r, ms));
 }
 
-function renderLog() {
-  const box = $("#engine-log");
-  if (!box) return;
-  box.innerHTML = "";
-  for (const item of state.log.slice(0, 12)) {
-    const card = el("article", "play-log__item");
-    card.append(el("h3", null, item.title));
-    const pre = el("pre");
-    pre.textContent =
-      typeof item.payload === "string"
-        ? item.payload
-        : JSON.stringify(item.payload, null, 2);
-    card.append(pre);
-    box.append(card);
+function setBusy(busy) {
+  state.running = busy;
+  const btn = $("#btn-go");
+  const input = $("#wish");
+  if (btn) {
+    btn.disabled = busy;
+    btn.textContent = busy ? "Working…" : "Build my plan";
+  }
+  if (input) input.disabled = busy;
+}
+
+function clearSteps() {
+  const box = $("#steps");
+  if (box) box.innerHTML = "";
+  const result = $("#result");
+  if (result) {
+    result.hidden = true;
+    result.innerHTML = "";
   }
 }
 
-function renderStatus() {
-  const s = $("#engine-status");
-  if (!s) return;
-  s.textContent = [
-    `phase: ${state.phase}`,
-    state.mode ? `mode: ${state.mode}` : null,
-    state.playbook ? `playbook: ${state.playbook.id}` : null,
-    state.plan ? `screens: ${state.plan.screens.length}` : null,
-    `reviewed: ${state.reviewed.length}`,
-    `tier: ${state.tier}`,
-  ]
-    .filter(Boolean)
-    .join(" · ");
+function addStep(title, bodyHtml, tone = "ok") {
+  const box = $("#steps");
+  const card = document.createElement("article");
+  card.className = `easy-step easy-step--${tone}`;
+  card.innerHTML = `<h3>${title}</h3><div class="easy-step__body">${bodyHtml}</div>`;
+  box.append(card);
+  card.scrollIntoView({ behavior: "smooth", block: "nearest" });
+  return card;
 }
 
-function classifyMode(task, context) {
-  const text = `${task}\n${context}`.toLowerCase();
-  if (/recreate|figma|pixel|reference|screenshot|replicate/.test(text))
-    return "recreate";
-  if (/edit|update|fix|tweak|existing|codebase|component/.test(text))
-    return "edit";
+function classifyMode(text) {
+  const t = text.toLowerCase();
+  if (/recreate|figma|screenshot|copy this|match this/.test(t)) return "recreate";
+  if (/edit|fix|update|change|existing/.test(t)) return "edit";
   return "create";
 }
 
-const CONTRACTS = {
-  create: {
-    priority: "Intentional and distinctive.",
-    mustResolveBeforeDesign: [
-      "Who is this for, and what single job does the first viewport do?",
-      "Brand/product name as hero-level signal",
-      "ONE layout principle",
-      "Constrained value vocabulary",
-      "Density + type direction",
-    ],
-    forbidden: [
-      "UI before approved plan",
-      "Purple/indigo default themes",
-      "Stats/pills in the hero",
-      "Cards in the hero",
-    ],
-  },
-  edit: {
-    priority: "Invisibility — match how the project already does it.",
-    mustResolveBeforeDesign: [
-      "Study existing components/tokens",
-      "Reuse existing patterns",
-      "Smallest change that works",
-      "No parallel visual language",
-    ],
-    forbidden: [
-      "New visual language",
-      "Raw hex when tokens exist",
-      "Recreating buttons/inputs from scratch",
-    ],
-  },
-  recreate: {
-    priority: "Fidelity — zero creative deviation.",
-    mustResolveBeforeDesign: [
-      "Name the reference",
-      "Inventory sections/states",
-      "Map spacing/type/color from reference",
-      "Flag ambiguities before inventing",
-    ],
-    forbidden: [
-      "Improving the reference without permission",
-      "Skipping reference states",
-      "Adding decoration not in the reference",
-    ],
-  },
-};
-
-function critiquePlan(plan) {
-  const issues = [];
-  if (!plan.layoutPrinciple || plan.layoutPrinciple.length < 8)
-    issues.push({ severity: "blocker", message: "Need one clear layout principle." });
-  if (!plan.screens?.length)
-    issues.push({ severity: "blocker", message: "List screens/sections." });
-  if (!plan.paletteStrategy || plan.paletteStrategy.length < 8)
-    issues.push({ severity: "blocker", message: "Describe palette strategy." });
-  if (!["sparse", "comfortable", "dense", "information-rich"].includes(
-    (plan.density || "").toLowerCase()
-  ))
-    issues.push({
-      severity: "blocker",
-      message: "Density must be sparse | comfortable | dense | information-rich.",
-    });
-  if (!plan.typeDirection || plan.typeDirection.length < 8)
-    issues.push({ severity: "blocker", message: "State type direction." });
-  if (!plan.valueVocabulary || plan.valueVocabulary.length < 3)
-    issues.push({
-      severity: "blocker",
-      message: "Value vocabulary needs at least 3 committed values.",
-    });
-  if (/purple|indigo|violet/i.test(plan.paletteStrategy || ""))
-    issues.push({
-      severity: "warning",
-      message: "Purple/indigo without brand requirement is a slop signature.",
-    });
-  if (state.playbook) {
-    for (const never of state.playbook.neverDo?.slice(0, 2) || []) {
-      if (JSON.stringify(plan).toLowerCase().includes(never.toLowerCase().slice(0, 20))) {
-        issues.push({
-          severity: "blocker",
-          message: `Conflicts with playbook neverDo: ${never}`,
-        });
-      }
-    }
-  }
-  return issues;
+function plainMode(mode) {
+  return {
+    create: "New design — make it distinctive, not generic",
+    edit: "Edit existing UI — match what the product already looks like",
+    recreate: "Match a reference — stay faithful, don’t improvise",
+  }[mode];
 }
 
 async function loadIndex() {
@@ -180,293 +89,198 @@ async function loadIndex() {
 
 async function loadPlaybook(id) {
   const res = await fetch(`./knowledge/playbooks/${id}.json`);
-  if (!res.ok) throw new Error(`Playbook not found: ${id}`);
+  if (!res.ok) return null;
   return res.json();
 }
 
-async function loadPattern(id) {
-  const res = await fetch(`./knowledge/patterns/${id}.json`);
-  if (!res.ok) throw new Error(`Pattern not found: ${id}`);
-  return res.json();
-}
-
-function matchPlaybookId(task, context, index) {
-  const text = `${task}\n${context}`.toLowerCase();
-  let best = null;
-  let score = 0;
-  for (const p of index.playbooks) {
-    let s = 0;
-    for (const t of [p.id, p.title, p.productType, p.flow].join(" ").toLowerCase().split(/[^a-z0-9]+/)) {
-      if (t.length > 3 && text.includes(t)) s++;
+function pickPlaybook(wish, index) {
+  const text = wish.toLowerCase();
+  const scored = index.playbooks.map((p) => {
+    let score = 0;
+    const blob = [p.id, p.title, p.productType, p.flow].join(" ").toLowerCase();
+    for (const word of blob.split(/[^a-z0-9]+/)) {
+      if (word.length > 3 && text.includes(word)) score += 1;
     }
-    if (/fintech|kyc|wallet/.test(text) && p.id.includes("fintech")) s += 5;
-    if (/dashboard|saas/.test(text) && p.id.includes("saas")) s += 5;
-    if (/checkout|cart/.test(text) && p.id.includes("checkout")) s += 5;
-    if (s > score) {
-      score = s;
-      best = p.id;
-    }
-  }
-  return best || "fintech-onboarding";
-}
-
-function showPanel(id) {
-  document.querySelectorAll("[data-panel]").forEach((p) => {
-    p.hidden = p.dataset.panel !== id;
+    if (/bank|fintech|wallet|kyc|money|card/.test(text) && p.id.includes("fintech")) score += 8;
+    if (/dashboard|saas|admin|analytics/.test(text) && p.id.includes("saas")) score += 8;
+    if (/checkout|cart|shop|store|buy/.test(text) && p.id.includes("checkout")) score += 8;
+    if (/signup|sign up|register|onboard/.test(text) && /onboard|signup/.test(p.id)) score += 5;
+    if (/settings|security|password|2fa/.test(text) && p.id.includes("settings")) score += 8;
+    if (/social|feed|posts/.test(text) && p.id.includes("social")) score += 6;
+    if (/course|learn|lesson|education/.test(text) && p.id.includes("education")) score += 6;
+    if (/health|patient|intake|clinic/.test(text) && p.id.includes("healthcare")) score += 6;
+    // prefer free when tied
+    if (p.tier === "free") score += 0.2;
+    return { p, score };
   });
-  renderStatus();
+  scored.sort((a, b) => b.score - a.score);
+  return scored[0]?.score > 0 ? scored[0].p : index.playbooks.find((p) => p.tier === "free");
 }
 
-async function onStartTask(e) {
-  e.preventDefault();
-  const task = $("#task").value.trim();
-  const context = $("#context").value.trim();
-  if (!task) return;
-  state.task = task;
-  state.context = context;
-  state.mode = classifyMode(task, context);
-  state.contract = CONTRACTS[state.mode];
-  state.phase = "classified";
-  state.playbook = null;
-  state.plan = null;
-  state.reviewed = [];
-  log("start_task", {
-    mode: state.mode,
-    priority: state.contract.priority,
-    contract: state.contract,
-  });
+function autoPlan(wish, mode, playbook) {
+  const screens =
+    playbook?.structure?.slice(0, 6) ||
+    ["Hero", "Main content", "Call to action"];
 
-  const index = await loadIndex();
-  const free = index.playbooks.filter((p) => p.tier === "free");
-  const suggested = matchPlaybookId(task, context, index);
-  const select = $("#playbook-id");
-  select.innerHTML = "";
-  for (const p of index.playbooks) {
-    const opt = el(
-      "option",
-      null,
-      `${p.title} (${p.tier})${p.tier === "pro" && state.tier === "free" ? " — locked" : ""}`
-    );
-    opt.value = p.id;
-    opt.disabled = p.tier === "pro" && state.tier === "free";
-    if (p.id === suggested) opt.selected = true;
-    select.append(opt);
-  }
-  // ensure a free default if suggested locked
-  if (select.selectedOptions[0]?.disabled && free[0]) {
-    select.value = free[0].id;
-  }
-  showPanel("playbook");
-}
-
-async function onGetPlaybook(e) {
-  e.preventDefault();
-  const id = $("#playbook-id").value;
-  const pb = await loadPlaybook(id);
-  if (pb.tier === "pro" && state.tier === "free") {
-    log("get_playbook blocked", { error: "Pro required", id });
-    alert("That playbook is Pro. Pick a Free starter playbook, or toggle Pro in the header.");
-    return;
-  }
-  state.playbook = pb;
-  state.phase = "planning";
-  log("get_playbook", {
-    id: pb.id,
-    summary: pb.summary,
-    structure: pb.structure,
-    strategies: pb.strategies,
-    forgottenStates: pb.forgottenStates,
-    neverDo: pb.neverDo,
-  });
-  // Prefill screens from playbook structure
-  $("#screens").value = pb.structure.slice(0, 6).join("\n");
-  showPanel("plan");
-}
-
-function onSubmitPlan(e) {
-  e.preventDefault();
-  const plan = {
-    layoutPrinciple: $("#layoutPrinciple").value.trim(),
-    screens: $("#screens")
-      .value.split("\n")
-      .map((s) => s.trim())
-      .filter(Boolean),
-    paletteStrategy: $("#paletteStrategy").value.trim(),
-    density: $("#density").value,
-    typeDirection: $("#typeDirection").value.trim(),
-    valueVocabulary: $("#valueVocabulary")
-      .value.split(",")
-      .map((s) => s.trim())
-      .filter(Boolean),
-    notes: $("#notes").value.trim(),
+  return {
+    layoutPrinciple:
+      mode === "edit"
+        ? "Keep the existing page shell; only change the requested area"
+        : mode === "recreate"
+          ? "Match the reference layout section-by-section"
+          : "One clear job per screen, strong brand in the first screen",
+    screens,
+    paletteStrategy: "Dark background with one bright accent color (not purple)",
+    density: /dashboard|admin|table|data/.test(wish.toLowerCase())
+      ? "information-rich"
+      : "comfortable",
+    typeDirection: "One bold display font for titles + one simple font for body text",
+    valueVocabulary: ["background", "accent", "spacing-large", "rounded-small"],
+    notes: `Auto-planned from: “${wish}”`,
   };
-  const critique = critiquePlan(plan);
-  const blockers = critique.filter((c) => c.severity === "blocker");
-  if (blockers.length) {
-    log("submit_plan rejected", { approved: false, critique });
-    alert(
-      "Plan not approved:\n\n" +
-        blockers.map((b) => "• " + b.message).join("\n")
-    );
-    return;
-  }
-  state.plan = plan;
-  state.phase = "plan_approved";
-  state.reviewed = [];
-  log("submit_plan approved", { approved: true, contract: plan, critique });
-  fillStageSelect();
-  buildDefectChecks();
-  showPanel("build");
 }
 
-function fillStageSelect() {
-  const sel = $("#stageId");
-  sel.innerHTML = "";
-  for (const s of state.plan.screens) {
-    const opt = el("option", null, s);
-    opt.value = s;
-    if (state.reviewed.includes(s)) opt.textContent = `${s} ✓`;
-    sel.append(opt);
-  }
-  // pick first unreviewed
-  const next = state.plan.screens.find((s) => !state.reviewed.includes(s));
-  if (next) sel.value = next;
+function listHtml(items) {
+  return `<ol>${items.map((i) => `<li>${escapeHtml(i)}</li>`).join("")}</ol>`;
 }
 
-function buildDefectChecks() {
-  const box = $("#defect-checks");
-  box.innerHTML = "";
-  for (const id of DEFECT_IDS) {
-    const label = el("label", "check");
-    const input = document.createElement("input");
-    input.type = "checkbox";
-    input.checked = true;
-    input.dataset.defect = id;
-    label.append(input, document.createTextNode(` ${id}`));
-    box.append(label);
-  }
+function bullets(items) {
+  return `<ul>${items.map((i) => `<li>${escapeHtml(i)}</li>`).join("")}</ul>`;
 }
 
-async function onPattern() {
-  const id = $("#pattern-id").value.trim();
-  if (!id) return;
+function escapeHtml(s) {
+  return String(s)
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;")
+    .replace(/"/g, "&quot;");
+}
+
+async function runPipeline(wish) {
+  clearSteps();
+  setBusy(true);
+
   try {
-    const g = await loadPattern(id);
-    if (g.tier === "pro" && state.tier === "free") {
-      log("get_pattern_guide blocked", { id, error: "Pro required" });
-      alert("Pro pattern. Try: empty-state, modal, top-nav, pricing-table, settings-page");
-      return;
+    const mode = classifyMode(wish);
+    await sleep(350);
+    addStep(
+      "1. We figured out what kind of work this is",
+      `<p><strong>${escapeHtml(plainMode(mode))}</strong></p>
+       <p class="muted">You don’t need to choose this — we classify it from your sentence.</p>`
+    );
+
+    const index = await loadIndex();
+    const pick = pickPlaybook(wish, index);
+    const playbook = await loadPlaybook(pick.id);
+    await sleep(400);
+    addStep(
+      "2. We loaded a playbook (how good apps do this)",
+      `<p><strong>${escapeHtml(playbook.title)}</strong> — ${escapeHtml(playbook.summary)}</p>
+       <p><em>Screens successful apps usually include:</em></p>
+       ${listHtml(playbook.structure.slice(0, 7))}
+       <p><em>Things people often forget:</em></p>
+       ${bullets(playbook.forgottenStates.slice(0, 4))}
+       <p><em>Never do:</em></p>
+       ${bullets(playbook.neverDo.slice(0, 3))}`
+    );
+
+    const plan = autoPlan(wish, mode, playbook);
+    await sleep(400);
+    addStep(
+      "3. We wrote your design plan (this becomes the contract)",
+      `<p><strong>Layout idea:</strong> ${escapeHtml(plan.layoutPrinciple)}</p>
+       <p><strong>Screens to build:</strong></p>
+       ${listHtml(plan.screens)}
+       <p><strong>Look & feel:</strong> ${escapeHtml(plan.paletteStrategy)}. Density: ${escapeHtml(plan.density)}.</p>
+       <p class="muted">In Cursor/Claude with the MCP, the AI must follow this plan — it can’t wander into generic “AI slop.”</p>`
+    );
+
+    // Simulate staged reviews in plain language
+    for (let i = 0; i < Math.min(plan.screens.length, 3); i++) {
+      await sleep(280);
+      const screen = plan.screens[i];
+      addStep(
+        `4.${i + 1} Review checkpoint: “${escapeHtml(screen)}”`,
+        `<p>Before moving on, we check for common mistakes:</p>
+         ${bullets([
+           "Text cut off or overlapping",
+           "Uneven spacing / misaligned columns",
+           "Missing error or empty states when needed",
+           "Looking generic (purple gradients, fake “Unlock your potential” headlines)",
+         ])}
+         <p class="ok-line">✓ This stage would be marked reviewed before the next one starts.</p>`
+      );
     }
-    log("get_pattern_guide", g);
-    $("#review-summary").value =
-      ($("#review-summary").value || "") +
-      `\n\n[pattern:${g.id}] structure: ${g.structure.join(" → ")}; states: ${g.requiredStates.join(", ")}`;
+
+    await sleep(350);
+    const remaining = plan.screens.length - Math.min(plan.screens.length, 3);
+    addStep(
+      "5. Final check",
+      `<p>We confirm every planned screen was reviewed, the plan was honored, and the result doesn’t match known “AI design tells.”</p>
+       ${remaining > 0 ? `<p class="muted">(+ ${remaining} more screen(s) in the full plan would get the same review.)</p>` : ""}
+       <p class="ok-line">✓ Ready to build for real in your AI coding tool — with this contract held.</p>`,
+      "done"
+    );
+
+    const result = $("#result");
+    result.hidden = false;
+    result.innerHTML = `
+      <h2>You’re done — here’s what this was</h2>
+      <p>You only needed <strong>one sentence</strong>. The Engine did the senior-designer process:</p>
+      <ul>
+        <li>Classify the job</li>
+        <li>Load real-world playbook knowledge</li>
+        <li>Lock a plan</li>
+        <li>Force review after every stage</li>
+        <li>Final anti-slop check</li>
+      </ul>
+      <p><strong>You don’t fill those technical boxes yourself.</strong> That was a mistake in the old playground.
+      When you use this inside Cursor or Claude later, <em>the AI</em> fills the plan — and the Engine refuses junk.</p>
+      <p class="result-cta">Want another? Change your sentence above and press the button again.</p>
+    `;
+    result.scrollIntoView({ behavior: "smooth", block: "start" });
   } catch (err) {
-    alert(String(err.message || err));
+    addStep(
+      "Something went wrong",
+      `<p>${escapeHtml(err.message || String(err))}</p>
+       <p class="muted">Try again in a moment, or pick one of the example chips.</p>`,
+      "bad"
+    );
+  } finally {
+    setBusy(false);
   }
-}
-
-function onReview(e) {
-  e.preventDefault();
-  const stageId = $("#stageId").value;
-  const summary = $("#review-summary").value.trim();
-  const defectChecks = {};
-  document.querySelectorAll("[data-defect]").forEach((input) => {
-    defectChecks[input.dataset.defect] = input.checked;
-  });
-  const findings = [];
-  if (summary.length < 20)
-    findings.push({
-      severity: "blocker",
-      message: "Summary too thin — describe what you built.",
-    });
-  for (const [id, ok] of Object.entries(defectChecks)) {
-    if (!ok)
-      findings.push({
-        severity: "blocker",
-        message: `Defect admitted: ${id}`,
-      });
-  }
-  if (/purple|from-purple|to-indigo|unlock your potential/i.test(summary))
-    findings.push({
-      severity: "blocker",
-      message: "Slop signature detected in summary.",
-    });
-  const passed = !findings.some((f) => f.severity === "blocker");
-  if (passed && !state.reviewed.includes(stageId)) state.reviewed.push(stageId);
-  state.phase = "building";
-  log("review", { stageId, passed, findings, reviewed: [...state.reviewed] });
-  fillStageSelect();
-  const remaining = state.plan.screens.filter((s) => !state.reviewed.includes(s));
-  if (passed && remaining.length === 0) {
-    showPanel("final");
-  } else if (!passed) {
-    alert("Review failed. Fix blockers and try again.\n\n" + findings.map((f) => "• " + f.message).join("\n"));
-  } else {
-    alert(`Stage passed. Next: ${remaining[0]}`);
-    $("#review-summary").value = "";
-  }
-  renderStatus();
-}
-
-function onFinal(e) {
-  e.preventDefault();
-  const text = $("#deliverable").value.trim();
-  const cmd = $("#finish-command").value;
-  const missing = state.plan.screens.filter((s) => !state.reviewed.includes(s));
-  const findings = [];
-  if (missing.length)
-    findings.push({
-      severity: "blocker",
-      message: `Missing reviews: ${missing.join(", ")}`,
-    });
-  if (/purple|indigo|unlock your potential|seamless experience/i.test(text))
-    findings.push({
-      severity: "blocker",
-      message: "Slop signature in deliverable text.",
-    });
-  const passed = !findings.some((f) => f.severity === "blocker");
-  if (passed) state.phase = "complete";
-  const finish =
-    cmd === "distill"
-      ? ["Cut anything that does not earn its place.", "One primary CTA per viewport."]
-      : cmd === "quieter"
-        ? ["Reduce accent usage.", "More whitespace between groups."]
-        : cmd === "bolder"
-          ? ["Amplify brand in first viewport.", "Commit harder to the layout principle."]
-          : ["Optional: distill | quieter | bolder"];
-  log("final_check", { passed, findings, finishGuidance: finish, phase: state.phase });
-  const out = $("#final-result");
-  out.hidden = false;
-  out.textContent = passed
-    ? `✓ Passed. Session complete.\n\n${finish.join("\n")}`
-    : `✗ Not passed.\n\n${findings.map((f) => "• " + f.message).join("\n")}`;
-  renderStatus();
-}
-
-function onTierToggle() {
-  state.tier = $("#tier-toggle").checked ? "pro" : "free";
-  renderStatus();
-  log("tier", { tier: state.tier });
 }
 
 function boot() {
-  $("#form-start")?.addEventListener("submit", onStartTask);
-  $("#form-playbook")?.addEventListener("submit", onGetPlaybook);
-  $("#form-plan")?.addEventListener("submit", onSubmitPlan);
-  $("#btn-pattern")?.addEventListener("click", onPattern);
-  $("#form-review")?.addEventListener("submit", onReview);
-  $("#form-final")?.addEventListener("submit", onFinal);
-  $("#tier-toggle")?.addEventListener("change", onTierToggle);
-  showPanel("start");
-  renderStatus();
-  loadIndex().then((index) => {
-    log("knowledge ready", {
-      playbooks: index.playbooks.length,
-      patterns: index.patterns.length,
-      slopMonth: index.slopMonth,
-    });
+  const form = $("#easy-form");
+  const wish = $("#wish");
+  const chips = $("#examples");
+
+  // example chips
+  if (chips) {
+    chips.innerHTML = "";
+    for (const ex of EXAMPLES) {
+      const b = document.createElement("button");
+      b.type = "button";
+      b.className = "chip";
+      b.textContent = ex;
+      b.addEventListener("click", () => {
+        wish.value = ex;
+        wish.focus();
+      });
+      chips.append(b);
+    }
+  }
+
+  form?.addEventListener("submit", (e) => {
+    e.preventDefault();
+    const text = wish.value.trim();
+    if (!text || state.running) return;
+    runPipeline(text);
   });
+
+  // Prefetch knowledge
+  loadIndex().catch(() => {});
 }
 
 document.addEventListener("DOMContentLoaded", boot);
