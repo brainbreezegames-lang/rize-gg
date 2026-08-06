@@ -7,6 +7,7 @@ import { DungeonHeartCrystal } from "./meshes/DungeonHeartCrystal";
 import { Shelf } from "./meshes/Shelf";
 import { PlayerController } from "./meshes/Player";
 import { FloorItems } from "./meshes/FloorItems";
+import { PlaceBurst } from "./meshes/PlaceBurst";
 import { SHELVES, ROOM_RADIUS } from "./constants";
 import { useGameStore } from "./store";
 import { sfx } from "./audio";
@@ -76,6 +77,7 @@ function SceneContents() {
       })}
       <FloorItems />
       <PlayerController />
+      <PlaceBurst />
       {/* Path dots toward heart */}
       <PathDots />
     </>
