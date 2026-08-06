@@ -16,7 +16,9 @@
     "factory:capture": "node factory/scripts/run-pipeline.mjs capture --input=factory/fixtures/sample-journeys.json",
     "factory:draft": "node factory/scripts/run-pipeline.mjs draft --flow=fintech-onboarding",
     "factory:status": "node factory/scripts/run-pipeline.mjs status",
-    "knowledge:generate": "node scripts/generate-knowledge.mjs"
+    "knowledge:generate": "node scripts/generate-knowledge.mjs",
+    "website:sync-knowledge": "rm -rf website/knowledge && cp -r knowledge website/knowledge",
+    "deploy": "npm run website:sync-knowledge && npx vercel deploy website --prod --yes"
   },
   "keywords": [
     "mcp",

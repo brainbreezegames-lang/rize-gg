@@ -1,39 +1,31 @@
-# Design Process Engine — Public Website
+# Design Process Engine — Public site
 
-Static multi-page site for the Design Process Engine product (not a framework app).
+Static site + browser playground. No GitHub skills required to use it.
 
-## Pages
+## Local
 
-| File | Purpose |
-|------|---------|
-| `index.html` | Landing — brand-first hero, CTA |
-| `pricing.html` | Free vs Pro (~$19/mo) |
-| `docs.html` | Pipeline tool sequence |
-| `install.html` | MCP install for Cursor / Claude Code / generic |
-| `styles.css` | Shared tokens + layout |
-| `main.js` | Nav toggle + reveal motion |
-
-## Run locally
-
-Zero install required — open the file:
+Open `index.html`, or:
 
 ```bash
-open website/index.html
-# or
-xdg-open website/index.html
+npx serve .
 ```
 
-Or serve with any static server:
+Then open **Playground** to run the full pipeline in your browser.
+
+## Deploy to Vercel
+
+From `design-process-engine/`:
 
 ```bash
-npx serve website
-# → http://localhost:3000 (port may vary)
+npm run website:sync-knowledge
+npx vercel deploy website --prod --yes
 ```
 
-```bash
-python3 -m http.server 8080 --directory website
-```
+Needs a Vercel account token in `VERCEL_TOKEN` (or interactive login).
 
-## Visual direction
+Or in the Vercel dashboard: **Add New Project → Import** this repo, set:
 
-Near-black canvas, electric lime accent, Syne + IBM Plex Sans. Editorial-tech — not purple gradients, cream/terracotta, or broadsheet.
+- **Root Directory:** `design-process-engine/website`
+- **Framework Preset:** Other
+- **Build Command:** (empty)
+- **Output Directory:** `.`
