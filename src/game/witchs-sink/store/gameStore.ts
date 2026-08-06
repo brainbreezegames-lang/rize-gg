@@ -306,40 +306,40 @@ export const useGameStore = create<GameState>()(
       placeOnBoard: () => {
         const s = get();
         if (s.phase !== "playing") return;
-        const cleanHeld = s.dishes.find((d) => d.status === "clean" && d.id === s.heldDishId);
-        // Also allow placing last washed clean dish if not held — find most recent clean not on board
-        let dish = cleanHeld;
-        if (!dish) {
-          // Auto-select clean dish matching next recipe if player washed it
-          const next = s.recipe[s.sequenceIndex];
-          if (next) {
-            dish = s.dishes.find((d) => d.id === next.dishId && d.status === "clean");
-          }
-        }
-        // Or any clean dish for extras
-        if (!dish) {
-          dish = s.dishes.find((d) => d.status === "clean");
-        }
+
+        const nextStep = s.recipe[s.sequenceIndex];
+        // Prefer the next recipe dish if it's already clean
+        let dish =
+          (nextStep &&
+            s.dishes.find((d) => d.id === nextStep.dishId && d.status === "clean")) ||
+          s.dishes.find((d) => d.id === s.heldDishId && d.status === "clean") ||
+          s.dishes.find((d) => d.status === "clean" && !d.inRecipe) ||
+          s.dishes.find((d) => d.status === "clean");
+
         if (!dish) {
           pushToast(get, set, "Wash a dish first, then place it on the board.", "info");
           return;
         }
 
-        const nextStep = s.recipe[s.sequenceIndex];
-        const isNextRecipe = nextStep && dish.id === nextStep.dishId;
+        const isNextRecipe = !!(nextStep && dish.id === nextStep.dishId);
 
-        if (dish.inRecipe && !isNextRecipe && s.mode !== "chaos") {
-          // Recipe dish out of order — cupboard it as practice instead? Soft fail.
+        if (dish.inRecipe && !isNextRecipe) {
+          // Out-of-order recipe dish — park it clean until its turn
           pushToast(
             get,
             set,
-            "That dish isn’t next on the scroll. Put extras in the cupboard, or find the recipe dish.",
+            "Clean, but not next on the scroll. It waits on the rack until its turn.",
             "info"
           );
           return;
         }
 
-        if (isNextRecipe || (s.mode === "chaos" && dish.inRecipe && isNextRecipe)) {
+        if (!isNextRecipe && !dish.inRecipe) {
+          get().putInCupboard(dish.id);
+          return;
+        }
+
+        if (isNextRecipe) {
           const slotIndex = s.sequenceIndex % 4;
           const boardSlots = [...s.boardSlots] as (string | null)[];
           boardSlots[slotIndex] = dish.id;
@@ -365,14 +365,9 @@ export const useGameStore = create<GameState>()(
             }
           }
 
-          // Ability unlock notices
           (["scent_of_sorting", "drain_sprite", "chain_rinsing", "great_rinse"] as AbilityId[]).forEach(
             (ab) => {
-              if (
-                s.mode !== "devotee" &&
-                sequenceIndex === abilityUnlockThreshold(ab) &&
-                sequenceIndex > s.sequenceIndex
-              ) {
+              if (s.mode !== "devotee" && sequenceIndex === abilityUnlockThreshold(ab)) {
                 const names: Record<AbilityId, string> = {
                   scent_of_sorting: "Scent of Sorting",
                   drain_sprite: "Drain-Sprite",
@@ -407,11 +402,7 @@ export const useGameStore = create<GameState>()(
           if (sequenceIndex >= SEQUENCE_LENGTH) {
             finishSequence(get, set);
           }
-          return;
         }
-
-        // Extra clean dish → cupboard
-        get().putInCupboard(dish.id);
       },
 
       putInCupboard: (id) => {

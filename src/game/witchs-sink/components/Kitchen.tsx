@@ -7,32 +7,37 @@ import { boxVoxels, PALETTE, VoxelMesh, type Voxel } from "../utils/voxels";
 
 function buildRoom(): Voxel[] {
   const v: Voxel[] = [];
-  // Floor
+  // Floor — warmer readable stone
   for (let x = -40; x <= 40; x++) {
     for (let z = -30; z <= 30; z++) {
-      const checker = (x + z) % 2 === 0 ? PALETTE.stoneDark : PALETTE.stone;
+      const checker = (x + z) % 2 === 0 ? "#2e343c" : "#3a424c";
       v.push({ x, y: 0, z, color: checker });
     }
   }
   // Back wall
   for (let x = -40; x <= 40; x++) {
     for (let y = 1; y <= 28; y++) {
-      const c = (x + y) % 3 === 0 ? PALETTE.stoneMid : PALETTE.stone;
-      // Window cutout
+      const c = (x + y) % 3 === 0 ? "#4a5560" : "#3a424c";
       if (x >= -28 && x <= -16 && y >= 10 && y <= 22) continue;
       v.push({ x, y, z: -28, color: c });
     }
   }
+  // Ceiling beams
+  for (let x = -38; x <= 38; x++) {
+    v.push({ x, y: 28, z: -20, color: PALETTE.woodDark });
+    v.push({ x, y: 28, z: -8, color: PALETTE.woodDark });
+    v.push({ x, y: 28, z: 4, color: PALETTE.woodDark });
+  }
   // Left wall
   for (let z = -28; z <= 28; z++) {
     for (let y = 1; y <= 28; y++) {
-      v.push({ x: -40, y, z, color: (z + y) % 2 === 0 ? PALETTE.stone : PALETTE.stoneDark });
+      v.push({ x: -40, y, z, color: (z + y) % 2 === 0 ? "#3a424c" : "#2a3038" });
     }
   }
-  // Right wall partial
-  for (let z = -28; z <= 10; z++) {
+  // Right wall
+  for (let z = -28; z <= 16; z++) {
     for (let y = 1; y <= 28; y++) {
-      v.push({ x: 40, y, z, color: PALETTE.stoneMid });
+      v.push({ x: 40, y, z, color: "#3a424c" });
     }
   }
   return v;
@@ -126,6 +131,28 @@ function buildFurniture(): Voxel[] {
   v.push({ x: -32, y: 12, z: 11, color: "#9B59F5" });
   // Chalkboard board back
   v.push(...boxVoxels(18, 10, -11, 12, 8, 1, "#1a1a14"));
+  // Drying rack
+  for (let y = 12; y <= 20; y++) {
+    v.push({ x: -18, y, z: -12, color: PALETTE.wood });
+    v.push({ x: -10, y, z: -12, color: PALETTE.wood });
+  }
+  for (let x = -18; x <= -10; x++) {
+    v.push({ x, y: 20, z: -12, color: PALETTE.woodLight });
+    v.push({ x, y: 16, z: -12, color: PALETTE.woodLight });
+  }
+  // Broom in corner
+  for (let y = 1; y <= 14; y++) v.push({ x: 36, y, z: 8, color: PALETTE.woodPale });
+  for (let x = 34; x <= 38; x++) {
+    for (let z = 7; z <= 9; z++) v.push({ x, y: 1, z, color: "#8a7a40" });
+  }
+  // Extra bottles on left table
+  v.push(...boxVoxels(-30, 9, -2, 2, 3, 2, "#3a8060"));
+  v.push(...boxVoxels(-27, 9, 0, 2, 4, 2, "#8030a0"));
+  // Cobweb corners (sparse)
+  for (let i = 0; i < 6; i++) {
+    v.push({ x: -38 + i, y: 26 - i, z: -26, color: "#8a8a9a" });
+    v.push({ x: 34 + (i % 3), y: 25 - i, z: -26, color: "#7a7a8a" });
+  }
   return v;
 }
 
@@ -335,26 +362,29 @@ export function KitchenEnvironment({
         <pointLight position={[-3.5, 1.2, -2]} color="#6688ff" intensity={2} distance={5} />
       )}
 
-      {/* Ambient kitchen fill */}
-      <ambientLight intensity={0.25} color="#2a2035" />
-      <hemisphereLight args={["#4a3060", "#1a1010", 0.4]} />
+      {/* Ambient kitchen fill — brighter for readable voxels */}
+      <ambientLight intensity={0.55} color="#3a2a48" />
+      <hemisphereLight args={["#6a5080", "#1a1018", 0.7]} />
       <directionalLight
-        position={[4, 8, 2]}
-        intensity={0.35}
-        color="#ffd0a0"
+        position={[5, 9, 4]}
+        intensity={0.65}
+        color="#ffd8b0"
         castShadow
         shadow-mapSize-width={1024}
         shadow-mapSize-height={1024}
       />
       {/* Moon light through window */}
       <spotLight
-        position={[-2.5, 2.5, -2]}
-        angle={0.5}
-        penumbra={0.6}
-        intensity={1.2}
-        color="#c0b0ff"
+        position={[-2.5, 2.8, -1.5]}
+        angle={0.55}
+        penumbra={0.5}
+        intensity={2.2}
+        color="#c8b8ff"
         castShadow
       />
+      {/* Fill from front so dishes read clearly */}
+      <pointLight position={[0, 3, 3]} color="#ffcc99" intensity={0.9} distance={12} />
+      <pointLight position={[-2, 2, 2]} color="#8866aa" intensity={0.5} distance={8} />
     </group>
   );
 }

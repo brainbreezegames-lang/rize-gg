@@ -25,8 +25,8 @@ function Scene() {
 
   return (
     <>
-      <color attach="background" args={["#0a0612"]} />
-      <fog attach="fog" args={["#12081c", 8, 22]} />
+      <color attach="background" args={["#140a1c"]} />
+      <fog attach="fog" args={["#1a0e24", 10, 28]} />
       <KitchenEnvironment effects={effects} />
       {phase !== "title" && (
         <>
@@ -68,11 +68,11 @@ export function GameCanvas() {
       <Canvas
         shadows
         dpr={[1, 1.75]}
-        camera={{ position: [4.5, 4.2, 5.5], fov: 42, near: 0.1, far: 50 }}
+        camera={{ position: [5.2, 4.8, 6.8], fov: 40, near: 0.1, far: 50 }}
         gl={{
           antialias: true,
           toneMapping: THREE.ACESFilmicToneMapping,
-          toneMappingExposure: 1.15,
+          toneMappingExposure: 1.35,
         }}
         onPointerMissed={() => {
           const s = useGameStore.getState();

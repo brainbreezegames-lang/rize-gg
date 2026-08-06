@@ -157,88 +157,112 @@ export function dishVoxels(
       : material === "iron"
         ? PALETTE.iron
         : material === "glass"
-          ? PALETTE.glass
+          ? "#7ec8e8"
           : material === "stone"
-            ? PALETTE.stoneMid
-            : PALETTE.ceramic;
+            ? PALETTE.stoneLight
+            : "#e8dcc0";
 
-  const base = dirty ? mixHex(matColor, grimeColor, 0.35) : matColor;
+  const base = dirty ? mixHex(matColor, grimeColor, 0.25) : matColor;
   const v: Voxel[] = [];
-
   const add = (x: number, y: number, z: number, c = base) => v.push({ x, y, z, color: c });
 
   switch (shape) {
     case "plate":
-      for (let x = -2; x <= 2; x++) {
-        for (let z = -2; z <= 2; z++) {
-          if (x * x + z * z <= 5) add(x, 0, z);
-          if (dirty && x * x + z * z <= 3 && Math.abs(x + z) % 2 === 0) add(x, 1, z, grimeColor);
+      for (let x = -3; x <= 3; x++) {
+        for (let z = -3; z <= 3; z++) {
+          const r2 = x * x + z * z;
+          if (r2 <= 10) add(x, 0, z);
+          if (r2 <= 8 && r2 >= 6) add(x, 1, z); // raised rim
+          if (dirty && r2 <= 5 && (x + z) % 2 === 0) add(x, 1, z, grimeColor);
         }
       }
       break;
     case "bowl":
-      for (let x = -2; x <= 2; x++) {
-        for (let z = -2; z <= 2; z++) {
-          const r = x * x + z * z;
-          if (r <= 5 && r >= 2) {
+      for (let x = -3; x <= 3; x++) {
+        for (let z = -3; z <= 3; z++) {
+          const r2 = x * x + z * z;
+          if (r2 <= 4) add(x, 0, z);
+          if (r2 <= 10 && r2 >= 5) {
             add(x, 0, z);
             add(x, 1, z);
             add(x, 2, z);
+            add(x, 3, z);
           }
-          if (r <= 2) add(x, 0, z);
-          if (dirty && r <= 2) add(x, 1, z, grimeColor);
+          if (dirty && r2 <= 4) add(x, 1, z, grimeColor);
         }
       }
       break;
     case "goblet":
-      add(0, 0, 0);
-      add(0, 1, 0);
-      add(0, 2, 0);
       for (let x = -1; x <= 1; x++) {
         for (let z = -1; z <= 1; z++) {
-          if (Math.abs(x) + Math.abs(z) <= 1) add(x, 0, z);
-          add(x, 3, z);
-          if (dirty) add(x, 4, z, grimeColor);
+          if (Math.abs(x) + Math.abs(z) <= 1) {
+            add(x, 0, z);
+            add(x, 1, z);
+          }
+        }
+      }
+      add(0, 2, 0);
+      add(0, 3, 0);
+      for (let x = -2; x <= 2; x++) {
+        for (let z = -2; z <= 2; z++) {
+          const r2 = x * x + z * z;
+          if (r2 <= 5 && r2 >= 2) {
+            add(x, 4, z);
+            add(x, 5, z);
+          }
+          if (r2 <= 2) add(x, 4, z);
+          if (dirty && r2 <= 2) add(x, 5, z, grimeColor);
         }
       }
       break;
     case "cauldron":
-      for (let x = -2; x <= 2; x++) {
-        for (let z = -2; z <= 2; z++) {
-          for (let y = 0; y <= 3; y++) {
-            const edge = Math.abs(x) === 2 || Math.abs(z) === 2;
-            if (edge || y === 0) add(x, y, z, PALETTE.ironDark);
+      for (let x = -3; x <= 3; x++) {
+        for (let z = -3; z <= 3; z++) {
+          const r2 = x * x + z * z;
+          if (r2 <= 10) {
+            for (let y = 0; y <= 4; y++) {
+              const edge = r2 >= 6;
+              if (edge || y === 0) add(x, y, z, PALETTE.ironDark);
+            }
           }
-          if (dirty && Math.abs(x) < 2 && Math.abs(z) < 2) add(x, 3, z, grimeColor);
+          if (dirty && r2 <= 5) add(x, 4, z, grimeColor);
         }
       }
+      // feet
+      add(-2, -1, -2, PALETTE.iron);
+      add(2, -1, -2, PALETTE.iron);
+      add(-2, -1, 2, PALETTE.iron);
+      add(2, -1, 2, PALETTE.iron);
       break;
     case "cup":
-      for (let x = -1; x <= 1; x++) {
-        for (let z = -1; z <= 1; z++) {
-          if (Math.abs(x) === 1 || Math.abs(z) === 1) {
+      for (let x = -2; x <= 2; x++) {
+        for (let z = -2; z <= 2; z++) {
+          const edge = Math.abs(x) === 2 || Math.abs(z) === 2;
+          if (edge) {
             add(x, 0, z);
             add(x, 1, z);
             add(x, 2, z);
-          } else {
+            add(x, 3, z);
+          } else if (Math.abs(x) < 2 && Math.abs(z) < 2) {
             add(x, 0, z);
             if (dirty) add(x, 1, z, grimeColor);
           }
         }
       }
-      add(2, 1, 0); // handle
+      add(3, 1, 0);
+      add(3, 2, 0);
+      add(2, 2, 0);
       break;
     default: // spoon
-      add(0, 0, 0);
-      add(0, 0, 1);
-      add(0, 0, 2);
-      add(0, 0, 3);
-      add(-1, 0, 4);
-      add(0, 0, 4);
-      add(1, 0, 4);
+      for (let z = 0; z <= 5; z++) add(0, 0, z, base);
+      add(0, 0, 6);
+      for (let x = -1; x <= 1; x++) {
+        for (let z = 6; z <= 8; z++) add(x, 0, z);
+      }
       if (dirty) {
-        add(0, 1, 4, grimeColor);
-        add(0, 1, 3, grimeColor);
+        add(0, 1, 7, grimeColor);
+        add(0, 1, 6, grimeColor);
+        add(-1, 1, 7, grimeColor);
       }
       break;
   }

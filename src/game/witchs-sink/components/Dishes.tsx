@@ -73,7 +73,7 @@ export function DishMesh({
     <group ref={group} position={position}>
       <VoxelMesh
         voxels={voxels}
-        size={0.09}
+        size={0.11}
         onClick={(e) => {
           e.stopPropagation();
           if (status === "dirty" || status === "in_pile") pickDish(id);
