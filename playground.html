@@ -1,0 +1,198 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Playground — Design Process Engine</title>
+    <meta
+      name="description"
+      content="Run the full design process pipeline in your browser — no GitHub required."
+    />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:wght@400;500;600&family=Syne:wght@600;700;800&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="./styles.css" />
+  </head>
+  <body>
+    <div class="atmosphere" aria-hidden="true">
+      <div class="atmosphere__grid"></div>
+    </div>
+
+    <header class="site-header">
+      <div class="site-header__inner">
+        <a class="brand" href="./index.html">
+          <span class="brand__mark">◆</span>
+          <span class="brand__name">Design Process Engine</span>
+        </a>
+        <button
+          class="nav-toggle"
+          type="button"
+          data-nav-toggle
+          aria-expanded="false"
+          aria-controls="site-nav"
+        >
+          <span></span>
+          <span class="sr-only">Menu</span>
+        </button>
+        <nav class="nav" id="site-nav" data-nav>
+          <a href="./playground.html" aria-current="page">Playground</a>
+          <a href="./docs.html">Docs</a>
+          <a href="./install.html">Install</a>
+          <a href="./pricing.html">Pricing</a>
+        </nav>
+      </div>
+    </header>
+
+    <main class="page shell play">
+      <div class="play__head" data-reveal>
+        <p class="section-label">Live playground</p>
+        <h1 class="section-title">Use the Engine in your browser</h1>
+        <p class="section-lede">
+          Walk the same pipeline the MCP enforces — classify, playbook, plan,
+          build + review, final check. No GitHub. No terminal. Toggle Pro to
+          unlock the full library.
+        </p>
+        <div class="play__meta">
+          <p id="engine-status" class="play__status">phase: idle</p>
+          <label class="play__tier">
+            <input type="checkbox" id="tier-toggle" />
+            Pro tier unlocked
+          </label>
+        </div>
+      </div>
+
+      <div class="play__grid">
+        <div class="play__panels">
+          <!-- START -->
+          <section class="play-panel" data-panel="start">
+            <h2>1. start_task</h2>
+            <form id="form-start" class="play-form">
+              <label>
+                What are you building?
+                <textarea id="task" rows="3" required placeholder="e.g. Fintech onboarding for a neon wallet app"></textarea>
+              </label>
+              <label>
+                Context (optional)
+                <textarea id="context" rows="2" placeholder="Next.js, dark UI, MENA audience…"></textarea>
+              </label>
+              <button class="btn btn--primary" type="submit">Start task</button>
+            </form>
+          </section>
+
+          <!-- PLAYBOOK -->
+          <section class="play-panel" data-panel="playbook" hidden>
+            <h2>2. get_playbook</h2>
+            <form id="form-playbook" class="play-form">
+              <label>
+                Playbook
+                <select id="playbook-id"></select>
+              </label>
+              <button class="btn btn--primary" type="submit">Load playbook</button>
+            </form>
+          </section>
+
+          <!-- PLAN -->
+          <section class="play-panel" data-panel="plan" hidden>
+            <h2>3. submit_plan</h2>
+            <form id="form-plan" class="play-form">
+              <label>
+                Layout principle (one)
+                <input id="layoutPrinciple" required placeholder="stepper with one job per screen" />
+              </label>
+              <label>
+                Screens / sections (one per line)
+                <textarea id="screens" rows="5" required></textarea>
+              </label>
+              <label>
+                Palette strategy
+                <input id="paletteStrategy" required placeholder="dark cool canvas + single mint accent" />
+              </label>
+              <label>
+                Density
+                <select id="density">
+                  <option>comfortable</option>
+                  <option>sparse</option>
+                  <option>dense</option>
+                  <option>information-rich</option>
+                </select>
+              </label>
+              <label>
+                Type direction
+                <input id="typeDirection" required placeholder="Syne headlines + IBM Plex body" />
+              </label>
+              <label>
+                Value vocabulary (comma-separated, ≥3)
+                <input id="valueVocabulary" required placeholder="--bg, --accent, gap-6, radius-sm" />
+              </label>
+              <label>
+                Notes
+                <textarea id="notes" rows="2" placeholder="Brand test, out of scope…"></textarea>
+              </label>
+              <button class="btn btn--primary" type="submit">Submit plan</button>
+            </form>
+          </section>
+
+          <!-- BUILD / REVIEW -->
+          <section class="play-panel" data-panel="build" hidden>
+            <h2>4. Build → get_pattern_guide → review</h2>
+            <div class="play-form">
+              <label>
+                Pattern guide id (optional)
+                <input id="pattern-id" placeholder="empty-state, otp-input, paywall…" />
+              </label>
+              <button class="btn btn--ghost" type="button" id="btn-pattern">Load pattern guide</button>
+            </div>
+            <form id="form-review" class="play-form">
+              <label>
+                Stage
+                <select id="stageId"></select>
+              </label>
+              <label>
+                What did you build? (honest summary)
+                <textarea id="review-summary" rows="4" required placeholder="Describe structure, how it holds the layout principle…"></textarea>
+              </label>
+              <fieldset>
+                <legend>Defect checklist (uncheck if you still see the defect)</legend>
+                <div id="defect-checks" class="play-checks"></div>
+              </fieldset>
+              <button class="btn btn--primary" type="submit">Submit review</button>
+            </form>
+          </section>
+
+          <!-- FINAL -->
+          <section class="play-panel" data-panel="final" hidden>
+            <h2>5. final_check</h2>
+            <form id="form-final" class="play-form">
+              <label>
+                Deliverable text (copy + notes for slop scan)
+                <textarea id="deliverable" rows="4" placeholder="Paste headlines, class names, summary of finished UI…"></textarea>
+              </label>
+              <label>
+                Finish command
+                <select id="finish-command">
+                  <option value="none">none</option>
+                  <option value="distill">distill</option>
+                  <option value="quieter">quieter</option>
+                  <option value="bolder">bolder</option>
+                </select>
+              </label>
+              <button class="btn btn--primary" type="submit">Run final check</button>
+            </form>
+            <pre id="final-result" class="play-result" hidden></pre>
+          </section>
+        </div>
+
+        <aside class="play__aside">
+          <h2>Engine log</h2>
+          <div id="engine-log" class="play-log"></div>
+        </aside>
+      </div>
+    </main>
+
+    <script src="./main.js"></script>
+    <script src="./playground.js"></script>
+  </body>
+</html>

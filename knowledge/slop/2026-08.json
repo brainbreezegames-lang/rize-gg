@@ -1,0 +1,169 @@
+{
+  "month": "2026-08",
+  "signatures": [
+    {
+      "id": "purple-gradient-default",
+      "name": "Purple gradient default theme",
+      "patterns": [
+        "purple",
+        "indigo",
+        "from-purple",
+        "to-indigo",
+        "violet-"
+      ],
+      "why": "Generic AI default aesthetic that erases brand.",
+      "fix": "Derive palette from brand tokens; ban purple-indigo stock gradients unless on-brand.",
+      "severity": "blocker"
+    },
+    {
+      "id": "hero-stat-strip",
+      "name": "Hero cluttered with stat strip",
+      "patterns": [
+        "stat strip",
+        "metrics row",
+        "social proof in hero",
+        "trusted by.*hero"
+      ],
+      "why": "First viewport should do one job; stats dilute brand and CTA.",
+      "fix": "Move metrics below the fold; keep hero to brand, headline, support, CTA, visual.",
+      "severity": "warning"
+    },
+    {
+      "id": "card-everything",
+      "name": "Everything in cards",
+      "patterns": [
+        "rounded-xl shadow",
+        "grid of cards",
+        "card for static text"
+      ],
+      "why": "Cards without interaction add noise and look template-generated.",
+      "fix": "Use cards only for interactive units; remove chrome from static content.",
+      "severity": "warning"
+    },
+    {
+      "id": "inset-hero-image",
+      "name": "Inset floating hero image",
+      "patterns": [
+        "hero.*rounded-2xl",
+        "floating image card",
+        "side panel hero"
+      ],
+      "why": "Promotional surfaces need full-bleed visual planes, not postage stamps.",
+      "fix": "Make hero media edge-to-edge background or dominant plane.",
+      "severity": "blocker"
+    },
+    {
+      "id": "inter-roboto-default",
+      "name": "Default Inter/Roboto stack",
+      "patterns": [
+        "font-sans",
+        "Inter",
+        "Roboto",
+        "Arial",
+        "system-ui only"
+      ],
+      "why": "Default type stacks signal generic AI output.",
+      "fix": "Choose an expressive brand font and wire it through tokens.",
+      "severity": "warning"
+    },
+    {
+      "id": "emoji-as-iconography",
+      "name": "Emoji used as UI iconography",
+      "patterns": [
+        "🚀",
+        "✨",
+        "👉",
+        "emoji icon"
+      ],
+      "why": "Emojis as icons read as placeholder marketing, not product UI.",
+      "fix": "Replace with a coherent icon set sized to the design system.",
+      "severity": "suggestion"
+    },
+    {
+      "id": "glassmorphism-soup",
+      "name": "Unmotivated glassmorphism",
+      "patterns": [
+        "backdrop-blur",
+        "bg-white/10",
+        "glass card",
+        "frosted"
+      ],
+      "why": "Frosted panels without hierarchy become visual noise.",
+      "fix": "Use blur sparingly on true overlays; prefer solid surfaces for content.",
+      "severity": "suggestion"
+    },
+    {
+      "id": "pill-chip-cluster",
+      "name": "Pill chip cluster clutter",
+      "patterns": [
+        "rounded-full.*badge",
+        "chip row",
+        "tag cloud"
+      ],
+      "why": "Clusters of pills compete with the primary message.",
+      "fix": "Limit chips; prefer one status treatment and structured filters.",
+      "severity": "warning"
+    },
+    {
+      "id": "fake-ai-copy",
+      "name": "Hollow AI marketing copy",
+      "patterns": [
+        "unlock your potential",
+        "seamlessly",
+        "next-generation",
+        "reimagine"
+      ],
+      "why": "Vague claims fail the brand test and designer review.",
+      "fix": "Write concrete product outcomes and verbs tied to the UI.",
+      "severity": "blocker"
+    },
+    {
+      "id": "missing-empty-error",
+      "name": "Missing empty and error states",
+      "patterns": [
+        "TODO empty",
+        "no empty state",
+        "spinner forever"
+      ],
+      "why": "Forgotten states are a top production defect source.",
+      "fix": "Specify empty, loading, error, and success for every data surface.",
+      "severity": "blocker"
+    },
+    {
+      "id": "modal-on-modal",
+      "name": "Stacked modal traps",
+      "patterns": [
+        "modal.*modal",
+        "confirm inside modal",
+        "nested dialog"
+      ],
+      "why": "Focus and dismissal become unpredictable.",
+      "fix": "Replace nested dialogs with inline expansion or a single stepped flow.",
+      "severity": "warning"
+    },
+    {
+      "id": "cream-serif-terracotta",
+      "name": "Cream background serif terracotta cluster",
+      "patterns": [
+        "#F4F1EA",
+        "cream.*serif",
+        "terracotta accent"
+      ],
+      "why": "Overused AI aesthetic cluster that feels unoriginal.",
+      "fix": "Pick a distinct direction with intentional color and type pairing.",
+      "severity": "suggestion"
+    },
+    {
+      "id": "broadsheet-dense",
+      "name": "Broadsheet dense newspaper layout",
+      "patterns": [
+        "hairline rules",
+        "zero radius columns",
+        "newspaper layout"
+      ],
+      "why": "Dense multi-column news layouts rarely fit product UI jobs.",
+      "fix": "Simplify to one job per section with clear hierarchy.",
+      "severity": "suggestion"
+    }
+  ]
+}

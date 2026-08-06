@@ -1,0 +1,33 @@
+{
+  "id": "banner",
+  "title": "Banner",
+  "category": "feedback",
+  "tier": "free",
+  "structure": [
+    "banner-root",
+    "banner-trigger",
+    "banner-message",
+    "banner-severity",
+    "banner-dismiss"
+  ],
+  "requiredStates": [
+    "default",
+    "visible",
+    "leaving",
+    "success",
+    "error",
+    "warning"
+  ],
+  "codeExample": "```tsx\nexport function BannerExample() {\n  // Minimal Banner pattern\n  return (\n    <section aria-label=\"Banner\" data-pattern=\"banner\">\n      <header>\n        <h2>Banner</h2>\n      </header>\n      <div className=\"pattern-body\">\n        {/* Implement required states: default + interactive variants */}\n      </div>\n    </section>\n  );\n}\n```",
+  "mistakes": [
+    "Toast as the only record of a destructive action",
+    "Modal without focus trap",
+    "Spinner with no timeout or cancel",
+    "Treating Banner as decoration without visible state"
+  ],
+  "relatedPatterns": [
+    "empty-state",
+    "modal",
+    "drawer"
+  ]
+}

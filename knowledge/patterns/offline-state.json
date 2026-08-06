@@ -1,0 +1,32 @@
+{
+  "id": "offline-state",
+  "title": "Offline State",
+  "category": "mobile-patterns",
+  "tier": "pro",
+  "structure": [
+    "offline-state-root",
+    "offline-state-gesture-target",
+    "offline-state-sheet-or-overlay",
+    "offline-state-safe-area",
+    "offline-state-haptics-cue"
+  ],
+  "requiredStates": [
+    "default",
+    "dragging",
+    "refreshing",
+    "offline",
+    "permission-denied"
+  ],
+  "codeExample": "```tsx\nexport function OfflineStateExample() {\n  // Minimal Offline State pattern\n  return (\n    <section aria-label=\"Offline State\" data-pattern=\"offline-state\">\n      <header>\n        <h2>Offline State</h2>\n      </header>\n      <div className=\"pattern-body\">\n        {/* Implement required states: default + interactive variants */}\n      </div>\n    </section>\n  );\n}\n```",
+  "mistakes": [
+    "Gesture-only actions with no button fallback",
+    "Ignoring safe-area insets",
+    "Pull-to-refresh fighting nested scroll",
+    "Treating Offline State as decoration without dragging state"
+  ],
+  "relatedPatterns": [
+    "infinite-scroll",
+    "permissions-prompt",
+    "pull-to-refresh"
+  ]
+}

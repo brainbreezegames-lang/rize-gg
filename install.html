@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Install — Design Process Engine</title>
+    <meta
+      name="description"
+      content="MCP install snippets for Cursor, Claude Code, and generic clients."
+    />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:wght@400;500;600&family=Syne:wght@600;700;800&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="./styles.css" />
+  </head>
+  <body>
+    <div class="atmosphere" aria-hidden="true">
+      <div class="atmosphere__grid"></div>
+    </div>
+
+    <header class="site-header">
+      <div class="site-header__inner">
+        <a class="brand" href="./index.html">
+          <span class="brand__mark">◆</span>
+          <span class="brand__name">Design Process Engine</span>
+        </a>
+        <button
+          class="nav-toggle"
+          type="button"
+          data-nav-toggle
+          aria-expanded="false"
+          aria-controls="site-nav"
+        >
+          <span></span>
+          <span class="sr-only">Menu</span>
+        </button>
+        <nav class="nav" id="site-nav" data-nav>
+          <a href="./playground.html">Playground</a>
+          <a href="./docs.html">Docs</a>
+          <a href="./install.html" aria-current="page">Install</a>
+          <a href="./pricing.html">Pricing</a>
+          <a href="./install.html">Get started</a>
+        </nav>
+      </div>
+    </header>
+
+    <main class="page shell">
+      <p class="section-label" data-reveal>Install</p>
+      <h1 class="section-title" data-reveal>Wire the MCP. Point at the skill.</h1>
+      <p class="section-lede" data-reveal>
+        Clone the package, install deps, then register the server with your
+        agent. Copy <code>skill/SKILL.md</code> so the pipeline is default
+        behavior.
+      </p>
+
+      <section class="install-block" data-reveal>
+        <h2>1. Package setup</h2>
+        <p>From the design-process-engine directory:</p>
+        <pre><code>npm install
+npm run build
+# or for local iteration:
+npm run dev</code></pre>
+      </section>
+
+      <section class="install-block" data-reveal>
+        <h2>Cursor</h2>
+        <p>
+          Add to your MCP config (Cursor Settings → MCP, or
+          <code>.cursor/mcp.json</code>):
+        </p>
+        <pre><code>{
+  "mcpServers": {
+    "design-process-engine": {
+      "command": "npx",
+      "args": ["tsx", "/absolute/path/to/design-process-engine/src/index.ts"]
+    }
+  }
+}</code></pre>
+        <p style="margin-top: 1rem">After build, you can use Node directly:</p>
+        <pre><code>{
+  "mcpServers": {
+    "design-process-engine": {
+      "command": "node",
+      "args": ["/absolute/path/to/design-process-engine/dist/index.js"]
+    }
+  }
+}</code></pre>
+      </section>
+
+      <section class="install-block" data-reveal>
+        <h2>Claude Code</h2>
+        <p>Register via CLI or project config:</p>
+        <pre><code>claude mcp add design-process-engine -- \
+  npx tsx /absolute/path/to/design-process-engine/src/index.ts</code></pre>
+        <p style="margin-top: 1rem">Or in <code>.mcp.json</code>:</p>
+        <pre><code>{
+  "mcpServers": {
+    "design-process-engine": {
+      "command": "npx",
+      "args": ["tsx", "/absolute/path/to/design-process-engine/src/index.ts"]
+    }
+  }
+}</code></pre>
+      </section>
+
+      <section class="install-block" data-reveal>
+        <h2>Generic MCP client</h2>
+        <p>
+          Any stdio MCP host works. Point command at the server entry and leave
+          args empty (or pass your absolute path):
+        </p>
+        <pre><code>{
+  "name": "design-process-engine",
+  "transport": "stdio",
+  "command": "node",
+  "args": ["/absolute/path/to/design-process-engine/dist/index.js"]
+}</code></pre>
+      </section>
+
+      <section class="install-block" data-reveal>
+        <h2>Companion skill</h2>
+        <p>
+          Copy or symlink <code>skill/SKILL.md</code> into your agent's skill
+          path so classify → plan → staged build → review is the default path —
+          not something the model invents around.
+        </p>
+      </section>
+    </main>
+
+    <footer class="site-footer">
+      <div class="site-footer__inner">
+        <span>Design Process Engine · MCP + skill</span>
+        <a href="./pricing.html">Pricing</a>
+      </div>
+    </footer>
+
+    <script src="./main.js" defer></script>
+  </body>
+</html>

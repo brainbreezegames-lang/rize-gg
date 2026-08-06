@@ -1,0 +1,33 @@
+{
+  "id": "usage-meters",
+  "title": "Usage Meters",
+  "category": "data",
+  "tier": "pro",
+  "structure": [
+    "usage-meters-root",
+    "usage-meters-toolbar",
+    "usage-meters-content-grid",
+    "usage-meters-empty",
+    "usage-meters-loading"
+  ],
+  "requiredStates": [
+    "default",
+    "loading",
+    "empty",
+    "error",
+    "filtered",
+    "sorted"
+  ],
+  "codeExample": "```tsx\nexport function UsageMetersExample() {\n  // Minimal Usage Meters pattern\n  return (\n    <section aria-label=\"Usage Meters\" data-pattern=\"usage-meters\">\n      <header>\n        <h2>Usage Meters</h2>\n      </header>\n      <div className=\"pattern-body\">\n        {/* Implement required states: default + interactive variants */}\n      </div>\n    </section>\n  );\n}\n```",
+  "mistakes": [
+    "Tables without empty or loading states",
+    "Filters that reset scroll position unexpectedly",
+    "Sort with no affordance of current order",
+    "Treating Usage Meters as decoration without loading state"
+  ],
+  "relatedPatterns": [
+    "filters",
+    "data-table",
+    "leaderboard"
+  ]
+}

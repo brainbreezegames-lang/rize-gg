@@ -1,0 +1,33 @@
+{
+  "id": "shipping-selector",
+  "title": "Shipping Selector",
+  "category": "commerce",
+  "tier": "pro",
+  "structure": [
+    "shipping-selector-root",
+    "shipping-selector-offer-summary",
+    "shipping-selector-price",
+    "shipping-selector-cta",
+    "shipping-selector-trust-signals"
+  ],
+  "requiredStates": [
+    "default",
+    "selected",
+    "loading",
+    "sold-out",
+    "discounted",
+    "error"
+  ],
+  "codeExample": "```tsx\nexport function ShippingSelectorExample() {\n  // Minimal Shipping Selector pattern\n  return (\n    <section aria-label=\"Shipping Selector\" data-pattern=\"shipping-selector\">\n      <header>\n        <h2>Shipping Selector</h2>\n      </header>\n      <div className=\"pattern-body\">\n        {/* Implement required states: default + interactive variants */}\n      </div>\n    </section>\n  );\n}\n```",
+  "mistakes": [
+    "Price without currency or tax clarity",
+    "CTA that does not restate the commitment",
+    "Hiding fees until the last step",
+    "Treating Shipping Selector as decoration without selected state"
+  ],
+  "relatedPatterns": [
+    "paywall",
+    "pricing-table",
+    "checkout-summary"
+  ]
+}

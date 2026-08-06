@@ -1,0 +1,33 @@
+{
+  "id": "date-picker",
+  "title": "Date Picker",
+  "category": "forms",
+  "tier": "pro",
+  "structure": [
+    "date-picker-root",
+    "date-picker-label",
+    "date-picker-input",
+    "date-picker-helper",
+    "date-picker-validation"
+  ],
+  "requiredStates": [
+    "default",
+    "focus",
+    "filled",
+    "error",
+    "disabled",
+    "submitting"
+  ],
+  "codeExample": "```tsx\nexport function DatePickerExample() {\n  // Minimal Date Picker pattern\n  return (\n    <section aria-label=\"Date Picker\" data-pattern=\"date-picker\">\n      <header>\n        <h2>Date Picker</h2>\n      </header>\n      <div className=\"pattern-body\">\n        {/* Implement required states: default + interactive variants */}\n      </div>\n    </section>\n  );\n}\n```",
+  "mistakes": [
+    "Validate only on submit with no field-level hints",
+    "Placeholder used as the only label",
+    "Destroying user input on validation error",
+    "Treating Date Picker as decoration without focus state"
+  ],
+  "relatedPatterns": [
+    "multi-step-form",
+    "file-upload",
+    "calendar"
+  ]
+}

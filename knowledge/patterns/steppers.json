@@ -1,0 +1,33 @@
+{
+  "id": "steppers",
+  "title": "Steppers",
+  "category": "forms",
+  "tier": "pro",
+  "structure": [
+    "steppers-root",
+    "steppers-label",
+    "steppers-input",
+    "steppers-helper",
+    "steppers-validation"
+  ],
+  "requiredStates": [
+    "default",
+    "focus",
+    "filled",
+    "error",
+    "disabled",
+    "submitting"
+  ],
+  "codeExample": "```tsx\nexport function SteppersExample() {\n  // Minimal Steppers pattern\n  return (\n    <section aria-label=\"Steppers\" data-pattern=\"steppers\">\n      <header>\n        <h2>Steppers</h2>\n      </header>\n      <div className=\"pattern-body\">\n        {/* Implement required states: default + interactive variants */}\n      </div>\n    </section>\n  );\n}\n```",
+  "mistakes": [
+    "Validate only on submit with no field-level hints",
+    "Placeholder used as the only label",
+    "Destroying user input on validation error",
+    "Treating Steppers as decoration without focus state"
+  ],
+  "relatedPatterns": [
+    "multi-step-form",
+    "file-upload",
+    "date-picker"
+  ]
+}

@@ -1,0 +1,33 @@
+{
+  "id": "cart-drawer",
+  "title": "Cart Drawer",
+  "category": "commerce",
+  "tier": "pro",
+  "structure": [
+    "cart-drawer-root",
+    "cart-drawer-offer-summary",
+    "cart-drawer-price",
+    "cart-drawer-cta",
+    "cart-drawer-trust-signals"
+  ],
+  "requiredStates": [
+    "default",
+    "selected",
+    "loading",
+    "sold-out",
+    "discounted",
+    "error"
+  ],
+  "codeExample": "```tsx\nexport function CartDrawerExample() {\n  // Minimal Cart Drawer pattern\n  return (\n    <section aria-label=\"Cart Drawer\" data-pattern=\"cart-drawer\">\n      <header>\n        <h2>Cart Drawer</h2>\n      </header>\n      <div className=\"pattern-body\">\n        {/* Implement required states: default + interactive variants */}\n      </div>\n    </section>\n  );\n}\n```",
+  "mistakes": [
+    "Price without currency or tax clarity",
+    "CTA that does not restate the commitment",
+    "Hiding fees until the last step",
+    "Treating Cart Drawer as decoration without selected state"
+  ],
+  "relatedPatterns": [
+    "paywall",
+    "pricing-table",
+    "checkout-summary"
+  ]
+}

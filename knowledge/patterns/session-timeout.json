@@ -1,0 +1,33 @@
+{
+  "id": "session-timeout",
+  "title": "Session Timeout",
+  "category": "auth",
+  "tier": "pro",
+  "structure": [
+    "session-timeout-root",
+    "session-timeout-identity-input",
+    "session-timeout-verify",
+    "session-timeout-error",
+    "session-timeout-success"
+  ],
+  "requiredStates": [
+    "default",
+    "pending",
+    "success",
+    "error",
+    "locked",
+    "expired"
+  ],
+  "codeExample": "```tsx\nexport function SessionTimeoutExample() {\n  // Minimal Session Timeout pattern\n  return (\n    <section aria-label=\"Session Timeout\" data-pattern=\"session-timeout\">\n      <header>\n        <h2>Session Timeout</h2>\n      </header>\n      <div className=\"pattern-body\">\n        {/* Implement required states: default + interactive variants */}\n      </div>\n    </section>\n  );\n}\n```",
+  "mistakes": [
+    "No rate-limit messaging on OTP",
+    "Password rules shown only after failure",
+    "Losing deep-link context after verify",
+    "Treating Session Timeout as decoration without pending state"
+  ],
+  "relatedPatterns": [
+    "otp-input",
+    "password-field",
+    "age-gate"
+  ]
+}

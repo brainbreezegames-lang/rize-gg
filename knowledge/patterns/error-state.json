@@ -1,0 +1,33 @@
+{
+  "id": "error-state",
+  "title": "Error State",
+  "category": "feedback",
+  "tier": "pro",
+  "structure": [
+    "error-state-root",
+    "error-state-trigger",
+    "error-state-message",
+    "error-state-severity",
+    "error-state-dismiss"
+  ],
+  "requiredStates": [
+    "default",
+    "visible",
+    "leaving",
+    "success",
+    "error",
+    "warning"
+  ],
+  "codeExample": "```tsx\nexport function ErrorStateExample() {\n  // Minimal Error State pattern\n  return (\n    <section aria-label=\"Error State\" data-pattern=\"error-state\">\n      <header>\n        <h2>Error State</h2>\n      </header>\n      <div className=\"pattern-body\">\n        {/* Implement required states: default + interactive variants */}\n      </div>\n    </section>\n  );\n}\n```",
+  "mistakes": [
+    "Toast as the only record of a destructive action",
+    "Modal without focus trap",
+    "Spinner with no timeout or cancel",
+    "Treating Error State as decoration without visible state"
+  ],
+  "relatedPatterns": [
+    "empty-state",
+    "modal",
+    "drawer"
+  ]
+}

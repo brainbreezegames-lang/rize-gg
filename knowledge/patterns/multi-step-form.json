@@ -1,0 +1,33 @@
+{
+  "id": "multi-step-form",
+  "title": "Multi Step Form",
+  "category": "forms",
+  "tier": "free",
+  "structure": [
+    "multi-step-form-root",
+    "multi-step-form-label",
+    "multi-step-form-input",
+    "multi-step-form-helper",
+    "multi-step-form-validation"
+  ],
+  "requiredStates": [
+    "default",
+    "focus",
+    "filled",
+    "error",
+    "disabled",
+    "submitting"
+  ],
+  "codeExample": "```tsx\nexport function MultiStepFormExample() {\n  // Minimal Multi Step Form pattern\n  return (\n    <section aria-label=\"Multi Step Form\" data-pattern=\"multi-step-form\">\n      <header>\n        <h2>Multi Step Form</h2>\n      </header>\n      <div className=\"pattern-body\">\n        {/* Implement required states: default + interactive variants */}\n      </div>\n    </section>\n  );\n}\n```",
+  "mistakes": [
+    "Validate only on submit with no field-level hints",
+    "Placeholder used as the only label",
+    "Destroying user input on validation error",
+    "Treating Multi Step Form as decoration without focus state"
+  ],
+  "relatedPatterns": [
+    "file-upload",
+    "date-picker",
+    "calendar"
+  ]
+}

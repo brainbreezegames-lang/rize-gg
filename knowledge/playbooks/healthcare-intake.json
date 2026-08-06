@@ -1,0 +1,59 @@
+{
+  "id": "healthcare-intake",
+  "title": "Healthcare Intake",
+  "productType": "healthcare",
+  "flow": "intake",
+  "tier": "pro",
+  "summary": "Collect clinical and admin intake data with clarity, privacy, and recoverable incomplete sessions.",
+  "structure": [
+    "patient-identity",
+    "insurance-capture",
+    "chief-complaint",
+    "medical-history",
+    "medications-allergies",
+    "consents-and-hipaa",
+    "review-submit",
+    "appointment-confirmation"
+  ],
+  "strategies": [
+    {
+      "name": "Save-and-resume intake",
+      "prevalence": "25 of 31",
+      "tradeoffs": "Lower abandonment; PHI persistence complexity.",
+      "when": "Long forms completed across devices before visits."
+    },
+    {
+      "name": "Clinician-priority question order",
+      "prevalence": "18 of 31",
+      "tradeoffs": "Better clinical data; feels abrupt to patients.",
+      "when": "Specialty clinics with protocolized triage."
+    },
+    {
+      "name": "Insurance photo OCR assist",
+      "prevalence": "14 of 31",
+      "tradeoffs": "Faster entry; OCR errors need easy correction.",
+      "when": "US-heavy ambulatory scheduling flows."
+    },
+    {
+      "name": "Proxy/caregiver mode",
+      "prevalence": "11 of 31",
+      "tradeoffs": "Inclusive for dependents; consent UX is harder.",
+      "when": "Pediatrics, elder care, and disability-aware products."
+    }
+  ],
+  "forgottenStates": [
+    "Expired insurance card warning",
+    "Incomplete form locked before appointment",
+    "Interpreter / language switch mid-flow",
+    "Sensitive question skip with clinician note",
+    "Offline clinic lobby completion"
+  ],
+  "neverDo": [
+    "Show PHI in URLs or page titles",
+    "Use playful gamification on clinical pain scales",
+    "Require account password resets mid-intake",
+    "Hide data-sharing consent in walls of text",
+    "Block submit without explaining mandatory fields clinically"
+  ],
+  "evidenceNotes": "Compiled from captured app journeys + curated designer wisdom."
+}

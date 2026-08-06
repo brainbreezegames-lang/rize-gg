@@ -1,0 +1,33 @@
+{
+  "id": "notification-center",
+  "title": "Notification Center",
+  "category": "content",
+  "tier": "pro",
+  "structure": [
+    "notification-center-root",
+    "notification-center-header",
+    "notification-center-body",
+    "notification-center-media",
+    "notification-center-actions"
+  ],
+  "requiredStates": [
+    "default",
+    "loading",
+    "empty",
+    "expanded",
+    "editing",
+    "error"
+  ],
+  "codeExample": "```tsx\nexport function NotificationCenterExample() {\n  // Minimal Notification Center pattern\n  return (\n    <section aria-label=\"Notification Center\" data-pattern=\"notification-center\">\n      <header>\n        <h2>Notification Center</h2>\n      </header>\n      <div className=\"pattern-body\">\n        {/* Implement required states: default + interactive variants */}\n      </div>\n    </section>\n  );\n}\n```",
+  "mistakes": [
+    "Unbounded nested threads with no collapse",
+    "Media without aspect-ratio reservation",
+    "Timestamps without relative/absolute toggle when needed",
+    "Treating Notification Center as decoration without loading state"
+  ],
+  "relatedPatterns": [
+    "chat-list",
+    "chat-composer",
+    "comment-thread"
+  ]
+}

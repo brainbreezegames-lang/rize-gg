@@ -1,0 +1,33 @@
+{
+  "id": "comment-thread",
+  "title": "Comment Thread",
+  "category": "content",
+  "tier": "pro",
+  "structure": [
+    "comment-thread-root",
+    "comment-thread-header",
+    "comment-thread-body",
+    "comment-thread-media",
+    "comment-thread-actions"
+  ],
+  "requiredStates": [
+    "default",
+    "loading",
+    "empty",
+    "expanded",
+    "editing",
+    "error"
+  ],
+  "codeExample": "```tsx\nexport function CommentThreadExample() {\n  // Minimal Comment Thread pattern\n  return (\n    <section aria-label=\"Comment Thread\" data-pattern=\"comment-thread\">\n      <header>\n        <h2>Comment Thread</h2>\n      </header>\n      <div className=\"pattern-body\">\n        {/* Implement required states: default + interactive variants */}\n      </div>\n    </section>\n  );\n}\n```",
+  "mistakes": [
+    "Unbounded nested threads with no collapse",
+    "Media without aspect-ratio reservation",
+    "Timestamps without relative/absolute toggle when needed",
+    "Treating Comment Thread as decoration without loading state"
+  ],
+  "relatedPatterns": [
+    "chat-list",
+    "chat-composer",
+    "notification-center"
+  ]
+}

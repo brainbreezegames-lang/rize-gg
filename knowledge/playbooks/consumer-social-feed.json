@@ -1,0 +1,59 @@
+{
+  "id": "consumer-social-feed",
+  "title": "Consumer Social Feed",
+  "productType": "consumer-social",
+  "flow": "feed",
+  "tier": "pro",
+  "summary": "Deliver a scrollable home feed that balances freshness, creator content, and safe empty/moderation states.",
+  "structure": [
+    "auth-gate-or-guest",
+    "feed-ranking-surface",
+    "composer-entry",
+    "post-detail",
+    "engagement-actions",
+    "notifications-entry",
+    "profile-hop"
+  ],
+  "strategies": [
+    {
+      "name": "Following-first chronological",
+      "prevalence": "16 of 44",
+      "tradeoffs": "Trust and clarity; weaker discovery and session length.",
+      "when": "Close-knit communities and creator-subscriber products."
+    },
+    {
+      "name": "Algorithmic For You default",
+      "prevalence": "34 of 44",
+      "tradeoffs": "Retention wins; users feel loss of control.",
+      "when": "Growth-stage consumer apps optimizing for DAU."
+    },
+    {
+      "name": "Stories + feed hybrid",
+      "prevalence": "27 of 44",
+      "tradeoffs": "Ephemeral engagement; UI noise and dual content models.",
+      "when": "Visual-first networks with daily check-in habits."
+    },
+    {
+      "name": "Local/nearby ranking",
+      "prevalence": "11 of 44",
+      "tradeoffs": "Relevance in place-based apps; privacy and thin supply.",
+      "when": "Events, dating-adjacent, or neighborhood products."
+    }
+  ],
+  "forgottenStates": [
+    "Muted / blocked author residual posts",
+    "Shadowbanned composer feedback",
+    "Feed refresh conflict while offline",
+    "Sensitive content blur with reveal",
+    "Zero following empty state with suggestions",
+    "Report flow confirmation"
+  ],
+  "neverDo": [
+    "Infinite autoplay video with sound on",
+    "Hide why a post was recommended",
+    "Let deleted posts leave broken threads",
+    "Use engagement bait as primary empty-state copy",
+    "Ship feed without pull-to-refresh or end-of-list cue"
+  ],
+  "evidenceNotes": "Compiled from captured app journeys + curated designer wisdom."
+}

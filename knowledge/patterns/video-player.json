@@ -1,0 +1,33 @@
+{
+  "id": "video-player",
+  "title": "Video Player",
+  "category": "content",
+  "tier": "pro",
+  "structure": [
+    "video-player-root",
+    "video-player-header",
+    "video-player-body",
+    "video-player-media",
+    "video-player-actions"
+  ],
+  "requiredStates": [
+    "default",
+    "loading",
+    "empty",
+    "expanded",
+    "editing",
+    "error"
+  ],
+  "codeExample": "```tsx\nexport function VideoPlayerExample() {\n  // Minimal Video Player pattern\n  return (\n    <section aria-label=\"Video Player\" data-pattern=\"video-player\">\n      <header>\n        <h2>Video Player</h2>\n      </header>\n      <div className=\"pattern-body\">\n        {/* Implement required states: default + interactive variants */}\n      </div>\n    </section>\n  );\n}\n```",
+  "mistakes": [
+    "Unbounded nested threads with no collapse",
+    "Media without aspect-ratio reservation",
+    "Timestamps without relative/absolute toggle when needed",
+    "Treating Video Player as decoration without loading state"
+  ],
+  "relatedPatterns": [
+    "chat-list",
+    "chat-composer",
+    "comment-thread"
+  ]
+}
