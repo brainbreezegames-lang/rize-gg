@@ -1,0 +1,59 @@
+{
+  "id": "ecommerce-checkout",
+  "title": "Ecommerce Checkout",
+  "productType": "ecommerce",
+  "flow": "checkout",
+  "tier": "pro",
+  "summary": "Convert cart intent into paid order with minimal friction, clear totals, and recoverable payment failures.",
+  "structure": [
+    "cart-review",
+    "shipping-address",
+    "shipping-method",
+    "payment-method",
+    "order-summary",
+    "place-order",
+    "confirmation-receipt"
+  ],
+  "strategies": [
+    {
+      "name": "Single-page checkout",
+      "prevalence": "26 of 52",
+      "tradeoffs": "Fewer clicks; longer page and harder mobile focus.",
+      "when": "Simple catalogs with one ship-to and few upsells."
+    },
+    {
+      "name": "Multi-step stepper checkout",
+      "prevalence": "24 of 52",
+      "tradeoffs": "Clear progress; more abandonment between steps.",
+      "when": "Complex shipping, gifts, or B2B purchase orders."
+    },
+    {
+      "name": "Guest checkout default",
+      "prevalence": "38 of 52",
+      "tradeoffs": "Higher conversion; weaker CRM identity capture.",
+      "when": "First-purchase heavy retail and low-frequency buys."
+    },
+    {
+      "name": "Express wallets above fold",
+      "prevalence": "33 of 52",
+      "tradeoffs": "Huge mobile lift; can skip email capture for marketing.",
+      "when": "Mobile-dominant traffic with Apple/Google Pay support."
+    }
+  ],
+  "forgottenStates": [
+    "Out-of-stock race after cart hold",
+    "Address validation soft-fail suggestions",
+    "3DS challenge return deep-link",
+    "Partial payment authorization",
+    "Promo code stacking conflicts",
+    "Tax recalculation after address change"
+  ],
+  "neverDo": [
+    "Surprise fees only on the final confirm screen",
+    "Force account creation before payment",
+    "Clear cart on payment decline",
+    "Hide return policy until after purchase",
+    "Use tiny unchecked marketing opt-ins by default"
+  ],
+  "evidenceNotes": "Compiled from captured app journeys + curated designer wisdom."
+}

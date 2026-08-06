@@ -1,0 +1,33 @@
+{
+  "id": "empty-state",
+  "title": "Empty State",
+  "category": "feedback",
+  "tier": "free",
+  "structure": [
+    "empty-state-root",
+    "empty-state-trigger",
+    "empty-state-message",
+    "empty-state-severity",
+    "empty-state-dismiss"
+  ],
+  "requiredStates": [
+    "default",
+    "visible",
+    "leaving",
+    "success",
+    "error",
+    "warning"
+  ],
+  "codeExample": "```tsx\nexport function EmptyStateExample() {\n  // Minimal Empty State pattern\n  return (\n    <section aria-label=\"Empty State\" data-pattern=\"empty-state\">\n      <header>\n        <h2>Empty State</h2>\n      </header>\n      <div className=\"pattern-body\">\n        {/* Implement required states: default + interactive variants */}\n      </div>\n    </section>\n  );\n}\n```",
+  "mistakes": [
+    "Toast as the only record of a destructive action",
+    "Modal without focus trap",
+    "Spinner with no timeout or cancel",
+    "Treating Empty State as decoration without visible state"
+  ],
+  "relatedPatterns": [
+    "modal",
+    "drawer",
+    "toast"
+  ]
+}

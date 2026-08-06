@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Install — Design Process Engine MCP</title>
+    <meta name="description" content="Connect the Design Process Engine MCP to Cursor or Claude Code in one minute." />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:wght@400;500;600&family=Syne:wght@600;700;800&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="./styles.css" />
+  </head>
+  <body>
+    <div class="atmosphere" aria-hidden="true"><div class="atmosphere__grid"></div></div>
+
+    <header class="site-header">
+      <div class="site-header__inner">
+        <a class="brand" href="./index.html">
+          <span class="brand__mark">◆</span>
+          <span class="brand__name">Design Process Engine</span>
+        </a>
+        <button class="nav-toggle" type="button" data-nav-toggle aria-expanded="false" aria-controls="site-nav">
+          <span></span><span class="sr-only">Menu</span>
+        </button>
+        <nav class="nav" id="site-nav" data-nav>
+          <a href="./install.html" aria-current="page">Install</a>
+          <a href="./docs.html">Pipeline</a>
+          <a href="./pricing.html">Pricing</a>
+        </nav>
+      </div>
+    </header>
+
+    <main class="page shell">
+      <p class="section-label">Ship today</p>
+      <h1 class="section-title">Install the MCP. Not a prompt kit.</h1>
+      <p class="section-lede">
+        Users connect this once. Their agent is then forced through the full
+        pipeline on every UI task. Pick remote (hosted) or local (stdio).
+      </p>
+
+      <section class="install-block" id="remote">
+        <h2>Option A — Remote MCP (fastest)</h2>
+        <p>
+          Paste into Cursor → Settings → MCP (or <code>.cursor/mcp.json</code>).
+          Same shape works for other MCP clients that support URL servers.
+        </p>
+        <pre id="remote-config"><code>{
+  "mcpServers": {
+    "design-process-engine": {
+      "url": "REPLACE_WITH_PUBLIC_MCP_URL/mcp"
+    }
+  }
+}</code></pre>
+        <button type="button" class="btn btn--primary" id="copy-remote">Copy config</button>
+        <p class="muted-note" id="remote-hint">
+          Public URL is injected when the host is live. If you see REPLACE_… the
+          host is still booting — refresh in a moment.
+        </p>
+      </section>
+
+      <section class="install-block" id="local">
+        <h2>Option B — Local stdio (runs on the user’s machine)</h2>
+        <p>From a checkout of this package:</p>
+        <pre><code>cd design-process-engine
+npm install
+npm run build</code></pre>
+        <pre><code>{
+  "mcpServers": {
+    "design-process-engine": {
+      "command": "node",
+      "args": ["/absolute/path/to/design-process-engine/dist/index.js"]
+    }
+  }
+}</code></pre>
+        <p>Or during development:</p>
+        <pre><code>{
+  "mcpServers": {
+    "design-process-engine": {
+      "command": "npx",
+      "args": ["tsx", "/absolute/path/to/design-process-engine/src/index.ts"]
+    }
+  }
+}</code></pre>
+      </section>
+
+      <section class="install-block">
+        <h2>Companion skill (required)</h2>
+        <p>
+          Install <code>skill/SKILL.md</code> as an agent skill / rule so the
+          pipeline is default behavior. The server refuses skipped steps; the
+          skill stops the agent from fighting that.
+        </p>
+        <p>
+          <a class="btn btn--ghost" href="https://raw.githubusercontent.com/brainbreezegames-lang/rize-gg/cursor/design-process-engine-9939/design-process-engine/skill/SKILL.md" target="_blank" rel="noreferrer">Open SKILL.md</a>
+        </p>
+      </section>
+
+      <section class="install-block">
+        <h2>First session checklist</h2>
+        <ol class="easy-howto">
+          <li>Ask the agent to build a UI screen</li>
+          <li>It must call <code>start_task</code> then <code>get_playbook</code></li>
+          <li><code>submit_plan</code> until approved</li>
+          <li>Build one stage → <code>get_pattern_guide</code> as needed → <code>review</code></li>
+          <li><code>final_check</code> before claiming done</li>
+        </ol>
+      </section>
+    </main>
+
+    <footer class="site-footer">
+      <div class="site-footer__inner">
+        <span>Design Process Engine</span>
+        <a href="./docs.html">Pipeline docs</a>
+      </div>
+    </footer>
+
+    <script src="./main.js" defer></script>
+    <script>
+      // Inject live MCP URL if host advertises it via /config.json or query
+      (async function () {
+        const pre = document.getElementById("remote-config");
+        const hint = document.getElementById("remote-hint");
+        let mcpUrl = localStorage.getItem("dpe_mcp_url") || "";
+        const params = new URLSearchParams(location.search);
+        if (params.get("mcp")) {
+          mcpUrl = params.get("mcp");
+          localStorage.setItem("dpe_mcp_url", mcpUrl);
+        }
+        try {
+          const res = await fetch("./runtime.json", { cache: "no-store" });
+          if (res.ok) {
+            const data = await res.json();
+            if (data.mcpUrl) mcpUrl = data.mcpUrl;
+          }
+        } catch (_) {}
+        if (mcpUrl) {
+          const cfg = {
+            mcpServers: {
+              "design-process-engine": { url: mcpUrl },
+            },
+          };
+          pre.querySelector("code").textContent = JSON.stringify(cfg, null, 2);
+          hint.textContent = "Live MCP: " + mcpUrl;
+        }
+        document.getElementById("copy-remote").addEventListener("click", async () => {
+          const text = pre.querySelector("code").textContent;
+          try {
+            await navigator.clipboard.writeText(text);
+            hint.textContent = "Copied. Paste into Cursor MCP settings.";
+          } catch {
+            hint.textContent = "Select the JSON and copy manually.";
+          }
+        });
+      })();
+    </script>
+  </body>
+</html>

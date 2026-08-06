@@ -1,0 +1,94 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://design-process-engine.dev/schemas/playbook-draft.schema.json",
+  "title": "PlaybookDraft",
+  "description": "Factory-produced playbook draft awaiting curator taste gate before landing in knowledge/playbooks.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "id",
+    "kind",
+    "title",
+    "productType",
+    "flow",
+    "status",
+    "structure",
+    "strategies",
+    "sourceJourneyIds"
+  ],
+  "properties": {
+    "id": {
+      "type": "string",
+      "minLength": 1,
+      "description": "Playbook id, typically equal to flowType (e.g. fintech-onboarding)"
+    },
+    "kind": { "const": "playbook-draft" },
+    "title": { "type": "string", "minLength": 1 },
+    "productType": { "type": "string" },
+    "flow": { "type": "string" },
+    "flowType": { "type": "string" },
+    "status": {
+      "type": "string",
+      "enum": ["draft", "pending-review", "approved", "rejected"]
+    },
+    "proposedTier": {
+      "type": "string",
+      "enum": ["free", "pro"],
+      "default": "pro"
+    },
+    "summary": { "type": "string" },
+    "structure": {
+      "type": "array",
+      "minItems": 1,
+      "items": { "type": "string" },
+      "description": "Ordered canonical step slugs aggregated from stacked journeys"
+    },
+    "strategies": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["name", "prevalence"],
+        "properties": {
+          "name": { "type": "string" },
+          "prevalence": {
+            "type": "string",
+            "description": "Human-readable count, e.g. '3 of 3'"
+          },
+          "count": { "type": "integer", "minimum": 0 },
+          "total": { "type": "integer", "minimum": 0 },
+          "tradeoffs": { "type": "string" },
+          "when": { "type": "string" }
+        }
+      }
+    },
+    "forgottenStates": {
+      "type": "array",
+      "items": { "type": "string" }
+    },
+    "neverDo": {
+      "type": "array",
+      "items": { "type": "string" }
+    },
+    "sourceJourneyIds": {
+      "type": "array",
+      "minItems": 1,
+      "items": { "type": "string" }
+    },
+    "prevalence": {
+      "type": "object",
+      "additionalProperties": {
+        "type": "object",
+        "properties": {
+          "count": { "type": "integer" },
+          "total": { "type": "integer" },
+          "label": { "type": "string" }
+        }
+      },
+      "description": "Step/pattern prevalence map"
+    },
+    "evidenceNotes": { "type": "string" },
+    "draftedAt": { "type": "string", "format": "date-time" },
+    "curatorNotes": { "type": "string" }
+  }
+}

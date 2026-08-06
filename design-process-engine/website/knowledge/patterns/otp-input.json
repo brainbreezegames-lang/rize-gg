@@ -1,0 +1,33 @@
+{
+  "id": "otp-input",
+  "title": "Otp Input",
+  "category": "auth",
+  "tier": "pro",
+  "structure": [
+    "otp-input-root",
+    "otp-input-identity-input",
+    "otp-input-verify",
+    "otp-input-error",
+    "otp-input-success"
+  ],
+  "requiredStates": [
+    "default",
+    "error",
+    "pending",
+    "expired",
+    "locked",
+    "success"
+  ],
+  "codeExample": "```tsx\nexport function OtpInputExample() {\n  // Minimal Otp Input pattern\n  return (\n    <section aria-label=\"Otp Input\" data-pattern=\"otp-input\">\n      <header><h2>Otp Input</h2></header>\n      <div className=\"pattern-body\">\n        {/* Implement required states: default, error, pending, expired, locked, success */}\n      </div>\n    </section>\n  );\n}\n```",
+  "mistakes": [
+    "Ask for SSN/NIN before explaining why",
+    "Show a generic error on KYC failure",
+    "Hide fee disclosure until after deposit",
+    "Use dark patterns to force biometric consent",
+    "Skip accessibility labels on document camera UI"
+  ],
+  "relatedPatterns": [
+    "phone-verify",
+    "email-verify"
+  ]
+}

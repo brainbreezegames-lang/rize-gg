@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Pricing — Design Process Engine</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600&family=Syne:wght@600;700;800&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="./styles.css" />
+  </head>
+  <body>
+    <div class="atmosphere" aria-hidden="true"><div class="atmosphere__grid"></div></div>
+    <header class="site-header">
+      <div class="site-header__inner">
+        <a class="brand" href="./index.html">
+          <span class="brand__mark">◆</span>
+          <span class="brand__name">Design Process Engine</span>
+        </a>
+        <nav class="nav" id="site-nav" data-nav>
+          <a href="./install.html">Install</a>
+          <a href="./docs.html">Pipeline</a>
+          <a href="./pricing.html" aria-current="page">Pricing</a>
+        </nav>
+      </div>
+    </header>
+
+    <main class="page shell">
+      <p class="section-label">Pricing</p>
+      <h1 class="section-title">Process free. Knowledge compounds on Pro.</h1>
+      <p class="section-lede">
+        Enforcement ships on day one. Playbooks and monthly slop updates are the subscription.
+      </p>
+
+      <div class="product-grid">
+        <article>
+          <h3>Free</h3>
+          <p><strong>$0</strong></p>
+          <ul class="easy-howto">
+            <li>Full process pipeline MCP</li>
+            <li>2 starter playbooks</li>
+            <li>20 starter pattern guides</li>
+            <li>Stage review</li>
+          </ul>
+          <p><a class="btn btn--primary" href="./install.html">Install free</a></p>
+        </article>
+        <article>
+          <h3>Pro</h3>
+          <p><strong>$19/mo</strong></p>
+          <ul class="easy-howto">
+            <li>All 10 playbooks</li>
+            <li>All 100 pattern guides</li>
+            <li>Monthly slop catalog in final_check</li>
+            <li>API key: <code>dpe_pro_*</code></li>
+          </ul>
+          <p class="muted-note">Keys via <code>DESIGN_ENGINE_API_KEY</code> / tool arg. Billing UI next.</p>
+        </article>
+      </div>
+    </main>
+
+    <footer class="site-footer">
+      <div class="site-footer__inner">
+        <span>Design Process Engine</span>
+        <a href="./install.html">Install</a>
+      </div>
+    </footer>
+    <script src="./main.js" defer></script>
+  </body>
+</html>

@@ -1,0 +1,32 @@
+{
+  "id": "permissions-prompt",
+  "title": "Permissions Prompt",
+  "category": "mobile-patterns",
+  "tier": "pro",
+  "structure": [
+    "permissions-prompt-root",
+    "permissions-prompt-gesture-target",
+    "permissions-prompt-sheet-or-overlay",
+    "permissions-prompt-safe-area",
+    "permissions-prompt-haptics-cue"
+  ],
+  "requiredStates": [
+    "default",
+    "dragging",
+    "refreshing",
+    "offline",
+    "permission-denied"
+  ],
+  "codeExample": "```tsx\nexport function PermissionsPromptExample() {\n  // Minimal Permissions Prompt pattern\n  return (\n    <section aria-label=\"Permissions Prompt\" data-pattern=\"permissions-prompt\">\n      <header>\n        <h2>Permissions Prompt</h2>\n      </header>\n      <div className=\"pattern-body\">\n        {/* Implement required states: default + interactive variants */}\n      </div>\n    </section>\n  );\n}\n```",
+  "mistakes": [
+    "Gesture-only actions with no button fallback",
+    "Ignoring safe-area insets",
+    "Pull-to-refresh fighting nested scroll",
+    "Treating Permissions Prompt as decoration without dragging state"
+  ],
+  "relatedPatterns": [
+    "infinite-scroll",
+    "offline-state",
+    "pull-to-refresh"
+  ]
+}

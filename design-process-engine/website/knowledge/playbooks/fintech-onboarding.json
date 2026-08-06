@@ -1,0 +1,60 @@
+{
+  "id": "fintech-onboarding",
+  "title": "Fintech Onboarding",
+  "productType": "fintech",
+  "flow": "onboarding",
+  "tier": "free",
+  "summary": "Guide new users from download through identity verification and first funded account without dropping trust or compliance.",
+  "structure": [
+    "welcome-value-prop",
+    "account-type-select",
+    "email-phone-verify",
+    "kyc-document-upload",
+    "soft-credit-or-risk-check",
+    "link-funding-source",
+    "first-deposit",
+    "home-dashboard-aha"
+  ],
+  "strategies": [
+    {
+      "name": "Progressive KYC",
+      "prevalence": "28 of 41",
+      "tradeoffs": "Faster first session vs delayed full product access; more drop-off if gate comes too late.",
+      "when": "Use when browsing and education can happen before funded transfers."
+    },
+    {
+      "name": "Instant soft-verify + deferred hard KYC",
+      "prevalence": "19 of 41",
+      "tradeoffs": "Higher activation; regulatory risk if hard limits are unclear.",
+      "when": "Low-risk products with clear spend caps until full verification."
+    },
+    {
+      "name": "Bank-link first, KYC second",
+      "prevalence": "12 of 41",
+      "tradeoffs": "Strong funding intent signal; scares privacy-sensitive users early.",
+      "when": "Neobanks and investing apps where deposit is the aha moment."
+    },
+    {
+      "name": "Invite-code gated waitlist",
+      "prevalence": "9 of 41",
+      "tradeoffs": "Demand control and exclusivity vs slower growth.",
+      "when": "Capacity-constrained launches or regulated rollouts by region."
+    }
+  ],
+  "forgottenStates": [
+    "KYC rejected with clear retry path",
+    "Document blur / wrong side resubmit",
+    "Funding source declined mid-link",
+    "Region not supported after signup",
+    "Session timeout during multi-step KYC",
+    "Pending manual review holding funds"
+  ],
+  "neverDo": [
+    "Ask for SSN/NIN before explaining why",
+    "Hide fee disclosure until after deposit",
+    "Use dark patterns to force biometric consent",
+    "Show a generic error on KYC failure",
+    "Skip accessibility labels on document camera UI"
+  ],
+  "evidenceNotes": "Compiled from captured app journeys + curated designer wisdom."
+}

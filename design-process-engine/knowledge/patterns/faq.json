@@ -1,0 +1,32 @@
+{
+  "id": "faq",
+  "title": "Faq",
+  "category": "marketing",
+  "tier": "pro",
+  "structure": [
+    "faq-root",
+    "faq-headline",
+    "faq-support",
+    "faq-proof",
+    "faq-cta"
+  ],
+  "requiredStates": [
+    "default",
+    "hover",
+    "dismissed",
+    "localized",
+    "reduced-motion"
+  ],
+  "codeExample": "```tsx\nexport function FaqExample() {\n  // Minimal Faq pattern\n  return (\n    <section aria-label=\"Faq\" data-pattern=\"faq\">\n      <header>\n        <h2>Faq</h2>\n      </header>\n      <div className=\"pattern-body\">\n        {/* Implement required states: default + interactive variants */}\n      </div>\n    </section>\n  );\n}\n```",
+  "mistakes": [
+    "Hero with multiple competing CTAs",
+    "Social proof logos with no context",
+    "FAQ accordion with all panels open by default",
+    "Treating Faq as decoration without hover state"
+  ],
+  "relatedPatterns": [
+    "onboarding-carousel",
+    "footer",
+    "hero"
+  ]
+}

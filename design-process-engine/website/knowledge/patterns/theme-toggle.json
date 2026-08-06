@@ -1,0 +1,33 @@
+{
+  "id": "theme-toggle",
+  "title": "Theme Toggle",
+  "category": "settings",
+  "tier": "pro",
+  "structure": [
+    "theme-toggle-root",
+    "theme-toggle-section-nav",
+    "theme-toggle-group",
+    "theme-toggle-control",
+    "theme-toggle-save"
+  ],
+  "requiredStates": [
+    "default",
+    "dirty",
+    "saving",
+    "saved",
+    "error",
+    "read-only"
+  ],
+  "codeExample": "```tsx\nexport function ThemeToggleExample() {\n  // Minimal Theme Toggle pattern\n  return (\n    <section aria-label=\"Theme Toggle\" data-pattern=\"theme-toggle\">\n      <header>\n        <h2>Theme Toggle</h2>\n      </header>\n      <div className=\"pattern-body\">\n        {/* Implement required states: default + interactive variants */}\n      </div>\n    </section>\n  );\n}\n```",
+  "mistakes": [
+    "Autosave with no confirmation of what changed",
+    "Dangerous actions adjacent to benign toggles",
+    "Read-only SSO fields looking editable",
+    "Treating Theme Toggle as decoration without dirty state"
+  ],
+  "relatedPatterns": [
+    "settings-page",
+    "cookie-consent",
+    "invite-team"
+  ]
+}

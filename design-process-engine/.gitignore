@@ -1,0 +1,8 @@
+node_modules/
+dist/
+*.log
+.DS_Store
+factory/queue/captured.json
+factory/queue/status.json
+factory/queue/drafts/*.json
+!factory/queue/drafts/.gitkeep

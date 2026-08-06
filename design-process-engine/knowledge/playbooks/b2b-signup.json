@@ -1,0 +1,59 @@
+{
+  "id": "b2b-signup",
+  "title": "B2B Signup",
+  "productType": "b2b",
+  "flow": "signup",
+  "tier": "pro",
+  "summary": "Convert work email interest into a team workspace with clear plan selection and invite paths.",
+  "structure": [
+    "work-email-capture",
+    "verify-email",
+    "company-profile",
+    "plan-or-trial-select",
+    "create-workspace",
+    "invite-teammates",
+    "connect-integrations",
+    "first-success-task"
+  ],
+  "strategies": [
+    {
+      "name": "Work-email only gate",
+      "prevalence": "29 of 36",
+      "tradeoffs": "Better lead quality; blocks freelancers on personal mail.",
+      "when": "Enterprise sales-assisted motions and domain-based SSO later."
+    },
+    {
+      "name": "Self-serve trial then sales assist",
+      "prevalence": "21 of 36",
+      "tradeoffs": "Faster PLG; sales loses early discovery context.",
+      "when": "Products with clear free trial value under seat caps."
+    },
+    {
+      "name": "Invite-first team formation",
+      "prevalence": "18 of 36",
+      "tradeoffs": "Network effects; solo admins feel blocked.",
+      "when": "Collaboration tools where value needs ≥2 seats."
+    },
+    {
+      "name": "SSO-first for enterprise domains",
+      "prevalence": "14 of 36",
+      "tradeoffs": "IT-friendly; slows SMB self-serve.",
+      "when": "Known enterprise domains or security-sensitive categories."
+    }
+  ],
+  "forgottenStates": [
+    "Personal email soft-warn with continue option",
+    "Existing workspace claim conflict",
+    "Domain already claimed by another admin",
+    "Trial already used on same company domain",
+    "Invite email bounce with resend"
+  ],
+  "neverDo": [
+    "Ask for credit card before any product value on a free trial",
+    "Require phone sales booking to start a trial",
+    "Dump users into an empty workspace with no next step",
+    "Use consumer social signup as the only path",
+    "Hide seat pricing until after team invites"
+  ],
+  "evidenceNotes": "Compiled from captured app journeys + curated designer wisdom."
+}

@@ -1,0 +1,33 @@
+{
+  "id": "timeline",
+  "title": "Timeline",
+  "category": "data",
+  "tier": "pro",
+  "structure": [
+    "timeline-root",
+    "timeline-toolbar",
+    "timeline-content-grid",
+    "timeline-empty",
+    "timeline-loading"
+  ],
+  "requiredStates": [
+    "default",
+    "loading",
+    "empty",
+    "error",
+    "filtered",
+    "sorted"
+  ],
+  "codeExample": "```tsx\nexport function TimelineExample() {\n  // Minimal Timeline pattern\n  return (\n    <section aria-label=\"Timeline\" data-pattern=\"timeline\">\n      <header>\n        <h2>Timeline</h2>\n      </header>\n      <div className=\"pattern-body\">\n        {/* Implement required states: default + interactive variants */}\n      </div>\n    </section>\n  );\n}\n```",
+  "mistakes": [
+    "Tables without empty or loading states",
+    "Filters that reset scroll position unexpectedly",
+    "Sort with no affordance of current order",
+    "Treating Timeline as decoration without loading state"
+  ],
+  "relatedPatterns": [
+    "filters",
+    "data-table",
+    "leaderboard"
+  ]
+}

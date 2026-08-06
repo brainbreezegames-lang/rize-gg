@@ -1,0 +1,33 @@
+{
+  "id": "refund-status",
+  "title": "Refund Status",
+  "category": "commerce",
+  "tier": "pro",
+  "structure": [
+    "refund-status-root",
+    "refund-status-offer-summary",
+    "refund-status-price",
+    "refund-status-cta",
+    "refund-status-trust-signals"
+  ],
+  "requiredStates": [
+    "default",
+    "selected",
+    "loading",
+    "sold-out",
+    "discounted",
+    "error"
+  ],
+  "codeExample": "```tsx\nexport function RefundStatusExample() {\n  // Minimal Refund Status pattern\n  return (\n    <section aria-label=\"Refund Status\" data-pattern=\"refund-status\">\n      <header>\n        <h2>Refund Status</h2>\n      </header>\n      <div className=\"pattern-body\">\n        {/* Implement required states: default + interactive variants */}\n      </div>\n    </section>\n  );\n}\n```",
+  "mistakes": [
+    "Price without currency or tax clarity",
+    "CTA that does not restate the commitment",
+    "Hiding fees until the last step",
+    "Treating Refund Status as decoration without selected state"
+  ],
+  "relatedPatterns": [
+    "paywall",
+    "pricing-table",
+    "checkout-summary"
+  ]
+}

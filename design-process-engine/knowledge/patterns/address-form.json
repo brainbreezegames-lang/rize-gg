@@ -1,0 +1,33 @@
+{
+  "id": "address-form",
+  "title": "Address Form",
+  "category": "forms",
+  "tier": "pro",
+  "structure": [
+    "address-form-root",
+    "address-form-label",
+    "address-form-input",
+    "address-form-helper",
+    "address-form-validation"
+  ],
+  "requiredStates": [
+    "default",
+    "focus",
+    "filled",
+    "error",
+    "disabled",
+    "submitting"
+  ],
+  "codeExample": "```tsx\nexport function AddressFormExample() {\n  // Minimal Address Form pattern\n  return (\n    <section aria-label=\"Address Form\" data-pattern=\"address-form\">\n      <header>\n        <h2>Address Form</h2>\n      </header>\n      <div className=\"pattern-body\">\n        {/* Implement required states: default + interactive variants */}\n      </div>\n    </section>\n  );\n}\n```",
+  "mistakes": [
+    "Validate only on submit with no field-level hints",
+    "Placeholder used as the only label",
+    "Destroying user input on validation error",
+    "Treating Address Form as decoration without focus state"
+  ],
+  "relatedPatterns": [
+    "multi-step-form",
+    "file-upload",
+    "date-picker"
+  ]
+}

@@ -1,0 +1,33 @@
+{
+  "id": "product-gallery",
+  "title": "Product Gallery",
+  "category": "commerce",
+  "tier": "pro",
+  "structure": [
+    "product-gallery-root",
+    "product-gallery-offer-summary",
+    "product-gallery-price",
+    "product-gallery-cta",
+    "product-gallery-trust-signals"
+  ],
+  "requiredStates": [
+    "default",
+    "selected",
+    "loading",
+    "sold-out",
+    "discounted",
+    "error"
+  ],
+  "codeExample": "```tsx\nexport function ProductGalleryExample() {\n  // Minimal Product Gallery pattern\n  return (\n    <section aria-label=\"Product Gallery\" data-pattern=\"product-gallery\">\n      <header>\n        <h2>Product Gallery</h2>\n      </header>\n      <div className=\"pattern-body\">\n        {/* Implement required states: default + interactive variants */}\n      </div>\n    </section>\n  );\n}\n```",
+  "mistakes": [
+    "Price without currency or tax clarity",
+    "CTA that does not restate the commitment",
+    "Hiding fees until the last step",
+    "Treating Product Gallery as decoration without selected state"
+  ],
+  "relatedPatterns": [
+    "paywall",
+    "pricing-table",
+    "checkout-summary"
+  ]
+}

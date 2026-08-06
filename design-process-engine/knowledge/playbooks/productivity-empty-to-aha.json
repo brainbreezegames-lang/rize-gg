@@ -1,0 +1,58 @@
+{
+  "id": "productivity-empty-to-aha",
+  "title": "Productivity Empty to Aha",
+  "productType": "productivity",
+  "flow": "activation",
+  "tier": "pro",
+  "summary": "Move a new workspace from blank canvas to first meaningful artifact so retention can start.",
+  "structure": [
+    "welcome-intent-question",
+    "template-gallery",
+    "sample-data-option",
+    "create-first-object",
+    "invite-or-share",
+    "aha-confirmation",
+    "habit-nudge-setup"
+  ],
+  "strategies": [
+    {
+      "name": "Template-led start",
+      "prevalence": "36 of 47",
+      "tradeoffs": "Fast structure; templates can feel generic or constraining.",
+      "when": "Docs, boards, and CRM-like tools with known starting shapes."
+    },
+    {
+      "name": "Import-existing-work first",
+      "prevalence": "22 of 47",
+      "tradeoffs": "High switching value; import failures kill trust.",
+      "when": "Migration-heavy categories (notes, tasks, design files)."
+    },
+    {
+      "name": "Guided blank canvas with coach marks",
+      "prevalence": "19 of 47",
+      "tradeoffs": "Feels powerful; higher cognitive load for novices.",
+      "when": "Power-user tools where blankness is part of the brand."
+    },
+    {
+      "name": "AI draft first artifact",
+      "prevalence": "15 of 47",
+      "tradeoffs": "Instant content; quality variance and trust issues.",
+      "when": "Writing, planning, and research products with AI positioning."
+    }
+  ],
+  "forgottenStates": [
+    "Template apply failure mid-load",
+    "Import mapping conflicts",
+    "Undo of first destructive create",
+    "Shared link before object has content",
+    "Checklist completion without real aha"
+  ],
+  "neverDo": [
+    "Leave a totally blank screen with only a cursor",
+    "Force a 12-step tour before first create",
+    "Call random sample data 'your projects'",
+    "Block create behind invite teammates",
+    "Celebrate activation before the user produced anything"
+  ],
+  "evidenceNotes": "Compiled from captured app journeys + curated designer wisdom."
+}

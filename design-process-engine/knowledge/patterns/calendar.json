@@ -1,0 +1,33 @@
+{
+  "id": "calendar",
+  "title": "Calendar",
+  "category": "forms",
+  "tier": "pro",
+  "structure": [
+    "calendar-root",
+    "calendar-label",
+    "calendar-input",
+    "calendar-helper",
+    "calendar-validation"
+  ],
+  "requiredStates": [
+    "default",
+    "focus",
+    "filled",
+    "error",
+    "disabled",
+    "submitting"
+  ],
+  "codeExample": "```tsx\nexport function CalendarExample() {\n  // Minimal Calendar pattern\n  return (\n    <section aria-label=\"Calendar\" data-pattern=\"calendar\">\n      <header>\n        <h2>Calendar</h2>\n      </header>\n      <div className=\"pattern-body\">\n        {/* Implement required states: default + interactive variants */}\n      </div>\n    </section>\n  );\n}\n```",
+  "mistakes": [
+    "Validate only on submit with no field-level hints",
+    "Placeholder used as the only label",
+    "Destroying user input on validation error",
+    "Treating Calendar as decoration without focus state"
+  ],
+  "relatedPatterns": [
+    "multi-step-form",
+    "file-upload",
+    "date-picker"
+  ]
+}

@@ -1,0 +1,33 @@
+{
+  "id": "modal",
+  "title": "Modal",
+  "category": "feedback",
+  "tier": "free",
+  "structure": [
+    "modal-root",
+    "modal-trigger",
+    "modal-message",
+    "modal-severity",
+    "modal-dismiss"
+  ],
+  "requiredStates": [
+    "default",
+    "visible",
+    "leaving",
+    "success",
+    "error",
+    "warning"
+  ],
+  "codeExample": "```tsx\nexport function ModalExample() {\n  // Minimal Modal pattern\n  return (\n    <section aria-label=\"Modal\" data-pattern=\"modal\">\n      <header>\n        <h2>Modal</h2>\n      </header>\n      <div className=\"pattern-body\">\n        {/* Implement required states: default + interactive variants */}\n      </div>\n    </section>\n  );\n}\n```",
+  "mistakes": [
+    "Toast as the only record of a destructive action",
+    "Modal without focus trap",
+    "Spinner with no timeout or cancel",
+    "Treating Modal as decoration without visible state"
+  ],
+  "relatedPatterns": [
+    "empty-state",
+    "drawer",
+    "toast"
+  ]
+}

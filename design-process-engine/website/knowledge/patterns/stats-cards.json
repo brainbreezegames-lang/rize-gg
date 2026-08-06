@@ -1,0 +1,33 @@
+{
+  "id": "stats-cards",
+  "title": "Stats Cards",
+  "category": "data",
+  "tier": "pro",
+  "structure": [
+    "stats-cards-root",
+    "stats-cards-toolbar",
+    "stats-cards-content-grid",
+    "stats-cards-empty",
+    "stats-cards-loading"
+  ],
+  "requiredStates": [
+    "default",
+    "loading",
+    "empty",
+    "error",
+    "filtered",
+    "sorted"
+  ],
+  "codeExample": "```tsx\nexport function StatsCardsExample() {\n  // Minimal Stats Cards pattern\n  return (\n    <section aria-label=\"Stats Cards\" data-pattern=\"stats-cards\">\n      <header>\n        <h2>Stats Cards</h2>\n      </header>\n      <div className=\"pattern-body\">\n        {/* Implement required states: default + interactive variants */}\n      </div>\n    </section>\n  );\n}\n```",
+  "mistakes": [
+    "Tables without empty or loading states",
+    "Filters that reset scroll position unexpectedly",
+    "Sort with no affordance of current order",
+    "Treating Stats Cards as decoration without loading state"
+  ],
+  "relatedPatterns": [
+    "filters",
+    "data-table",
+    "leaderboard"
+  ]
+}

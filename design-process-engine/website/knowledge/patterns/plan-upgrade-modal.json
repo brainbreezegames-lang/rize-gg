@@ -1,0 +1,33 @@
+{
+  "id": "plan-upgrade-modal",
+  "title": "Plan Upgrade Modal",
+  "category": "commerce",
+  "tier": "pro",
+  "structure": [
+    "plan-upgrade-modal-root",
+    "plan-upgrade-modal-offer-summary",
+    "plan-upgrade-modal-price",
+    "plan-upgrade-modal-cta",
+    "plan-upgrade-modal-trust-signals"
+  ],
+  "requiredStates": [
+    "default",
+    "selected",
+    "loading",
+    "sold-out",
+    "discounted",
+    "error"
+  ],
+  "codeExample": "```tsx\nexport function PlanUpgradeModalExample() {\n  // Minimal Plan Upgrade Modal pattern\n  return (\n    <section aria-label=\"Plan Upgrade Modal\" data-pattern=\"plan-upgrade-modal\">\n      <header>\n        <h2>Plan Upgrade Modal</h2>\n      </header>\n      <div className=\"pattern-body\">\n        {/* Implement required states: default + interactive variants */}\n      </div>\n    </section>\n  );\n}\n```",
+  "mistakes": [
+    "Price without currency or tax clarity",
+    "CTA that does not restate the commitment",
+    "Hiding fees until the last step",
+    "Treating Plan Upgrade Modal as decoration without selected state"
+  ],
+  "relatedPatterns": [
+    "paywall",
+    "pricing-table",
+    "checkout-summary"
+  ]
+}

@@ -1,0 +1,56 @@
+{
+  "name": "design-process-engine",
+  "version": "1.0.0",
+  "description": "A stateful MCP that turns any AI coding agent into a disciplined designer — classify, plan, build in stages, review every stage.",
+  "type": "module",
+  "main": "dist/index.js",
+  "bin": {
+    "design-process-engine": "dist/index.js",
+    "design-process-engine-http": "dist/http.js"
+  },
+  "scripts": {
+    "build": "tsc",
+    "start": "node dist/index.js",
+    "dev": "tsx src/index.ts",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "factory:capture": "node factory/scripts/run-pipeline.mjs capture --input=factory/fixtures/sample-journeys.json",
+    "factory:draft": "node factory/scripts/run-pipeline.mjs draft --flow=fintech-onboarding",
+    "factory:status": "node factory/scripts/run-pipeline.mjs status",
+    "knowledge:generate": "node scripts/generate-knowledge.mjs",
+    "website:sync-knowledge": "rm -rf website/knowledge && cp -r knowledge website/knowledge",
+    "deploy": "npm run website:sync-knowledge && npx vercel deploy website --prod --yes",
+    "start:http": "node dist/http.js",
+    "dev:http": "tsx src/http.ts"
+  },
+  "keywords": [
+    "mcp",
+    "design",
+    "ai-agent",
+    "process-engine",
+    "anti-slop"
+  ],
+  "author": "",
+  "license": "MIT",
+  "engines": {
+    "node": ">=18"
+  },
+  "dependencies": {
+    "@modelcontextprotocol/sdk": "^1.30.0",
+    "zod": "^4.4.3"
+  },
+  "devDependencies": {
+    "@types/node": "^26.1.2",
+    "tsx": "^4.23.9",
+    "typescript": "^5.9.2",
+    "vercel": "^58.7.1",
+    "vitest": "^4.1.10"
+  },
+  "files": [
+    "dist",
+    "knowledge",
+    "skill",
+    "README.md",
+    "PRD.md"
+  ]
+}

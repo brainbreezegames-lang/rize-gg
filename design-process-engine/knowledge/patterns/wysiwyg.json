@@ -1,0 +1,33 @@
+{
+  "id": "wysiwyg",
+  "title": "Wysiwyg",
+  "category": "content",
+  "tier": "pro",
+  "structure": [
+    "wysiwyg-root",
+    "wysiwyg-header",
+    "wysiwyg-body",
+    "wysiwyg-media",
+    "wysiwyg-actions"
+  ],
+  "requiredStates": [
+    "default",
+    "loading",
+    "empty",
+    "expanded",
+    "editing",
+    "error"
+  ],
+  "codeExample": "```tsx\nexport function WysiwygExample() {\n  // Minimal Wysiwyg pattern\n  return (\n    <section aria-label=\"Wysiwyg\" data-pattern=\"wysiwyg\">\n      <header>\n        <h2>Wysiwyg</h2>\n      </header>\n      <div className=\"pattern-body\">\n        {/* Implement required states: default + interactive variants */}\n      </div>\n    </section>\n  );\n}\n```",
+  "mistakes": [
+    "Unbounded nested threads with no collapse",
+    "Media without aspect-ratio reservation",
+    "Timestamps without relative/absolute toggle when needed",
+    "Treating Wysiwyg as decoration without loading state"
+  ],
+  "relatedPatterns": [
+    "chat-list",
+    "chat-composer",
+    "comment-thread"
+  ]
+}

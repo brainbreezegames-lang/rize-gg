@@ -1,0 +1,33 @@
+{
+  "id": "file-upload",
+  "title": "File Upload",
+  "category": "forms",
+  "tier": "pro",
+  "structure": [
+    "file-upload-root",
+    "file-upload-label",
+    "file-upload-input",
+    "file-upload-helper",
+    "file-upload-validation"
+  ],
+  "requiredStates": [
+    "default",
+    "focus",
+    "filled",
+    "error",
+    "disabled",
+    "submitting"
+  ],
+  "codeExample": "```tsx\nexport function FileUploadExample() {\n  // Minimal File Upload pattern\n  return (\n    <section aria-label=\"File Upload\" data-pattern=\"file-upload\">\n      <header>\n        <h2>File Upload</h2>\n      </header>\n      <div className=\"pattern-body\">\n        {/* Implement required states: default + interactive variants */}\n      </div>\n    </section>\n  );\n}\n```",
+  "mistakes": [
+    "Validate only on submit with no field-level hints",
+    "Placeholder used as the only label",
+    "Destroying user input on validation error",
+    "Treating File Upload as decoration without focus state"
+  ],
+  "relatedPatterns": [
+    "multi-step-form",
+    "date-picker",
+    "calendar"
+  ]
+}

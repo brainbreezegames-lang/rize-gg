@@ -1,0 +1,33 @@
+{
+  "id": "review-stars",
+  "title": "Review Stars",
+  "category": "commerce",
+  "tier": "pro",
+  "structure": [
+    "review-stars-root",
+    "review-stars-offer-summary",
+    "review-stars-price",
+    "review-stars-cta",
+    "review-stars-trust-signals"
+  ],
+  "requiredStates": [
+    "default",
+    "selected",
+    "loading",
+    "sold-out",
+    "discounted",
+    "error"
+  ],
+  "codeExample": "```tsx\nexport function ReviewStarsExample() {\n  // Minimal Review Stars pattern\n  return (\n    <section aria-label=\"Review Stars\" data-pattern=\"review-stars\">\n      <header>\n        <h2>Review Stars</h2>\n      </header>\n      <div className=\"pattern-body\">\n        {/* Implement required states: default + interactive variants */}\n      </div>\n    </section>\n  );\n}\n```",
+  "mistakes": [
+    "Price without currency or tax clarity",
+    "CTA that does not restate the commitment",
+    "Hiding fees until the last step",
+    "Treating Review Stars as decoration without selected state"
+  ],
+  "relatedPatterns": [
+    "paywall",
+    "pricing-table",
+    "checkout-summary"
+  ]
+}

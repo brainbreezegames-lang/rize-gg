@@ -1,0 +1,33 @@
+{
+  "id": "billing-portal",
+  "title": "Billing Portal",
+  "category": "commerce",
+  "tier": "pro",
+  "structure": [
+    "billing-portal-root",
+    "billing-portal-offer-summary",
+    "billing-portal-price",
+    "billing-portal-cta",
+    "billing-portal-trust-signals"
+  ],
+  "requiredStates": [
+    "default",
+    "selected",
+    "loading",
+    "sold-out",
+    "discounted",
+    "error"
+  ],
+  "codeExample": "```tsx\nexport function BillingPortalExample() {\n  // Minimal Billing Portal pattern\n  return (\n    <section aria-label=\"Billing Portal\" data-pattern=\"billing-portal\">\n      <header>\n        <h2>Billing Portal</h2>\n      </header>\n      <div className=\"pattern-body\">\n        {/* Implement required states: default + interactive variants */}\n      </div>\n    </section>\n  );\n}\n```",
+  "mistakes": [
+    "Price without currency or tax clarity",
+    "CTA that does not restate the commitment",
+    "Hiding fees until the last step",
+    "Treating Billing Portal as decoration without selected state"
+  ],
+  "relatedPatterns": [
+    "paywall",
+    "pricing-table",
+    "checkout-summary"
+  ]
+}

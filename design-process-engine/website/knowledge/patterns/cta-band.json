@@ -1,0 +1,32 @@
+{
+  "id": "cta-band",
+  "title": "Cta Band",
+  "category": "marketing",
+  "tier": "pro",
+  "structure": [
+    "cta-band-root",
+    "cta-band-headline",
+    "cta-band-support",
+    "cta-band-proof",
+    "cta-band-cta"
+  ],
+  "requiredStates": [
+    "default",
+    "hover",
+    "dismissed",
+    "localized",
+    "reduced-motion"
+  ],
+  "codeExample": "```tsx\nexport function CtaBandExample() {\n  // Minimal Cta Band pattern\n  return (\n    <section aria-label=\"Cta Band\" data-pattern=\"cta-band\">\n      <header>\n        <h2>Cta Band</h2>\n      </header>\n      <div className=\"pattern-body\">\n        {/* Implement required states: default + interactive variants */}\n      </div>\n    </section>\n  );\n}\n```",
+  "mistakes": [
+    "Hero with multiple competing CTAs",
+    "Social proof logos with no context",
+    "FAQ accordion with all panels open by default",
+    "Treating Cta Band as decoration without hover state"
+  ],
+  "relatedPatterns": [
+    "onboarding-carousel",
+    "faq",
+    "footer"
+  ]
+}

@@ -1,0 +1,130 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://design-process-engine.dev/schemas/journey.schema.json",
+  "title": "CapturedAppJourney",
+  "description": "A captured product journey from a real app — steps, screenshot refs, UI states, and flow classification.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["id", "app", "flowType", "capturedAt", "steps"],
+  "properties": {
+    "id": {
+      "type": "string",
+      "minLength": 1,
+      "description": "Stable journey id, e.g. revolut-onboarding-2026-03"
+    },
+    "app": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["name", "productType"],
+      "properties": {
+        "name": { "type": "string", "minLength": 1 },
+        "productType": {
+          "type": "string",
+          "enum": [
+            "fintech",
+            "saas",
+            "ecommerce",
+            "b2b",
+            "consumer-social",
+            "productivity",
+            "marketplace",
+            "healthcare",
+            "education",
+            "other"
+          ]
+        },
+        "platform": {
+          "type": "string",
+          "enum": ["ios", "android", "web", "desktop", "multi"],
+          "default": "web"
+        },
+        "url": { "type": "string", "format": "uri" }
+      }
+    },
+    "flowType": {
+      "type": "string",
+      "minLength": 1,
+      "description": "Canonical flow key used for stacking, e.g. fintech-onboarding"
+    },
+    "flow": {
+      "type": "string",
+      "description": "Short flow label, e.g. onboarding, checkout"
+    },
+    "capturedAt": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "capturer": {
+      "type": "string",
+      "description": "Operator or agent that captured the journey"
+    },
+    "notes": { "type": "string" },
+    "steps": {
+      "type": "array",
+      "minItems": 1,
+      "items": { "$ref": "#/$defs/step" }
+    },
+    "forgottenStates": {
+      "type": "array",
+      "items": { "type": "string" },
+      "description": "States observed or inferred that most agents forget"
+    },
+    "strategiesObserved": {
+      "type": "array",
+      "items": { "type": "string" }
+    },
+    "antiPatterns": {
+      "type": "array",
+      "items": { "type": "string" }
+    }
+  },
+  "$defs": {
+    "step": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["index", "name", "screen"],
+      "properties": {
+        "index": { "type": "integer", "minimum": 0 },
+        "name": {
+          "type": "string",
+          "minLength": 1,
+          "description": "Normalized step slug, e.g. email-phone-verify"
+        },
+        "screen": {
+          "type": "string",
+          "description": "Human-readable screen title"
+        },
+        "intent": { "type": "string" },
+        "screenshotRef": {
+          "type": "string",
+          "description": "Relative path or URI to screenshot asset"
+        },
+        "states": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": ["name"],
+            "properties": {
+              "name": {
+                "type": "string",
+                "description": "State name: default, pending, error, success, empty, locked, etc."
+              },
+              "screenshotRef": { "type": "string" },
+              "notes": { "type": "string" }
+            }
+          }
+        },
+        "patterns": {
+          "type": "array",
+          "items": { "type": "string" },
+          "description": "Pattern ids observed on this step"
+        },
+        "copySignals": {
+          "type": "array",
+          "items": { "type": "string" }
+        }
+      }
+    }
+  }
+}

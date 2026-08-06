@@ -1,0 +1,33 @@
+{
+  "id": "churn-save",
+  "title": "Churn Save",
+  "category": "commerce",
+  "tier": "pro",
+  "structure": [
+    "churn-save-root",
+    "churn-save-offer-summary",
+    "churn-save-price",
+    "churn-save-cta",
+    "churn-save-trust-signals"
+  ],
+  "requiredStates": [
+    "default",
+    "selected",
+    "loading",
+    "sold-out",
+    "discounted",
+    "error"
+  ],
+  "codeExample": "```tsx\nexport function ChurnSaveExample() {\n  // Minimal Churn Save pattern\n  return (\n    <section aria-label=\"Churn Save\" data-pattern=\"churn-save\">\n      <header>\n        <h2>Churn Save</h2>\n      </header>\n      <div className=\"pattern-body\">\n        {/* Implement required states: default + interactive variants */}\n      </div>\n    </section>\n  );\n}\n```",
+  "mistakes": [
+    "Price without currency or tax clarity",
+    "CTA that does not restate the commitment",
+    "Hiding fees until the last step",
+    "Treating Churn Save as decoration without selected state"
+  ],
+  "relatedPatterns": [
+    "paywall",
+    "pricing-table",
+    "checkout-summary"
+  ]
+}

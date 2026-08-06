@@ -1,0 +1,59 @@
+{
+  "id": "education-course-player",
+  "title": "Education Course Player",
+  "productType": "education",
+  "flow": "course-player",
+  "tier": "pro",
+  "summary": "Keep learners oriented in a course with progress, media playback, and resume across sessions.",
+  "structure": [
+    "course-outline",
+    "lesson-player",
+    "notes-and-resources",
+    "quiz-checkpoint",
+    "progress-persistence",
+    "discussion-or-comments",
+    "completion-certificate"
+  ],
+  "strategies": [
+    {
+      "name": "Sidebar curriculum + focus player",
+      "prevalence": "29 of 35",
+      "tradeoffs": "Strong orientation; crowded on small screens.",
+      "when": "Long-form cohort and evergreen courses."
+    },
+    {
+      "name": "Up-next autoplay with controls",
+      "prevalence": "21 of 35",
+      "tradeoffs": "Completion lift; can feel pushy.",
+      "when": "Video-first platforms optimizing course finish rates."
+    },
+    {
+      "name": "Spaced quiz gates",
+      "prevalence": "16 of 35",
+      "tradeoffs": "Learning quality; friction and drop-off risk.",
+      "when": "Certification and compliance learning products."
+    },
+    {
+      "name": "Mobile download for offline lessons",
+      "prevalence": "12 of 35",
+      "tradeoffs": "Access equity; DRM and storage complexity.",
+      "when": "Global learner bases with intermittent connectivity."
+    }
+  ],
+  "forgottenStates": [
+    "Resume mid-video after crash",
+    "Quiz fail retry cooldown",
+    "Caption language missing",
+    "Lesson locked until prerequisite",
+    "Certificate generation delay",
+    "Teacher unpublished lesson while enrolled"
+  ],
+  "neverDo": [
+    "Lose playback position on tab blur",
+    "Autoplay next lesson without an obvious stop",
+    "Hide total course duration and remaining time",
+    "Ship video-only with no captions path",
+    "Block notes behind a separate paywall mid-lesson"
+  ],
+  "evidenceNotes": "Compiled from captured app journeys + curated designer wisdom."
+}

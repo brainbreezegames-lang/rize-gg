@@ -1,0 +1,33 @@
+{
+  "id": "kyc-upload",
+  "title": "Kyc Upload",
+  "category": "auth",
+  "tier": "pro",
+  "structure": [
+    "kyc-upload-root",
+    "kyc-upload-identity-input",
+    "kyc-upload-verify",
+    "kyc-upload-error",
+    "kyc-upload-success"
+  ],
+  "requiredStates": [
+    "default",
+    "pending",
+    "success",
+    "error",
+    "locked",
+    "expired"
+  ],
+  "codeExample": "```tsx\nexport function KycUploadExample() {\n  // Minimal Kyc Upload pattern\n  return (\n    <section aria-label=\"Kyc Upload\" data-pattern=\"kyc-upload\">\n      <header>\n        <h2>Kyc Upload</h2>\n      </header>\n      <div className=\"pattern-body\">\n        {/* Implement required states: default + interactive variants */}\n      </div>\n    </section>\n  );\n}\n```",
+  "mistakes": [
+    "No rate-limit messaging on OTP",
+    "Password rules shown only after failure",
+    "Losing deep-link context after verify",
+    "Treating Kyc Upload as decoration without pending state"
+  ],
+  "relatedPatterns": [
+    "otp-input",
+    "password-field",
+    "age-gate"
+  ]
+}

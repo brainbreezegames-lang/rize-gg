@@ -1,0 +1,33 @@
+{
+  "id": "invoice",
+  "title": "Invoice",
+  "category": "commerce",
+  "tier": "pro",
+  "structure": [
+    "invoice-root",
+    "invoice-offer-summary",
+    "invoice-price",
+    "invoice-cta",
+    "invoice-trust-signals"
+  ],
+  "requiredStates": [
+    "default",
+    "selected",
+    "loading",
+    "sold-out",
+    "discounted",
+    "error"
+  ],
+  "codeExample": "```tsx\nexport function InvoiceExample() {\n  // Minimal Invoice pattern\n  return (\n    <section aria-label=\"Invoice\" data-pattern=\"invoice\">\n      <header>\n        <h2>Invoice</h2>\n      </header>\n      <div className=\"pattern-body\">\n        {/* Implement required states: default + interactive variants */}\n      </div>\n    </section>\n  );\n}\n```",
+  "mistakes": [
+    "Price without currency or tax clarity",
+    "CTA that does not restate the commitment",
+    "Hiding fees until the last step",
+    "Treating Invoice as decoration without selected state"
+  ],
+  "relatedPatterns": [
+    "paywall",
+    "pricing-table",
+    "checkout-summary"
+  ]
+}

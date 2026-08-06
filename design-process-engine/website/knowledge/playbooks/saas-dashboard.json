@@ -1,0 +1,58 @@
+{
+  "id": "saas-dashboard",
+  "title": "SaaS Dashboard",
+  "productType": "saas",
+  "flow": "dashboard",
+  "tier": "free",
+  "summary": "First authenticated home that orients users to status, next actions, and navigation without drowning them in charts.",
+  "structure": [
+    "global-top-nav",
+    "workspace-switcher",
+    "kpi-summary-row",
+    "primary-task-list",
+    "recent-activity",
+    "empty-or-setup-cta",
+    "help-and-upgrade-nudge"
+  ],
+  "strategies": [
+    {
+      "name": "Action-first home",
+      "prevalence": "31 of 48",
+      "tradeoffs": "Faster task completion vs weaker executive overview.",
+      "when": "Operator tools where users return to do work, not browse metrics."
+    },
+    {
+      "name": "Metric-first executive view",
+      "prevalence": "22 of 48",
+      "tradeoffs": "Great for leadership; paralyzes new IC users with numbers.",
+      "when": "Analytics, revenue, or ops products with daily KPI rituals."
+    },
+    {
+      "name": "Setup checklist until aha",
+      "prevalence": "34 of 48",
+      "tradeoffs": "Improves activation; feels naggy if checklist never ends.",
+      "when": "Multi-integration SaaS that needs connected data to show value."
+    },
+    {
+      "name": "Role-personalized modules",
+      "prevalence": "17 of 48",
+      "tradeoffs": "Higher relevance; harder to design and QA.",
+      "when": "Products with distinct admin, manager, and member jobs."
+    }
+  ],
+  "forgottenStates": [
+    "Zero-data empty dashboard after signup",
+    "Permission-denied widgets for restricted roles",
+    "Stale data with last-synced timestamp",
+    "Partial outage on one widget",
+    "Mobile collapse of dense KPI grids"
+  ],
+  "neverDo": [
+    "Show demo charts pretending to be live data",
+    "Put six equal-priority cards competing for attention",
+    "Hide primary create action behind nested menus",
+    "Auto-play product tour on every login",
+    "Use purple gradient defaults with no brand signal"
+  ],
+  "evidenceNotes": "Compiled from captured app journeys + curated designer wisdom."
+}

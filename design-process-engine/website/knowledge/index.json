@@ -1,0 +1,788 @@
+{
+  "generatedAt": "2026-08-06T14:58:54.254Z",
+  "playbooks": [
+    {
+      "kind": "playbook",
+      "id": "fintech-onboarding",
+      "title": "Fintech Onboarding",
+      "tier": "free",
+      "productType": "fintech",
+      "flow": "onboarding"
+    },
+    {
+      "kind": "playbook",
+      "id": "saas-dashboard",
+      "title": "SaaS Dashboard",
+      "tier": "free",
+      "productType": "saas",
+      "flow": "dashboard"
+    },
+    {
+      "kind": "playbook",
+      "id": "ecommerce-checkout",
+      "title": "Ecommerce Checkout",
+      "tier": "pro",
+      "productType": "ecommerce",
+      "flow": "checkout"
+    },
+    {
+      "kind": "playbook",
+      "id": "b2b-signup",
+      "title": "B2B Signup",
+      "tier": "pro",
+      "productType": "b2b",
+      "flow": "signup"
+    },
+    {
+      "kind": "playbook",
+      "id": "consumer-social-feed",
+      "title": "Consumer Social Feed",
+      "tier": "pro",
+      "productType": "consumer-social",
+      "flow": "feed"
+    },
+    {
+      "kind": "playbook",
+      "id": "productivity-empty-to-aha",
+      "title": "Productivity Empty to Aha",
+      "tier": "pro",
+      "productType": "productivity",
+      "flow": "activation"
+    },
+    {
+      "kind": "playbook",
+      "id": "marketplace-listing",
+      "title": "Marketplace Listing",
+      "tier": "pro",
+      "productType": "marketplace",
+      "flow": "listing"
+    },
+    {
+      "kind": "playbook",
+      "id": "healthcare-intake",
+      "title": "Healthcare Intake",
+      "tier": "pro",
+      "productType": "healthcare",
+      "flow": "intake"
+    },
+    {
+      "kind": "playbook",
+      "id": "education-course-player",
+      "title": "Education Course Player",
+      "tier": "pro",
+      "productType": "education",
+      "flow": "course-player"
+    },
+    {
+      "kind": "playbook",
+      "id": "settings-account-security",
+      "title": "Settings Account Security",
+      "tier": "pro",
+      "productType": "platform",
+      "flow": "settings-security"
+    }
+  ],
+  "patterns": [
+    {
+      "kind": "pattern",
+      "id": "nav-drawer",
+      "title": "Nav Drawer",
+      "tier": "free",
+      "category": "navigation"
+    },
+    {
+      "kind": "pattern",
+      "id": "multi-step-form",
+      "title": "Multi Step Form",
+      "tier": "free",
+      "category": "forms"
+    },
+    {
+      "kind": "pattern",
+      "id": "paywall",
+      "title": "Paywall",
+      "tier": "free",
+      "category": "commerce"
+    },
+    {
+      "kind": "pattern",
+      "id": "pricing-table",
+      "title": "Pricing Table",
+      "tier": "free",
+      "category": "commerce"
+    },
+    {
+      "kind": "pattern",
+      "id": "empty-state",
+      "title": "Empty State",
+      "tier": "free",
+      "category": "feedback"
+    },
+    {
+      "kind": "pattern",
+      "id": "settings-page",
+      "title": "Settings Page",
+      "tier": "free",
+      "category": "settings"
+    },
+    {
+      "kind": "pattern",
+      "id": "top-nav",
+      "title": "Top Nav",
+      "tier": "free",
+      "category": "navigation"
+    },
+    {
+      "kind": "pattern",
+      "id": "bottom-tabs",
+      "title": "Bottom Tabs",
+      "tier": "free",
+      "category": "navigation"
+    },
+    {
+      "kind": "pattern",
+      "id": "sidebar",
+      "title": "Sidebar",
+      "tier": "free",
+      "category": "navigation"
+    },
+    {
+      "kind": "pattern",
+      "id": "breadcrumbs",
+      "title": "Breadcrumbs",
+      "tier": "free",
+      "category": "navigation"
+    },
+    {
+      "kind": "pattern",
+      "id": "search",
+      "title": "Search",
+      "tier": "free",
+      "category": "navigation"
+    },
+    {
+      "kind": "pattern",
+      "id": "filters",
+      "title": "Filters",
+      "tier": "free",
+      "category": "data"
+    },
+    {
+      "kind": "pattern",
+      "id": "data-table",
+      "title": "Data Table",
+      "tier": "free",
+      "category": "data"
+    },
+    {
+      "kind": "pattern",
+      "id": "leaderboard",
+      "title": "Leaderboard",
+      "tier": "free",
+      "category": "data"
+    },
+    {
+      "kind": "pattern",
+      "id": "modal",
+      "title": "Modal",
+      "tier": "free",
+      "category": "feedback"
+    },
+    {
+      "kind": "pattern",
+      "id": "drawer",
+      "title": "Drawer",
+      "tier": "free",
+      "category": "feedback"
+    },
+    {
+      "kind": "pattern",
+      "id": "toast",
+      "title": "Toast",
+      "tier": "free",
+      "category": "feedback"
+    },
+    {
+      "kind": "pattern",
+      "id": "banner",
+      "title": "Banner",
+      "tier": "free",
+      "category": "feedback"
+    },
+    {
+      "kind": "pattern",
+      "id": "skeleton",
+      "title": "Skeleton",
+      "tier": "free",
+      "category": "feedback"
+    },
+    {
+      "kind": "pattern",
+      "id": "spinner",
+      "title": "Spinner",
+      "tier": "free",
+      "category": "feedback"
+    },
+    {
+      "kind": "pattern",
+      "id": "error-state",
+      "title": "Error State",
+      "tier": "pro",
+      "category": "feedback"
+    },
+    {
+      "kind": "pattern",
+      "id": "success-state",
+      "title": "Success State",
+      "tier": "pro",
+      "category": "feedback"
+    },
+    {
+      "kind": "pattern",
+      "id": "onboarding-carousel",
+      "title": "Onboarding Carousel",
+      "tier": "pro",
+      "category": "marketing"
+    },
+    {
+      "kind": "pattern",
+      "id": "otp-input",
+      "title": "Otp Input",
+      "tier": "pro",
+      "category": "auth"
+    },
+    {
+      "kind": "pattern",
+      "id": "password-field",
+      "title": "Password Field",
+      "tier": "pro",
+      "category": "auth"
+    },
+    {
+      "kind": "pattern",
+      "id": "file-upload",
+      "title": "File Upload",
+      "tier": "pro",
+      "category": "forms"
+    },
+    {
+      "kind": "pattern",
+      "id": "date-picker",
+      "title": "Date Picker",
+      "tier": "pro",
+      "category": "forms"
+    },
+    {
+      "kind": "pattern",
+      "id": "calendar",
+      "title": "Calendar",
+      "tier": "pro",
+      "category": "forms"
+    },
+    {
+      "kind": "pattern",
+      "id": "chat-list",
+      "title": "Chat List",
+      "tier": "pro",
+      "category": "content"
+    },
+    {
+      "kind": "pattern",
+      "id": "chat-composer",
+      "title": "Chat Composer",
+      "tier": "pro",
+      "category": "content"
+    },
+    {
+      "kind": "pattern",
+      "id": "comment-thread",
+      "title": "Comment Thread",
+      "tier": "pro",
+      "category": "content"
+    },
+    {
+      "kind": "pattern",
+      "id": "notification-center",
+      "title": "Notification Center",
+      "tier": "pro",
+      "category": "content"
+    },
+    {
+      "kind": "pattern",
+      "id": "avatar-menu",
+      "title": "Avatar Menu",
+      "tier": "pro",
+      "category": "navigation"
+    },
+    {
+      "kind": "pattern",
+      "id": "profile-header",
+      "title": "Profile Header",
+      "tier": "pro",
+      "category": "content"
+    },
+    {
+      "kind": "pattern",
+      "id": "stats-cards",
+      "title": "Stats Cards",
+      "tier": "pro",
+      "category": "data"
+    },
+    {
+      "kind": "pattern",
+      "id": "chart-panel",
+      "title": "Chart Panel",
+      "tier": "pro",
+      "category": "data"
+    },
+    {
+      "kind": "pattern",
+      "id": "kanban",
+      "title": "Kanban",
+      "tier": "pro",
+      "category": "data"
+    },
+    {
+      "kind": "pattern",
+      "id": "timeline",
+      "title": "Timeline",
+      "tier": "pro",
+      "category": "data"
+    },
+    {
+      "kind": "pattern",
+      "id": "activity-feed",
+      "title": "Activity Feed",
+      "tier": "pro",
+      "category": "content"
+    },
+    {
+      "kind": "pattern",
+      "id": "infinite-scroll",
+      "title": "Infinite Scroll",
+      "tier": "pro",
+      "category": "mobile-patterns"
+    },
+    {
+      "kind": "pattern",
+      "id": "pagination",
+      "title": "Pagination",
+      "tier": "pro",
+      "category": "data"
+    },
+    {
+      "kind": "pattern",
+      "id": "tabs",
+      "title": "Tabs",
+      "tier": "pro",
+      "category": "navigation"
+    },
+    {
+      "kind": "pattern",
+      "id": "accordion",
+      "title": "Accordion",
+      "tier": "pro",
+      "category": "content"
+    },
+    {
+      "kind": "pattern",
+      "id": "steppers",
+      "title": "Steppers",
+      "tier": "pro",
+      "category": "forms"
+    },
+    {
+      "kind": "pattern",
+      "id": "wizard",
+      "title": "Wizard",
+      "tier": "pro",
+      "category": "forms"
+    },
+    {
+      "kind": "pattern",
+      "id": "checkout-summary",
+      "title": "Checkout Summary",
+      "tier": "pro",
+      "category": "commerce"
+    },
+    {
+      "kind": "pattern",
+      "id": "cart-drawer",
+      "title": "Cart Drawer",
+      "tier": "pro",
+      "category": "commerce"
+    },
+    {
+      "kind": "pattern",
+      "id": "product-card",
+      "title": "Product Card",
+      "tier": "pro",
+      "category": "commerce"
+    },
+    {
+      "kind": "pattern",
+      "id": "product-gallery",
+      "title": "Product Gallery",
+      "tier": "pro",
+      "category": "commerce"
+    },
+    {
+      "kind": "pattern",
+      "id": "review-stars",
+      "title": "Review Stars",
+      "tier": "pro",
+      "category": "commerce"
+    },
+    {
+      "kind": "pattern",
+      "id": "coupon-field",
+      "title": "Coupon Field",
+      "tier": "pro",
+      "category": "commerce"
+    },
+    {
+      "kind": "pattern",
+      "id": "subscription-tiers",
+      "title": "Subscription Tiers",
+      "tier": "pro",
+      "category": "commerce"
+    },
+    {
+      "kind": "pattern",
+      "id": "feature-comparison",
+      "title": "Feature Comparison",
+      "tier": "pro",
+      "category": "commerce"
+    },
+    {
+      "kind": "pattern",
+      "id": "faq",
+      "title": "Faq",
+      "tier": "pro",
+      "category": "marketing"
+    },
+    {
+      "kind": "pattern",
+      "id": "footer",
+      "title": "Footer",
+      "tier": "pro",
+      "category": "marketing"
+    },
+    {
+      "kind": "pattern",
+      "id": "hero",
+      "title": "Hero",
+      "tier": "pro",
+      "category": "marketing"
+    },
+    {
+      "kind": "pattern",
+      "id": "social-proof",
+      "title": "Social Proof",
+      "tier": "pro",
+      "category": "marketing"
+    },
+    {
+      "kind": "pattern",
+      "id": "cta-band",
+      "title": "Cta Band",
+      "tier": "pro",
+      "category": "marketing"
+    },
+    {
+      "kind": "pattern",
+      "id": "cookie-consent",
+      "title": "Cookie Consent",
+      "tier": "pro",
+      "category": "settings"
+    },
+    {
+      "kind": "pattern",
+      "id": "age-gate",
+      "title": "Age Gate",
+      "tier": "pro",
+      "category": "auth"
+    },
+    {
+      "kind": "pattern",
+      "id": "kyc-upload",
+      "title": "Kyc Upload",
+      "tier": "pro",
+      "category": "auth"
+    },
+    {
+      "kind": "pattern",
+      "id": "phone-verify",
+      "title": "Phone Verify",
+      "tier": "pro",
+      "category": "auth"
+    },
+    {
+      "kind": "pattern",
+      "id": "email-verify",
+      "title": "Email Verify",
+      "tier": "pro",
+      "category": "auth"
+    },
+    {
+      "kind": "pattern",
+      "id": "magic-link",
+      "title": "Magic Link",
+      "tier": "pro",
+      "category": "auth"
+    },
+    {
+      "kind": "pattern",
+      "id": "sso-buttons",
+      "title": "Sso Buttons",
+      "tier": "pro",
+      "category": "auth"
+    },
+    {
+      "kind": "pattern",
+      "id": "two-factor",
+      "title": "Two Factor",
+      "tier": "pro",
+      "category": "auth"
+    },
+    {
+      "kind": "pattern",
+      "id": "session-timeout",
+      "title": "Session Timeout",
+      "tier": "pro",
+      "category": "auth"
+    },
+    {
+      "kind": "pattern",
+      "id": "permissions-prompt",
+      "title": "Permissions Prompt",
+      "tier": "pro",
+      "category": "mobile-patterns"
+    },
+    {
+      "kind": "pattern",
+      "id": "offline-state",
+      "title": "Offline State",
+      "tier": "pro",
+      "category": "mobile-patterns"
+    },
+    {
+      "kind": "pattern",
+      "id": "pull-to-refresh",
+      "title": "Pull To Refresh",
+      "tier": "pro",
+      "category": "mobile-patterns"
+    },
+    {
+      "kind": "pattern",
+      "id": "swipe-actions",
+      "title": "Swipe Actions",
+      "tier": "pro",
+      "category": "mobile-patterns"
+    },
+    {
+      "kind": "pattern",
+      "id": "bottom-sheet",
+      "title": "Bottom Sheet",
+      "tier": "pro",
+      "category": "mobile-patterns"
+    },
+    {
+      "kind": "pattern",
+      "id": "floating-action-button",
+      "title": "Floating Action Button",
+      "tier": "pro",
+      "category": "mobile-patterns"
+    },
+    {
+      "kind": "pattern",
+      "id": "command-palette",
+      "title": "Command Palette",
+      "tier": "pro",
+      "category": "navigation"
+    },
+    {
+      "kind": "pattern",
+      "id": "split-view",
+      "title": "Split View",
+      "tier": "pro",
+      "category": "navigation"
+    },
+    {
+      "kind": "pattern",
+      "id": "master-detail",
+      "title": "Master Detail",
+      "tier": "pro",
+      "category": "navigation"
+    },
+    {
+      "kind": "pattern",
+      "id": "wysiwyg",
+      "title": "Wysiwyg",
+      "tier": "pro",
+      "category": "content"
+    },
+    {
+      "kind": "pattern",
+      "id": "code-block",
+      "title": "Code Block",
+      "tier": "pro",
+      "category": "content"
+    },
+    {
+      "kind": "pattern",
+      "id": "video-player",
+      "title": "Video Player",
+      "tier": "pro",
+      "category": "content"
+    },
+    {
+      "kind": "pattern",
+      "id": "map-embed",
+      "title": "Map Embed",
+      "tier": "pro",
+      "category": "content"
+    },
+    {
+      "kind": "pattern",
+      "id": "address-form",
+      "title": "Address Form",
+      "tier": "pro",
+      "category": "forms"
+    },
+    {
+      "kind": "pattern",
+      "id": "shipping-selector",
+      "title": "Shipping Selector",
+      "tier": "pro",
+      "category": "commerce"
+    },
+    {
+      "kind": "pattern",
+      "id": "invoice",
+      "title": "Invoice",
+      "tier": "pro",
+      "category": "commerce"
+    },
+    {
+      "kind": "pattern",
+      "id": "receipt",
+      "title": "Receipt",
+      "tier": "pro",
+      "category": "commerce"
+    },
+    {
+      "kind": "pattern",
+      "id": "refund-status",
+      "title": "Refund Status",
+      "tier": "pro",
+      "category": "commerce"
+    },
+    {
+      "kind": "pattern",
+      "id": "waitlist",
+      "title": "Waitlist",
+      "tier": "pro",
+      "category": "marketing"
+    },
+    {
+      "kind": "pattern",
+      "id": "invite-team",
+      "title": "Invite Team",
+      "tier": "pro",
+      "category": "settings"
+    },
+    {
+      "kind": "pattern",
+      "id": "role-matrix",
+      "title": "Role Matrix",
+      "tier": "pro",
+      "category": "settings"
+    },
+    {
+      "kind": "pattern",
+      "id": "audit-log",
+      "title": "Audit Log",
+      "tier": "pro",
+      "category": "settings"
+    },
+    {
+      "kind": "pattern",
+      "id": "api-key-manager",
+      "title": "Api Key Manager",
+      "tier": "pro",
+      "category": "settings"
+    },
+    {
+      "kind": "pattern",
+      "id": "webhook-config",
+      "title": "Webhook Config",
+      "tier": "pro",
+      "category": "settings"
+    },
+    {
+      "kind": "pattern",
+      "id": "billing-portal",
+      "title": "Billing Portal",
+      "tier": "pro",
+      "category": "commerce"
+    },
+    {
+      "kind": "pattern",
+      "id": "usage-meters",
+      "title": "Usage Meters",
+      "tier": "pro",
+      "category": "data"
+    },
+    {
+      "kind": "pattern",
+      "id": "plan-upgrade-modal",
+      "title": "Plan Upgrade Modal",
+      "tier": "pro",
+      "category": "commerce"
+    },
+    {
+      "kind": "pattern",
+      "id": "churn-save",
+      "title": "Churn Save",
+      "tier": "pro",
+      "category": "commerce"
+    },
+    {
+      "kind": "pattern",
+      "id": "nps-survey",
+      "title": "Nps Survey",
+      "tier": "pro",
+      "category": "feedback"
+    },
+    {
+      "kind": "pattern",
+      "id": "cookie-preferences",
+      "title": "Cookie Preferences",
+      "tier": "pro",
+      "category": "settings"
+    },
+    {
+      "kind": "pattern",
+      "id": "accessibility-menu",
+      "title": "Accessibility Menu",
+      "tier": "pro",
+      "category": "settings"
+    },
+    {
+      "kind": "pattern",
+      "id": "language-switcher",
+      "title": "Language Switcher",
+      "tier": "pro",
+      "category": "settings"
+    },
+    {
+      "kind": "pattern",
+      "id": "theme-toggle",
+      "title": "Theme Toggle",
+      "tier": "pro",
+      "category": "settings"
+    }
+  ],
+  "slopMonth": "2026-08"
+}

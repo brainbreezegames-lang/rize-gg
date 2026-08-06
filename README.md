@@ -1,5 +1,14 @@
 This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
 
+## Design Process Engine (MCP)
+
+**Real product — stateful MCP for AI coding agents.**
+
+- Package: [`design-process-engine/`](./design-process-engine/)
+- Install docs: [`design-process-engine/website/install.html`](./design-process-engine/website/install.html)
+- Pipeline: `start_task` → `get_playbook` → `submit_plan` → `get_pattern_guide` → `review` → `final_check`
+- Run HTTP: `cd design-process-engine && npm run start:http`
+
 ## Getting Started
 
 Create a local env file first:

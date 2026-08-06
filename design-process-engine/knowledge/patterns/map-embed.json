@@ -1,0 +1,33 @@
+{
+  "id": "map-embed",
+  "title": "Map Embed",
+  "category": "content",
+  "tier": "pro",
+  "structure": [
+    "map-embed-root",
+    "map-embed-header",
+    "map-embed-body",
+    "map-embed-media",
+    "map-embed-actions"
+  ],
+  "requiredStates": [
+    "default",
+    "loading",
+    "empty",
+    "expanded",
+    "editing",
+    "error"
+  ],
+  "codeExample": "```tsx\nexport function MapEmbedExample() {\n  // Minimal Map Embed pattern\n  return (\n    <section aria-label=\"Map Embed\" data-pattern=\"map-embed\">\n      <header>\n        <h2>Map Embed</h2>\n      </header>\n      <div className=\"pattern-body\">\n        {/* Implement required states: default + interactive variants */}\n      </div>\n    </section>\n  );\n}\n```",
+  "mistakes": [
+    "Unbounded nested threads with no collapse",
+    "Media without aspect-ratio reservation",
+    "Timestamps without relative/absolute toggle when needed",
+    "Treating Map Embed as decoration without loading state"
+  ],
+  "relatedPatterns": [
+    "chat-list",
+    "chat-composer",
+    "comment-thread"
+  ]
+}

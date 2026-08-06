@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Pipeline — Design Process Engine</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:wght@400;500;600&family=Syne:wght@600;700;800&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="./styles.css" />
+  </head>
+  <body>
+    <div class="atmosphere" aria-hidden="true"><div class="atmosphere__grid"></div></div>
+    <header class="site-header">
+      <div class="site-header__inner">
+        <a class="brand" href="./index.html">
+          <span class="brand__mark">◆</span>
+          <span class="brand__name">Design Process Engine</span>
+        </a>
+        <button class="nav-toggle" type="button" data-nav-toggle aria-expanded="false" aria-controls="site-nav">
+          <span></span><span class="sr-only">Menu</span>
+        </button>
+        <nav class="nav" id="site-nav" data-nav>
+          <a href="./install.html">Install</a>
+          <a href="./docs.html" aria-current="page">Pipeline</a>
+          <a href="./pricing.html">Pricing</a>
+        </nav>
+      </div>
+    </header>
+
+    <main class="page shell">
+      <p class="section-label">The product</p>
+      <h1 class="section-title">Tools are the steps. State is the moat.</h1>
+      <p class="section-lede">
+        This is the PRD pipeline — enforced by the MCP server, not suggested by a markdown file.
+      </p>
+
+      <section class="install-block">
+        <pre><code>start_task
+  → get_playbook
+  → submit_plan          # approved plan = session contract
+  → get_pattern_guide*   # on demand while building
+  → (build → review)*    # no stage ends unreviewed
+  → final_check</code></pre>
+      </section>
+
+      <section class="install-block">
+        <h2>Modes</h2>
+        <ul class="easy-howto">
+          <li><strong>Create</strong> — intentional, distinctive</li>
+          <li><strong>Edit</strong> — invisibility; unused DS pieces banned</li>
+          <li><strong>Recreate</strong> — fidelity; zero creative deviation</li>
+        </ul>
+      </section>
+
+      <section class="install-block">
+        <h2>Knowledge</h2>
+        <p>10 playbooks · 100 pattern guides · monthly slop catalog. Free tier gets process + starters; Pro unlocks the full library.</p>
+      </section>
+
+      <section class="install-block">
+        <h2>Factory</h2>
+        <p>Product A (internal): capture → draft → human curate. Run <code>npm run factory:capture</code> in the package.</p>
+      </section>
+
+      <p><a class="btn btn--primary" href="./install.html">Install the MCP</a></p>
+    </main>
+
+    <footer class="site-footer">
+      <div class="site-footer__inner">
+        <span>Design Process Engine</span>
+        <a href="./install.html">Install</a>
+      </div>
+    </footer>
+    <script src="./main.js" defer></script>
+  </body>
+</html>
