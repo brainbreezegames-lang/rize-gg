@@ -69,16 +69,17 @@ export default function WitchFeastGame() {
     >
       <Canvas
         shadows
-        dpr={[1, 1.5]}
+        dpr={[1, 1.25]}
         gl={{
           antialias: false,
           powerPreference: "high-performance",
-          toneMapping: 4, // ACESFilmic
+          toneMappingExposure: 1.35,
         }}
-        camera={{ fov: 70, near: 0.1, far: 40, position: [0, 1.55, 3.5] }}
+        camera={{ fov: 72, near: 0.1, far: 50, position: [0, 1.55, 3.5] }}
         onCreated={({ gl }) => {
-          gl.setClearColor("#0B0A10");
-          // Pixel / gritty feel — slight low-res upscale can be done via dpr
+          gl.setClearColor("#1A1520");
+          gl.toneMapping = 4; // ACESFilmicToneMapping
+          gl.toneMappingExposure = 1.35;
         }}
       >
         <Suspense fallback={null}>

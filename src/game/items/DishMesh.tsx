@@ -3,14 +3,40 @@
 import { useMemo, useRef } from "react";
 import * as THREE from "three";
 import { useFrame } from "@react-three/fiber";
-import { dishMaterial, PALETTE } from "../utils/voxel";
+import { PALETTE } from "../utils/voxel";
 import { getSet, type Category, type SizeRank } from "../data/sets";
 import type { WorldItem } from "../data/items";
 import { useGameStore } from "../store/gameStore";
 import { CUPBOARDS, slotWorldPosition } from "../data/cupboards";
 
 function sizeScale(size: SizeRank): number {
-  return 1 - size * 0.18;
+  return 1 - size * 0.16;
+}
+
+/** Voxel brick helper */
+function Brick({
+  position,
+  args,
+  color,
+  emissive,
+}: {
+  position: [number, number, number];
+  args: [number, number, number];
+  color: string;
+  emissive?: string;
+}) {
+  return (
+    <mesh position={position} castShadow receiveShadow>
+      <boxGeometry args={args} />
+      <meshStandardMaterial
+        color={color}
+        emissive={emissive ?? color}
+        emissiveIntensity={emissive ? 0.35 : 0.08}
+        roughness={0.7}
+        metalness={0.1}
+      />
+    </mesh>
+  );
 }
 
 export function DishMesh({
@@ -23,10 +49,6 @@ export function DishMesh({
   magic?: boolean;
 }) {
   const set = getSet(item.setId);
-  const mat = useMemo(
-    () => dishMaterial(set.primary, set.accent, set.rim, set.material),
-    [set]
-  );
   const s = sizeScale(item.size);
   const group = useRef<THREE.Group>(null);
 
@@ -35,24 +57,42 @@ export function DishMesh({
     group.current.position.y += Math.sin(clock.elapsedTime * 4) * 0.002;
   });
 
-  const outline = highlight || magic;
-
   return (
     <group ref={group} scale={s}>
       {item.isLid ? (
-        <LidGeom material={mat} />
+        <VoxelLid primary={set.primary} accent={set.accent} rim={set.rim} />
       ) : (
-        <CategoryGeom category={item.category} material={mat} size={item.size} />
+        <VoxelDish
+          category={item.category}
+          size={item.size}
+          primary={set.primary}
+          accent={set.accent}
+          rim={set.rim}
+        />
       )}
-      {outline && (
-        <mesh scale={1.08}>
-          <boxGeometry args={[0.45, 0.2, 0.45]} />
+      {highlight && (
+        <mesh scale={1.15} position={[0, 0.05, 0]}>
+          <boxGeometry args={[0.5, 0.25, 0.5]} />
           <meshStandardMaterial
-            color={magic ? PALETTE.purpleMagic : PALETTE.gold}
+            color={PALETTE.gold}
             transparent
-            opacity={0.25}
-            emissive={magic ? PALETTE.purpleMagic : PALETTE.gold}
-            emissiveIntensity={1.5}
+            opacity={0.22}
+            emissive={PALETTE.gold}
+            emissiveIntensity={1.4}
+            depthWrite={false}
+            toneMapped={false}
+          />
+        </mesh>
+      )}
+      {magic && (
+        <mesh scale={1.2} position={[0, 0.08, 0]}>
+          <boxGeometry args={[0.45, 0.3, 0.45]} />
+          <meshStandardMaterial
+            color={PALETTE.purpleMagic}
+            transparent
+            opacity={0.2}
+            emissive={PALETTE.purpleMagic}
+            emissiveIntensity={1.6}
             depthWrite={false}
             toneMapped={false}
           />
@@ -62,101 +102,107 @@ export function DishMesh({
   );
 }
 
-function CategoryGeom({
+function VoxelDish({
   category,
-  material,
   size,
+  primary,
+  accent,
+  rim,
 }: {
   category: Category;
-  material: THREE.Material;
   size: SizeRank;
+  primary: string;
+  accent: string;
+  rim: string;
 }) {
+  const w = 0.42 - size * 0.05;
+
   switch (category) {
     case "plates":
       return (
-        <mesh castShadow rotation={[Math.PI / 2, 0, 0]}>
-          <cylinderGeometry args={[0.28, 0.28, 0.04, 8]} />
-          <primitive object={material} attach="material" />
-        </mesh>
+        <group>
+          {/* Flat plate base */}
+          <Brick position={[0, 0, 0]} args={[w, 0.04, w]} color={primary} />
+          {/* Rim ring as 4 edge bricks */}
+          <Brick position={[0, 0.03, w / 2 - 0.02]} args={[w, 0.03, 0.04]} color={rim} />
+          <Brick position={[0, 0.03, -w / 2 + 0.02]} args={[w, 0.03, 0.04]} color={rim} />
+          <Brick position={[w / 2 - 0.02, 0.03, 0]} args={[0.04, 0.03, w - 0.08]} color={rim} />
+          <Brick position={[-w / 2 + 0.02, 0.03, 0]} args={[0.04, 0.03, w - 0.08]} color={rim} />
+          {/* Pattern center */}
+          <Brick position={[0, 0.025, 0]} args={[w * 0.45, 0.02, w * 0.45]} color={accent} />
+        </group>
       );
     case "bowls":
       return (
-        <mesh castShadow>
-          <cylinderGeometry args={[0.22, 0.16, 0.14, 8]} />
-          <primitive object={material} attach="material" />
-        </mesh>
+        <group>
+          <Brick position={[0, 0.02, 0]} args={[w * 0.7, 0.04, w * 0.7]} color={primary} />
+          <Brick position={[0, 0.08, w * 0.32]} args={[w * 0.75, 0.1, 0.05]} color={primary} />
+          <Brick position={[0, 0.08, -w * 0.32]} args={[w * 0.75, 0.1, 0.05]} color={primary} />
+          <Brick position={[w * 0.32, 0.08, 0]} args={[0.05, 0.1, w * 0.65]} color={primary} />
+          <Brick position={[-w * 0.32, 0.08, 0]} args={[0.05, 0.1, w * 0.65]} color={primary} />
+          <Brick position={[0, 0.1, 0]} args={[w * 0.3, 0.02, w * 0.3]} color={accent} />
+        </group>
       );
     case "cups":
       return (
         <group>
-          <mesh castShadow>
-            <cylinderGeometry args={[0.1, 0.08, 0.18, 8]} />
-            <primitive object={material} attach="material" />
-          </mesh>
-          <mesh position={[0.12, 0, 0]} castShadow>
-            <torusGeometry args={[0.06, 0.015, 4, 8, Math.PI]} />
-            <primitive object={material} attach="material" />
-          </mesh>
+          <Brick position={[0, 0.08, 0]} args={[0.14, 0.18, 0.14]} color={primary} />
+          <Brick position={[0, 0.18, 0]} args={[0.16, 0.03, 0.16]} color={rim} />
+          <Brick position={[0.12, 0.08, 0]} args={[0.08, 0.03, 0.03]} color={accent} />
+          <Brick position={[0.15, 0.08, 0]} args={[0.03, 0.1, 0.03]} color={accent} />
         </group>
       );
     case "cutlery":
       return (
-        <group rotation={[0, 0, size === 1 ? 0.2 : 0]}>
-          <mesh castShadow>
-            <boxGeometry args={[0.04, 0.28, 0.02]} />
-            <primitive object={material} attach="material" />
-          </mesh>
-          <mesh position={[0, 0.12, 0]} castShadow>
-            <boxGeometry
-              args={[size === 0 ? 0.08 : size === 1 ? 0.05 : 0.06, 0.08, 0.01]}
-            />
-            <primitive object={material} attach="material" />
-          </mesh>
+        <group rotation={[0, 0, size === 1 ? 0.15 : 0]}>
+          <Brick position={[0, 0.1, 0]} args={[0.04, 0.28, 0.03]} color={rim} />
+          {size === 0 && (
+            <Brick position={[0, 0.26, 0]} args={[0.1, 0.08, 0.02]} color={primary} />
+          )}
+          {size === 1 && (
+            <Brick position={[0, 0.26, 0]} args={[0.05, 0.1, 0.02]} color={primary} />
+          )}
+          {size >= 2 && (
+            <Brick position={[0, 0.24, 0]} args={[0.08, 0.06, 0.03]} color={primary} />
+          )}
         </group>
       );
     case "cookware":
       return (
-        <mesh castShadow>
-          <cylinderGeometry
-            args={[0.2 + (3 - size) * 0.04, 0.16 + (3 - size) * 0.03, 0.22, 8]}
-          />
-          <primitive object={material} attach="material" />
-        </mesh>
+        <group>
+          <Brick position={[0, 0.08, 0]} args={[w * 0.85, 0.18, w * 0.85]} color={primary} />
+          <Brick position={[0, 0.18, 0]} args={[w * 0.9, 0.04, w * 0.9]} color={rim} />
+          <Brick position={[w * 0.5, 0.1, 0]} args={[0.1, 0.04, 0.04]} color={accent} />
+          <Brick position={[-w * 0.5, 0.1, 0]} args={[0.1, 0.04, 0.04]} color={accent} />
+        </group>
       );
     case "jars":
       return (
         <group>
-          <mesh castShadow>
-            <cylinderGeometry args={[0.1, 0.12, 0.22, 8]} />
-            <primitive object={material} attach="material" />
-          </mesh>
-          <mesh position={[0, 0.13, 0]}>
-            <cylinderGeometry args={[0.08, 0.08, 0.05, 8]} />
-            <meshStandardMaterial color="#5C3A1E" />
-          </mesh>
+          <Brick position={[0, 0.1, 0]} args={[0.16, 0.22, 0.16]} color={primary} />
+          <Brick position={[0, 0.24, 0]} args={[0.12, 0.06, 0.12]} color={rim} />
+          <Brick position={[0, 0.12, 0.09]} args={[0.1, 0.08, 0.02]} color={accent} />
         </group>
       );
     default:
-      return (
-        <mesh>
-          <boxGeometry args={[0.2, 0.2, 0.2]} />
-          <primitive object={material} attach="material" />
-        </mesh>
-      );
+      return <Brick position={[0, 0.05, 0]} args={[0.2, 0.2, 0.2]} color={primary} />;
   }
 }
 
-function LidGeom({ material }: { material: THREE.Material }) {
+function VoxelLid({
+  primary,
+  accent,
+  rim,
+}: {
+  primary: string;
+  accent: string;
+  rim: string;
+}) {
   return (
     <group>
-      <mesh castShadow rotation={[Math.PI / 2, 0, 0]}>
-        <cylinderGeometry args={[0.2, 0.2, 0.04, 8]} />
-        <primitive object={material} attach="material" />
-      </mesh>
-      <mesh position={[0, 0.05, 0]} castShadow>
-        <boxGeometry args={[0.06, 0.06, 0.06]} />
-        <primitive object={material} attach="material" />
-      </mesh>
+      <Brick position={[0, 0.02, 0]} args={[0.36, 0.04, 0.36]} color={primary} />
+      <Brick position={[0, 0.05, 0]} args={[0.38, 0.03, 0.38]} color={rim} />
+      <Brick position={[0, 0.1, 0]} args={[0.08, 0.08, 0.08]} color={accent} />
     </group>
   );
 }
@@ -197,7 +243,7 @@ export function WorldItems() {
         const magic =
           glowingSetId === item.setId &&
           !item.placedSlotId &&
-          activeCharm?.includes("call");
+          !!activeCharm?.includes("call");
 
         return (
           <group
@@ -206,12 +252,11 @@ export function WorldItems() {
             rotation={rotation}
             userData={{ itemId: item.id, interact: "item" }}
           >
-            {/* Larger invisible hit volume for easier pickup */}
             <mesh visible={false}>
-              <boxGeometry args={[0.55, 0.45, 0.55]} />
-              <meshBasicMaterial />
+              <boxGeometry args={[0.6, 0.5, 0.6]} />
+              <meshBasicMaterial transparent opacity={0} />
             </mesh>
-            <DishMesh item={item} highlight={highlight} magic={!!magic} />
+            <DishMesh item={item} highlight={highlight} magic={magic} />
           </group>
         );
       })}

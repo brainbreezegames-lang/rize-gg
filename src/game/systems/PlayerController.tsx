@@ -35,10 +35,10 @@ export function PlayerController() {
   const held = useGameStore((s) => s.getHeldItem());
   const selectedSlot = useGameStore((s) => s.selectedSlot);
 
-  // Init camera
+  // Init camera — face the plate cupboard / floor mess
   useEffect(() => {
-    camera.position.set(0, PLAYER_HEIGHT, 3.5);
-    euler.current.set(0, 0, 0);
+    camera.position.set(0.2, PLAYER_HEIGHT, 2.8);
+    euler.current.set(-0.15, 0.15, 0);
     camera.quaternion.setFromEuler(euler.current);
   }, [camera]);
 
@@ -148,10 +148,12 @@ export function PlayerController() {
     const tryInteract = (mode: "pickup" | "place") => {
       const store = useGameStore.getState();
       raycaster.current.setFromCamera(new THREE.Vector2(0, 0), camera);
+      raycaster.current.far = REACH + 1.2;
       // Collect interactables from scene
       const targets: THREE.Object3D[] = [];
       scene.traverse((obj) => {
-        if (obj.userData?.interact) targets.push(obj);
+        if (obj.userData?.interact || obj.userData?.itemId || obj.userData?.charmId)
+          targets.push(obj);
       });
       const hits = raycaster.current.intersectObjects(targets, true);
 
@@ -159,21 +161,62 @@ export function PlayerController() {
         for (const hit of hits) {
           let o: THREE.Object3D | null = hit.object;
           while (o) {
-            if (o.userData?.itemId && hit.distance <= REACH) {
+            if (o.userData?.itemId && hit.distance <= REACH + 0.6) {
               store.pickUpItem(o.userData.itemId);
               return;
             }
-            if (o.userData?.charmId && hit.distance <= REACH) {
+            if (o.userData?.charmId && hit.distance <= REACH + 0.6) {
               store.unlockCharm(o.userData.charmId);
               return;
             }
-            if (o.userData?.interact === "cat" && hit.distance <= REACH) {
+            if (o.userData?.interact === "cat" && hit.distance <= REACH + 0.6) {
               store.petCat();
               return;
             }
             o = o.parent;
           }
         }
+
+        // Fallback: nearest loose item in look cone (friendlier targeting)
+        const forward = new THREE.Vector3(0, 0, -1).applyQuaternion(
+          camera.quaternion
+        );
+        let bestId: string | null = null;
+        let bestScore = Infinity;
+        for (const item of store.items) {
+          if (item.placedSlotId || item.inventorySlot !== null || item.hidden)
+            continue;
+          if (item.kind !== "dish" && item.kind !== "lid") continue;
+          const pos = new THREE.Vector3(...item.position);
+          const to = pos.clone().sub(camera.position);
+          const dist = to.length();
+          if (dist > REACH + 0.8) continue;
+          to.normalize();
+          const align = forward.dot(to);
+          if (align < 0.55) continue;
+          const score = dist + (1 - align) * 2;
+          if (score < bestScore) {
+            bestScore = score;
+            bestId = item.id;
+          }
+        }
+        if (bestId) {
+          store.pickUpItem(bestId);
+          return;
+        }
+
+        // Charms by proximity
+        for (const charm of CHARM_DEFS) {
+          if (store.unlockedCharms.includes(charm.id)) continue;
+          const dist = camera.position.distanceTo(
+            new THREE.Vector3(...charm.position)
+          );
+          if (dist < 2.2) {
+            store.unlockCharm(charm.id);
+            return;
+          }
+        }
+        store.setMessage("Nothing in reach — walk closer and look at a dish.");
         return;
       }
 
@@ -323,9 +366,9 @@ export function PlayerController() {
           <meshStandardMaterial color="#C4A574" />
         </mesh>
       ))}
-      {/* Held dish */}
+      {/* Held dish — keep modest so it doesn't fill the view */}
       {currentHeld && (
-        <group position={[0.02, -0.02, -0.38]} scale={0.85}>
+        <group position={[0.02, -0.05, -0.42]} scale={0.55}>
           <DishMesh item={currentHeld} highlight />
         </group>
       )}

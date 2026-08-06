@@ -70,12 +70,9 @@ function Candle({
         ref={light}
         position={[0, 0.25, 0]}
         color={PALETTE.candle}
-        intensity={1.2}
-        distance={6}
+        intensity={2.4}
+        distance={8}
         decay={2}
-        castShadow
-        shadow-mapSize-width={512}
-        shadow-mapSize-height={512}
       />
     </group>
   );
@@ -238,11 +235,16 @@ export function KitchenEnvironment() {
       <LavenderBunch position={[-6.7, 0.85, -3.3]} />
       <Banner position={[-6.5, 1.6, -3.8]} />
 
-      {/* Wall candles */}
+      {/* Wall candles — denser ring so the kitchen reads clearly */}
       <Candle position={[-3, 2.4, -5.7]} />
       <Candle position={[3, 2.4, -5.7]} />
       <Candle position={[0, 2.6, 6.6]} />
       <Candle position={[5, 1.8, 4]} />
+      <Candle position={[-5, 1.8, 4]} />
+      <Candle position={[0, 2.2, -5.5]} />
+      <Candle position={[6.5, 2.0, -1]} />
+      <Candle position={[-1.5, 1.1, 1.5]} />
+      <Candle position={[1.5, 1.1, 1.5]} />
 
       {/* Bench for cat */}
       <Box position={[-6.2, 0.35, -1.2]} args={[1.4, 0.7, 0.55]} material={wood2} />
@@ -275,18 +277,30 @@ export function KitchenEnvironment() {
         />
       ))}
 
-      {/* Ambient + fill */}
-      <ambientLight intensity={0.18} color="#2A2030" />
-      <hemisphereLight args={["#3A4A6A", "#1A1008", 0.35]} />
+      {/* Bright cozy fill — readable voxel kitchen, still night */}
+      <ambientLight intensity={0.55} color="#6A5A78" />
+      <hemisphereLight args={["#8AA0C8", "#3A2818", 0.7]} />
       <directionalLight
-        position={[-8, 5, -2]}
-        intensity={0.25}
-        color={PALETTE.moon}
-        castShadow={false}
+        position={[-6, 8, 2]}
+        intensity={0.85}
+        color="#FFE0B0"
+        castShadow
+        shadow-mapSize-width={1024}
+        shadow-mapSize-height={1024}
       />
+      <directionalLight
+        position={[4, 6, -4]}
+        intensity={0.35}
+        color={PALETTE.moon}
+      />
+      {/* Room fill lamps */}
+      <pointLight position={[0, 3.2, 0]} color="#FFCC88" intensity={2.2} distance={14} decay={2} />
+      <pointLight position={[-2, 2.5, -3]} color="#FFAA66" intensity={1.6} distance={10} decay={2} />
+      <pointLight position={[3, 2.5, -3]} color="#FFAA66" intensity={1.6} distance={10} decay={2} />
+      <pointLight position={[0, 2.5, 4]} color="#FFBB77" intensity={1.4} distance={10} decay={2} />
 
-      {/* Fog for depth / grit */}
-      <fog attach="fog" args={["#0B0A10", 8, 22]} />
+      {/* Soft night fog — keep depth without burying the room */}
+      <fog attach="fog" args={["#1A1520", 16, 36]} />
     </group>
   );
 }

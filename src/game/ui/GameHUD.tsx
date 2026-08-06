@@ -151,9 +151,16 @@ function PlayingHUD() {
   const useCharm = useGameStore((s) => s.useCharm);
   const cooldowns = useGameStore((s) => s.cooldowns);
   const message = useGameStore((s) => s.message);
+  const setMessage = useGameStore((s) => s.setMessage);
   const completedSets = useGameStore((s) => s.completedSets);
   const pointerLocked = useGameStore((s) => s.pointerLocked);
   const elapsedMs = useGameStore((s) => s.elapsedMs);
+
+  useEffect(() => {
+    if (!message) return;
+    const t = setTimeout(() => setMessage(null), 2800);
+    return () => clearTimeout(t);
+  }, [message, setMessage]);
 
   const stacks = inventoryStacks(inventory, items);
 
@@ -459,13 +466,14 @@ function PlayingHUD() {
             ) : (
               <div
                 style={{
-                  marginTop: 20,
-                  fontSize: 14,
-                  opacity: 0.3,
+                  marginTop: 18,
+                  fontSize: 16,
+                  opacity: 0.25,
                   color: "#E8D5B0",
+                  lineHeight: 1,
                 }}
               >
-                ✦
+                ·
               </div>
             )}
           </button>

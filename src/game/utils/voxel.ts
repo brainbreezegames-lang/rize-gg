@@ -61,35 +61,38 @@ export function woodMaterial(variant = 0): THREE.MeshStandardMaterial {
   tex.repeat.set(2, 2);
   return new THREE.MeshStandardMaterial({
     map: tex,
-    roughness: 0.85,
+    color: "#C4A574",
+    roughness: 0.75,
     metalness: 0.05,
   });
 }
 
 export function stoneMaterial(): THREE.MeshStandardMaterial {
   const tex = pixelTexture(
-    ["#4A4E52", "#3A3E42", "#5A5E62", "#2E3236", "#6A6E72"],
+    ["#6A6E72", "#5A5E62", "#7A7E82", "#4E5256", "#8A8E92"],
     16,
     "stone"
   );
   tex.repeat.set(4, 2);
   return new THREE.MeshStandardMaterial({
     map: tex,
-    roughness: 0.95,
+    color: "#A8ACB0",
+    roughness: 0.9,
     metalness: 0.02,
   });
 }
 
 export function floorMaterial(): THREE.MeshStandardMaterial {
   const tex = pixelTexture(
-    ["#3D2A1A", "#4A3220", "#2E1E12", "#5A3E28", "#352418"],
+    ["#5C3A22", "#6B4428", "#4A2E18", "#7A5230", "#553420"],
     16,
     "floor"
   );
   tex.repeat.set(8, 8);
   return new THREE.MeshStandardMaterial({
     map: tex,
-    roughness: 0.9,
+    color: "#8B5A2B",
+    roughness: 0.85,
     metalness: 0.0,
   });
 }
@@ -118,6 +121,8 @@ export function dishMaterial(
     color: primary,
     roughness,
     metalness,
+    emissive: primary,
+    emissiveIntensity: 0.12,
     transparent: material === "glass",
     opacity: material === "glass" ? 0.85 : 1,
   });
