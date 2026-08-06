@@ -932,12 +932,8 @@ ${lastPrompt ? `The user described this design as: "${lastPrompt}"` : ""}
 
 Look at the reference image and recreate EVERY section, card, list item, stat, and UI element you see. Do NOT simplify or skip any part of the design. The output should look identical to the screenshot.`;
 
-      const success = await generate(convertPrompt, selectedModel, activeSkills, resized, apiKey || undefined);
-      if (success) {
-        setGeneratedImage(null);
-      } else {
-        setImageError("Code conversion failed. Check the error above and try again.");
-      }
+      await generate(convertPrompt, selectedModel, activeSkills, resized, apiKey || undefined);
+      setGeneratedImage(null);
     } catch (err) {
       setImageError(err instanceof Error ? err.message : "Failed to convert image");
     } finally {
