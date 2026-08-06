@@ -1,7 +1,7 @@
 "use client";
 
-import { useMemo } from "react";
-import { ThreeEvent } from "@react-three/fiber";
+import { useMemo, useState } from "react";
+import { ThreeEvent, useFrame } from "@react-three/fiber";
 import { VoxelItem } from "./VoxelItem";
 import { useGameStore } from "../store";
 import { SHELVES } from "../constants";
@@ -14,15 +14,17 @@ export function FloorItems() {
   const tryPickup = useGameStore((s) => s.tryPickup);
   const setHighlighted = useGameStore((s) => s.setHighlighted);
   const playerPos = useGameStore((s) => s.playerPos);
+  const [identifying, setIdentifying] = useState(false);
 
-  const identifying = performance.now() / 1000 < identifyUntil;
+  useFrame(() => {
+    setIdentifying(performance.now() / 1000 < identifyUntil);
+  });
 
   const floor = useMemo(
     () => items.filter((i) => !i.collected && !i.placed),
     [items]
   );
 
-  // Auto-highlight nearest
   let nearestId: string | null = null;
   let nearestD = 1.5;
   for (const item of floor) {
