@@ -6,7 +6,7 @@
     <title>Try it — Design Process Engine</title>
     <meta
       name="description"
-      content="Type what you want to build. We run the design process for you."
+      content="Get a design brief you can paste into ChatGPT, Claude, or Cursor."
     />
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
@@ -47,17 +47,23 @@
 
     <main class="page shell easy">
       <section class="easy-hero" data-reveal>
-        <p class="section-label">For humans, not developers</p>
-        <h1 class="section-title">Just say what you want to build</h1>
+        <p class="section-label">What this is for</p>
+        <h1 class="section-title">Get a better prompt for your AI</h1>
         <p class="section-lede">
-          You only type one sentence. We run the senior-designer process for you
-          — classify, playbook, plan, review, final check. No forms full of
-          jargon.
+          Tell us what you want to build. We turn it into a clear design brief.
+          Then you <strong>copy that brief</strong> and paste it into ChatGPT,
+          Claude, or Cursor so the AI builds something less generic.
         </p>
+        <ol class="easy-howto">
+          <li>Type what you want</li>
+          <li>Click the button</li>
+          <li>Copy the brief</li>
+          <li>Paste it into your AI chat</li>
+        </ol>
       </section>
 
       <form id="easy-form" class="easy-form" data-reveal>
-        <label for="wish" class="easy-label">What do you want?</label>
+        <label for="wish" class="easy-label">What do you want to build?</label>
         <textarea
           id="wish"
           rows="3"
@@ -66,12 +72,16 @@
         ></textarea>
         <div id="examples" class="chips" aria-label="Examples"></div>
         <button id="btn-go" class="btn btn--primary" type="submit">
-          Build my plan
+          Make my brief
         </button>
       </form>
 
-      <div id="steps" class="easy-steps" aria-live="polite"></div>
       <div id="result" class="easy-result" hidden></div>
+
+      <details id="process-details" class="easy-details" hidden>
+        <summary>Optional: see how we built this brief</summary>
+        <div id="steps" class="easy-steps" aria-live="polite"></div>
+      </details>
     </main>
 
     <script src="./main.js"></script>

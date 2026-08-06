@@ -1,20 +1,7 @@
 /**
- * Super-simple playground for non-developers.
- * User types what they want → we do the pipeline for them.
+ * Non-dev playground:
+ * Input one sentence → get a copy-paste brief for ChatGPT / Claude / Cursor.
  */
-
-const DEFECT_IDS = [
-  "clipped_text",
-  "overlapping",
-  "grid_misalignment",
-  "same_role_sizes",
-  "escaping_containers",
-  "spacing_violations",
-  "contrast",
-  "hit_targets",
-  "missing_states",
-  "one_job",
-];
 
 const EXAMPLES = [
   "A signup flow for a banking app",
@@ -26,6 +13,7 @@ const EXAMPLES = [
 const state = {
   running: false,
   index: null,
+  lastBrief: "",
 };
 
 const $ = (sel) => document.querySelector(sel);
@@ -40,29 +28,17 @@ function setBusy(busy) {
   const input = $("#wish");
   if (btn) {
     btn.disabled = busy;
-    btn.textContent = busy ? "Working…" : "Build my plan";
+    btn.textContent = busy ? "Making your brief…" : "Make my brief";
   }
   if (input) input.disabled = busy;
 }
 
-function clearSteps() {
-  const box = $("#steps");
-  if (box) box.innerHTML = "";
-  const result = $("#result");
-  if (result) {
-    result.hidden = true;
-    result.innerHTML = "";
-  }
-}
-
-function addStep(title, bodyHtml, tone = "ok") {
-  const box = $("#steps");
-  const card = document.createElement("article");
-  card.className = `easy-step easy-step--${tone}`;
-  card.innerHTML = `<h3>${title}</h3><div class="easy-step__body">${bodyHtml}</div>`;
-  box.append(card);
-  card.scrollIntoView({ behavior: "smooth", block: "nearest" });
-  return card;
+function escapeHtml(s) {
+  return String(s)
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;")
+    .replace(/"/g, "&quot;");
 }
 
 function classifyMode(text) {
@@ -75,8 +51,8 @@ function classifyMode(text) {
 function plainMode(mode) {
   return {
     create: "New design — make it distinctive, not generic",
-    edit: "Edit existing UI — match what the product already looks like",
-    recreate: "Match a reference — stay faithful, don’t improvise",
+    edit: "Edit existing UI — match what already exists",
+    recreate: "Match a reference — stay faithful",
   }[mode];
 }
 
@@ -109,7 +85,6 @@ function pickPlaybook(wish, index) {
     if (/social|feed|posts/.test(text) && p.id.includes("social")) score += 6;
     if (/course|learn|lesson|education/.test(text) && p.id.includes("education")) score += 6;
     if (/health|patient|intake|clinic/.test(text) && p.id.includes("healthcare")) score += 6;
-    // prefer free when tied
     if (p.tier === "free") score += 0.2;
     return { p, score };
   });
@@ -135,117 +110,156 @@ function autoPlan(wish, mode, playbook) {
       ? "information-rich"
       : "comfortable",
     typeDirection: "One bold display font for titles + one simple font for body text",
-    valueVocabulary: ["background", "accent", "spacing-large", "rounded-small"],
-    notes: `Auto-planned from: “${wish}”`,
+    notes: wish,
   };
 }
 
-function listHtml(items) {
-  return `<ol>${items.map((i) => `<li>${escapeHtml(i)}</li>`).join("")}</ol>`;
+function buildBrief(wish, mode, playbook, plan) {
+  const screens = plan.screens.map((s, i) => `${i + 1}. ${s}`).join("\n");
+  const forgotten = (playbook.forgottenStates || [])
+    .slice(0, 5)
+    .map((s) => `- ${s}`)
+    .join("\n");
+  const never = (playbook.neverDo || [])
+    .slice(0, 4)
+    .map((s) => `- ${s}`)
+    .join("\n");
+  const strategy = playbook.strategies?.[0];
+
+  return `You are my design lead. Build this UI carefully. Follow this brief exactly.
+
+## What I want
+${wish}
+
+## Mode
+${plainMode(mode)}
+
+## Playbook: ${playbook.title}
+${playbook.summary}
+
+Recommended strategy: ${strategy ? `${strategy.name} (${strategy.prevalence}). ${strategy.when}` : "Pick one clear approach and stick to it."}
+
+## Screens to build (in order)
+${screens}
+
+## Layout rule
+${plan.layoutPrinciple}
+
+## Look and feel
+- ${plan.paletteStrategy}
+- Density: ${plan.density}
+- Type: ${plan.typeDirection}
+- Do NOT use purple gradients, generic SaaS slogans (“unlock your potential”), or emoji decoration.
+
+## States you must include
+${forgotten || "- Loading, empty, and error states where relevant"}
+
+## Never do
+${never || "- Don’t invent a second visual style mid-way"}
+
+## How to work
+1. Build ONE screen at a time.
+2. After each screen, self-check: no clipped text, no overlap, consistent spacing, not generic.
+3. When all screens are done, do a final pass against this brief.
+
+Start with screen 1 now.`;
 }
 
-function bullets(items) {
-  return `<ul>${items.map((i) => `<li>${escapeHtml(i)}</li>`).join("")}</ul>`;
-}
-
-function escapeHtml(s) {
-  return String(s)
-    .replace(/&/g, "&amp;")
-    .replace(/</g, "&lt;")
-    .replace(/>/g, "&gt;")
-    .replace(/"/g, "&quot;");
+function addStep(title, bodyHtml) {
+  const box = $("#steps");
+  const card = document.createElement("article");
+  card.className = "easy-step";
+  card.innerHTML = `<h3>${title}</h3><div class="easy-step__body">${bodyHtml}</div>`;
+  box.append(card);
 }
 
 async function runPipeline(wish) {
-  clearSteps();
+  const steps = $("#steps");
+  const details = $("#process-details");
+  const result = $("#result");
+  steps.innerHTML = "";
+  result.hidden = true;
+  details.hidden = true;
   setBusy(true);
 
   try {
+    await sleep(200);
     const mode = classifyMode(wish);
-    await sleep(350);
-    addStep(
-      "1. We figured out what kind of work this is",
-      `<p><strong>${escapeHtml(plainMode(mode))}</strong></p>
-       <p class="muted">You don’t need to choose this — we classify it from your sentence.</p>`
-    );
-
     const index = await loadIndex();
     const pick = pickPlaybook(wish, index);
     const playbook = await loadPlaybook(pick.id);
-    await sleep(400);
-    addStep(
-      "2. We loaded a playbook (how good apps do this)",
-      `<p><strong>${escapeHtml(playbook.title)}</strong> — ${escapeHtml(playbook.summary)}</p>
-       <p><em>Screens successful apps usually include:</em></p>
-       ${listHtml(playbook.structure.slice(0, 7))}
-       <p><em>Things people often forget:</em></p>
-       ${bullets(playbook.forgottenStates.slice(0, 4))}
-       <p><em>Never do:</em></p>
-       ${bullets(playbook.neverDo.slice(0, 3))}`
-    );
-
     const plan = autoPlan(wish, mode, playbook);
-    await sleep(400);
+    const brief = buildBrief(wish, mode, playbook, plan);
+    state.lastBrief = brief;
+
+    // Optional process trail (collapsed)
     addStep(
-      "3. We wrote your design plan (this becomes the contract)",
-      `<p><strong>Layout idea:</strong> ${escapeHtml(plan.layoutPrinciple)}</p>
-       <p><strong>Screens to build:</strong></p>
-       ${listHtml(plan.screens)}
-       <p><strong>Look & feel:</strong> ${escapeHtml(plan.paletteStrategy)}. Density: ${escapeHtml(plan.density)}.</p>
-       <p class="muted">In Cursor/Claude with the MCP, the AI must follow this plan — it can’t wander into generic “AI slop.”</p>`
+      "Classified",
+      `<p>${escapeHtml(plainMode(mode))}</p>`
     );
-
-    // Simulate staged reviews in plain language
-    for (let i = 0; i < Math.min(plan.screens.length, 3); i++) {
-      await sleep(280);
-      const screen = plan.screens[i];
-      addStep(
-        `4.${i + 1} Review checkpoint: “${escapeHtml(screen)}”`,
-        `<p>Before moving on, we check for common mistakes:</p>
-         ${bullets([
-           "Text cut off or overlapping",
-           "Uneven spacing / misaligned columns",
-           "Missing error or empty states when needed",
-           "Looking generic (purple gradients, fake “Unlock your potential” headlines)",
-         ])}
-         <p class="ok-line">✓ This stage would be marked reviewed before the next one starts.</p>`
-      );
-    }
-
-    await sleep(350);
-    const remaining = plan.screens.length - Math.min(plan.screens.length, 3);
     addStep(
-      "5. Final check",
-      `<p>We confirm every planned screen was reviewed, the plan was honored, and the result doesn’t match known “AI design tells.”</p>
-       ${remaining > 0 ? `<p class="muted">(+ ${remaining} more screen(s) in the full plan would get the same review.)</p>` : ""}
-       <p class="ok-line">✓ Ready to build for real in your AI coding tool — with this contract held.</p>`,
-      "done"
+      "Playbook",
+      `<p><strong>${escapeHtml(playbook.title)}</strong> — ${escapeHtml(playbook.summary)}</p>`
     );
+    addStep(
+      "Plan",
+      `<p>${escapeHtml(plan.screens.length)} screens · ${escapeHtml(plan.paletteStrategy)}</p>`
+    );
+    details.hidden = false;
 
-    const result = $("#result");
     result.hidden = false;
     result.innerHTML = `
-      <h2>You’re done — here’s what this was</h2>
-      <p>You only needed <strong>one sentence</strong>. The Engine did the senior-designer process:</p>
-      <ul>
-        <li>Classify the job</li>
-        <li>Load real-world playbook knowledge</li>
-        <li>Lock a plan</li>
-        <li>Force review after every stage</li>
-        <li>Final anti-slop check</li>
-      </ul>
-      <p><strong>You don’t fill those technical boxes yourself.</strong> That was a mistake in the old playground.
-      When you use this inside Cursor or Claude later, <em>the AI</em> fills the plan — and the Engine refuses junk.</p>
-      <p class="result-cta">Want another? Change your sentence above and press the button again.</p>
+      <p class="easy-kicker">Your next step (this is the whole point)</p>
+      <h2>1. Copy this brief</h2>
+      <p>This is a ready-made message for your AI. You don’t need to understand every line.</p>
+      <pre id="brief-text" class="brief-box">${escapeHtml(brief)}</pre>
+      <button type="button" class="btn btn--primary" id="btn-copy">Copy brief</button>
+      <p id="copy-status" class="copy-status" hidden>Copied ✓</p>
+
+      <h2 class="next-h">2. Paste it into an AI</h2>
+      <ol class="easy-howto">
+        <li>Open <a href="https://chatgpt.com" target="_blank" rel="noreferrer">ChatGPT</a>, <a href="https://claude.ai" target="_blank" rel="noreferrer">Claude</a>, or Cursor</li>
+        <li>Paste the brief</li>
+        <li>Send it — ask the AI to build screen 1 first</li>
+      </ol>
+
+      <p class="muted-note">
+        That’s what this product is: it writes a stricter design brief so your AI
+        doesn’t invent random purple “startup” UI. You are not supposed to build
+        the screens yourself.
+      </p>
     `;
+
+    $("#btn-copy")?.addEventListener("click", async () => {
+      try {
+        await navigator.clipboard.writeText(state.lastBrief);
+        const status = $("#copy-status");
+        if (status) {
+          status.hidden = false;
+          status.textContent = "Copied ✓ — now paste it into ChatGPT / Claude / Cursor";
+        }
+      } catch {
+        // fallback: select the text
+        const pre = $("#brief-text");
+        if (pre) {
+          const range = document.createRange();
+          range.selectNodeContents(pre);
+          const sel = window.getSelection();
+          sel.removeAllRanges();
+          sel.addRange(range);
+          alert("Press Ctrl+C (or Cmd+C) to copy the selected brief.");
+        }
+      }
+    });
+
     result.scrollIntoView({ behavior: "smooth", block: "start" });
   } catch (err) {
-    addStep(
-      "Something went wrong",
-      `<p>${escapeHtml(err.message || String(err))}</p>
-       <p class="muted">Try again in a moment, or pick one of the example chips.</p>`,
-      "bad"
-    );
+    result.hidden = false;
+    result.innerHTML = `
+      <h2>Something went wrong</h2>
+      <p>${escapeHtml(err.message || String(err))}</p>
+      <p>Try an example chip and click the button again.</p>
+    `;
   } finally {
     setBusy(false);
   }
@@ -256,7 +270,6 @@ function boot() {
   const wish = $("#wish");
   const chips = $("#examples");
 
-  // example chips
   if (chips) {
     chips.innerHTML = "";
     for (const ex of EXAMPLES) {
@@ -279,7 +292,6 @@ function boot() {
     runPipeline(text);
   });
 
-  // Prefetch knowledge
   loadIndex().catch(() => {});
 }
 

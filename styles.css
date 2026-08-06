@@ -611,6 +611,76 @@ pre {
   margin-bottom: 1.5rem;
 }
 
+.easy-howto {
+  margin: 1rem 0 0;
+  padding-left: 1.2rem;
+  color: var(--ink-muted);
+}
+
+.easy-howto li {
+  margin: 0.25rem 0;
+}
+
+.easy-howto a {
+  color: var(--accent);
+  text-decoration: underline;
+}
+
+.easy-kicker {
+  margin: 0 0 0.35rem;
+  color: var(--accent);
+  font-weight: 600;
+  font-size: 0.95rem;
+}
+
+.brief-box {
+  margin: 0.75rem 0 1rem;
+  padding: 1rem;
+  max-height: 280px;
+  overflow: auto;
+  border: 1px solid var(--border-strong);
+  background: var(--bg);
+  color: var(--ink-muted);
+  font-family: "IBM Plex Mono", ui-monospace, monospace;
+  font-size: 0.78rem;
+  line-height: 1.45;
+  white-space: pre-wrap;
+}
+
+.copy-status {
+  margin: 0.65rem 0 0;
+  color: var(--accent);
+  font-weight: 600;
+}
+
+.next-h {
+  margin-top: 1.75rem !important;
+}
+
+.muted-note {
+  margin-top: 1.25rem;
+  color: var(--ink-muted);
+  font-size: 0.95rem;
+}
+
+.easy-details {
+  margin-top: 1.5rem;
+  border: 1px solid var(--border);
+  padding: 0.75rem 1rem;
+  background: var(--bg-soft);
+  color: var(--ink-muted);
+}
+
+.easy-details summary {
+  cursor: pointer;
+  color: var(--ink);
+  font-weight: 500;
+}
+
+.easy-details[open] summary {
+  margin-bottom: 0.75rem;
+}
+
 .easy-form {
   display: grid;
   gap: 0.85rem;
