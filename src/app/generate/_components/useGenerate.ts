@@ -63,8 +63,10 @@ export function useGenerate() {
       const finalCode = normalizeCode(extractCodeFromResponse(accumulated));
       setCode(finalCode);
       setViolations(validateGeneratedCode(finalCode));
+      return true;
     } catch (err) {
       setError(err instanceof Error ? err.message : "Generation failed");
+      return false;
     } finally {
       setIsGenerating(false);
     }
