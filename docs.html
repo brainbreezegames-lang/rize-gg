@@ -3,11 +3,7 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>Docs — Design Process Engine</title>
-    <meta
-      name="description"
-      content="Pipeline docs: start_task → get_playbook → submit_plan → get_pattern_guide → review → final_check."
-    />
+    <title>Pipeline — Design Process Engine</title>
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link
@@ -17,103 +13,68 @@
     <link rel="stylesheet" href="./styles.css" />
   </head>
   <body>
-    <div class="atmosphere" aria-hidden="true">
-      <div class="atmosphere__grid"></div>
-    </div>
-
+    <div class="atmosphere" aria-hidden="true"><div class="atmosphere__grid"></div></div>
     <header class="site-header">
       <div class="site-header__inner">
         <a class="brand" href="./index.html">
           <span class="brand__mark">◆</span>
           <span class="brand__name">Design Process Engine</span>
         </a>
-        <button
-          class="nav-toggle"
-          type="button"
-          data-nav-toggle
-          aria-expanded="false"
-          aria-controls="site-nav"
-        >
-          <span></span>
-          <span class="sr-only">Menu</span>
+        <button class="nav-toggle" type="button" data-nav-toggle aria-expanded="false" aria-controls="site-nav">
+          <span></span><span class="sr-only">Menu</span>
         </button>
         <nav class="nav" id="site-nav" data-nav>
-          <a href="./playground.html">Try it</a>
-          <a href="./docs.html" aria-current="page">Docs</a>
           <a href="./install.html">Install</a>
+          <a href="./docs.html" aria-current="page">Pipeline</a>
           <a href="./pricing.html">Pricing</a>
-          <a href="./install.html">Get started</a>
         </nav>
       </div>
     </header>
 
     <main class="page shell">
-      <p class="section-label" data-reveal>Pipeline</p>
-      <h1 class="section-title" data-reveal>The tools are the steps.</h1>
-      <p class="section-lede" data-reveal>
-        The server refuses later steps without earlier ones. The companion skill
-        tells the agent not to fight that.
+      <p class="section-label">The product</p>
+      <h1 class="section-title">Tools are the steps. State is the moat.</h1>
+      <p class="section-lede">
+        This is the PRD pipeline — enforced by the MCP server, not suggested by a markdown file.
       </p>
 
-      <ol class="pipeline" data-reveal>
-        <li>
-          <strong><code>start_task</code></strong>
-          <p>
-            Classify the work as Create, Edit, or Recreate. Returns the mode
-            contract and opens a stateful session.
-          </p>
-        </li>
-        <li>
-          <strong><code>get_playbook</code></strong>
-          <p>
-            Pull a product × flow playbook (structure, strategies, forgotten
-            states, never-do). Injected when planning starts — not dumped upfront.
-          </p>
-        </li>
-        <li>
-          <strong><code>submit_plan</code></strong>
-          <p>
-            Critique and approve the plan. Once approved, the plan is the
-            session contract: stages, screens, and constraints.
-          </p>
-        </li>
-        <li>
-          <strong><code>get_pattern_guide</code></strong>
-          <p>
-            Request a pattern guide at the moment a component appears — required
-            states, mistakes, related patterns, minimal code shape.
-          </p>
-        </li>
-        <li>
-          <strong><code>review</code></strong>
-          <p>
-            After every stage: defect hunt, plan drift, brand bans, slop
-            signatures. Blockers fail the stage; fix and re-review.
-          </p>
-        </li>
-        <li>
-          <strong><code>final_check</code></strong>
-          <p>
-            End-of-task gate before ship. Confirms all stages passed review and
-            no open blockers remain on the contract.
-          </p>
-        </li>
-      </ol>
+      <section class="install-block">
+        <pre><code>start_task
+  → get_playbook
+  → submit_plan          # approved plan = session contract
+  → get_pattern_guide*   # on demand while building
+  → (build → review)*    # no stage ends unreviewed
+  → final_check</code></pre>
+      </section>
 
-      <p class="section-lede" style="margin-top: 2.5rem" data-reveal>
-        Also available: <code>register_brand_rules</code> and
-        <code>get_session</code> for brand bans / palette / type and for
-        inspecting the live contract.
-      </p>
+      <section class="install-block">
+        <h2>Modes</h2>
+        <ul class="easy-howto">
+          <li><strong>Create</strong> — intentional, distinctive</li>
+          <li><strong>Edit</strong> — invisibility; unused DS pieces banned</li>
+          <li><strong>Recreate</strong> — fidelity; zero creative deviation</li>
+        </ul>
+      </section>
+
+      <section class="install-block">
+        <h2>Knowledge</h2>
+        <p>10 playbooks · 100 pattern guides · monthly slop catalog. Free tier gets process + starters; Pro unlocks the full library.</p>
+      </section>
+
+      <section class="install-block">
+        <h2>Factory</h2>
+        <p>Product A (internal): capture → draft → human curate. Run <code>npm run factory:capture</code> in the package.</p>
+      </section>
+
+      <p><a class="btn btn--primary" href="./install.html">Install the MCP</a></p>
     </main>
 
     <footer class="site-footer">
       <div class="site-footer__inner">
-        <span>Design Process Engine · MCP + skill</span>
+        <span>Design Process Engine</span>
         <a href="./install.html">Install</a>
       </div>
     </footer>
-
     <script src="./main.js" defer></script>
   </body>
 </html>

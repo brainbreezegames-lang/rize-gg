@@ -3,11 +3,8 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>Install — Design Process Engine</title>
-    <meta
-      name="description"
-      content="MCP install snippets for Cursor, Claude Code, and generic clients."
-    />
+    <title>Install — Design Process Engine MCP</title>
+    <meta name="description" content="Connect the Design Process Engine MCP to Cursor or Claude Code in one minute." />
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link
@@ -17,9 +14,7 @@
     <link rel="stylesheet" href="./styles.css" />
   </head>
   <body>
-    <div class="atmosphere" aria-hidden="true">
-      <div class="atmosphere__grid"></div>
-    </div>
+    <div class="atmosphere" aria-hidden="true"><div class="atmosphere__grid"></div></div>
 
     <header class="site-header">
       <div class="site-header__inner">
@@ -27,59 +22,51 @@
           <span class="brand__mark">◆</span>
           <span class="brand__name">Design Process Engine</span>
         </a>
-        <button
-          class="nav-toggle"
-          type="button"
-          data-nav-toggle
-          aria-expanded="false"
-          aria-controls="site-nav"
-        >
-          <span></span>
-          <span class="sr-only">Menu</span>
+        <button class="nav-toggle" type="button" data-nav-toggle aria-expanded="false" aria-controls="site-nav">
+          <span></span><span class="sr-only">Menu</span>
         </button>
         <nav class="nav" id="site-nav" data-nav>
-          <a href="./playground.html">Try it</a>
-          <a href="./docs.html">Docs</a>
           <a href="./install.html" aria-current="page">Install</a>
+          <a href="./docs.html">Pipeline</a>
           <a href="./pricing.html">Pricing</a>
-          <a href="./install.html">Get started</a>
         </nav>
       </div>
     </header>
 
     <main class="page shell">
-      <p class="section-label" data-reveal>Install</p>
-      <h1 class="section-title" data-reveal>Wire the MCP. Point at the skill.</h1>
-      <p class="section-lede" data-reveal>
-        Clone the package, install deps, then register the server with your
-        agent. Copy <code>skill/SKILL.md</code> so the pipeline is default
-        behavior.
+      <p class="section-label">Ship today</p>
+      <h1 class="section-title">Install the MCP. Not a prompt kit.</h1>
+      <p class="section-lede">
+        Users connect this once. Their agent is then forced through the full
+        pipeline on every UI task. Pick remote (hosted) or local (stdio).
       </p>
 
-      <section class="install-block" data-reveal>
-        <h2>1. Package setup</h2>
-        <p>From the design-process-engine directory:</p>
-        <pre><code>npm install
-npm run build
-# or for local iteration:
-npm run dev</code></pre>
-      </section>
-
-      <section class="install-block" data-reveal>
-        <h2>Cursor</h2>
+      <section class="install-block" id="remote">
+        <h2>Option A — Remote MCP (fastest)</h2>
         <p>
-          Add to your MCP config (Cursor Settings → MCP, or
-          <code>.cursor/mcp.json</code>):
+          Paste into Cursor → Settings → MCP (or <code>.cursor/mcp.json</code>).
+          Same shape works for other MCP clients that support URL servers.
         </p>
-        <pre><code>{
+        <pre id="remote-config"><code>{
   "mcpServers": {
     "design-process-engine": {
-      "command": "npx",
-      "args": ["tsx", "/absolute/path/to/design-process-engine/src/index.ts"]
+      "url": "REPLACE_WITH_PUBLIC_MCP_URL/mcp"
     }
   }
 }</code></pre>
-        <p style="margin-top: 1rem">After build, you can use Node directly:</p>
+        <button type="button" class="btn btn--primary" id="copy-remote">Copy config</button>
+        <p class="muted-note" id="remote-hint">
+          Public URL is injected when the host is live. If you see REPLACE_… the
+          host is still booting — refresh in a moment.
+        </p>
+      </section>
+
+      <section class="install-block" id="local">
+        <h2>Option B — Local stdio (runs on the user’s machine)</h2>
+        <p>From a checkout of this package:</p>
+        <pre><code>cd design-process-engine
+npm install
+npm run build</code></pre>
         <pre><code>{
   "mcpServers": {
     "design-process-engine": {
@@ -88,14 +75,7 @@ npm run dev</code></pre>
     }
   }
 }</code></pre>
-      </section>
-
-      <section class="install-block" data-reveal>
-        <h2>Claude Code</h2>
-        <p>Register via CLI or project config:</p>
-        <pre><code>claude mcp add design-process-engine -- \
-  npx tsx /absolute/path/to/design-process-engine/src/index.ts</code></pre>
-        <p style="margin-top: 1rem">Or in <code>.mcp.json</code>:</p>
+        <p>Or during development:</p>
         <pre><code>{
   "mcpServers": {
     "design-process-engine": {
@@ -106,37 +86,75 @@ npm run dev</code></pre>
 }</code></pre>
       </section>
 
-      <section class="install-block" data-reveal>
-        <h2>Generic MCP client</h2>
+      <section class="install-block">
+        <h2>Companion skill (required)</h2>
         <p>
-          Any stdio MCP host works. Point command at the server entry and leave
-          args empty (or pass your absolute path):
+          Install <code>skill/SKILL.md</code> as an agent skill / rule so the
+          pipeline is default behavior. The server refuses skipped steps; the
+          skill stops the agent from fighting that.
         </p>
-        <pre><code>{
-  "name": "design-process-engine",
-  "transport": "stdio",
-  "command": "node",
-  "args": ["/absolute/path/to/design-process-engine/dist/index.js"]
-}</code></pre>
+        <p>
+          <a class="btn btn--ghost" href="https://raw.githubusercontent.com/brainbreezegames-lang/rize-gg/cursor/design-process-engine-9939/design-process-engine/skill/SKILL.md" target="_blank" rel="noreferrer">Open SKILL.md</a>
+        </p>
       </section>
 
-      <section class="install-block" data-reveal>
-        <h2>Companion skill</h2>
-        <p>
-          Copy or symlink <code>skill/SKILL.md</code> into your agent's skill
-          path so classify → plan → staged build → review is the default path —
-          not something the model invents around.
-        </p>
+      <section class="install-block">
+        <h2>First session checklist</h2>
+        <ol class="easy-howto">
+          <li>Ask the agent to build a UI screen</li>
+          <li>It must call <code>start_task</code> then <code>get_playbook</code></li>
+          <li><code>submit_plan</code> until approved</li>
+          <li>Build one stage → <code>get_pattern_guide</code> as needed → <code>review</code></li>
+          <li><code>final_check</code> before claiming done</li>
+        </ol>
       </section>
     </main>
 
     <footer class="site-footer">
       <div class="site-footer__inner">
-        <span>Design Process Engine · MCP + skill</span>
-        <a href="./pricing.html">Pricing</a>
+        <span>Design Process Engine</span>
+        <a href="./docs.html">Pipeline docs</a>
       </div>
     </footer>
 
     <script src="./main.js" defer></script>
+    <script>
+      // Inject live MCP URL if host advertises it via /config.json or query
+      (async function () {
+        const pre = document.getElementById("remote-config");
+        const hint = document.getElementById("remote-hint");
+        let mcpUrl = localStorage.getItem("dpe_mcp_url") || "";
+        const params = new URLSearchParams(location.search);
+        if (params.get("mcp")) {
+          mcpUrl = params.get("mcp");
+          localStorage.setItem("dpe_mcp_url", mcpUrl);
+        }
+        try {
+          const res = await fetch("./runtime.json", { cache: "no-store" });
+          if (res.ok) {
+            const data = await res.json();
+            if (data.mcpUrl) mcpUrl = data.mcpUrl;
+          }
+        } catch (_) {}
+        if (mcpUrl) {
+          const cfg = {
+            mcpServers: {
+              "design-process-engine": { url: mcpUrl },
+            },
+          };
+          pre.querySelector("code").textContent = JSON.stringify(cfg, null, 2);
+          hint.textContent = "Live MCP: " + mcpUrl;
+        }
+        document.getElementById("copy-remote").addEventListener("click", async () => {
+          const text = pre.querySelector("code").textContent;
+          try {
+            await navigator.clipboard.writeText(text);
+            hint.textContent = "Copied. Paste into Cursor MCP settings.";
+          } catch {
+            hint.textContent = "Select the JSON and copy manually.";
+          }
+        });
+      })();
+    </script>
   </body>
 </html>

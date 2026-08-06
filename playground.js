@@ -28,7 +28,7 @@ function setBusy(busy) {
   const input = $("#wish");
   if (btn) {
     btn.disabled = busy;
-    btn.textContent = busy ? "Making your brief…" : "Make my brief";
+    btn.textContent = busy ? "Running demo…" : "Run demo process";
   }
   if (input) input.disabled = busy;
 }
@@ -209,25 +209,21 @@ async function runPipeline(wish) {
 
     result.hidden = false;
     result.innerHTML = `
-      <p class="easy-kicker">Your next step (this is the whole point)</p>
-      <h2>1. Copy this brief</h2>
-      <p>This is a ready-made message for your AI. You don’t need to understand every line.</p>
+      <p class="easy-kicker">Demo output (not the whole product)</p>
+      <h2>What the real Engine does with this</h2>
+      <ul>
+        <li><strong>Remembers</strong> this plan as a session contract (a .md file can’t)</li>
+        <li><strong>Blocks</strong> the AI from coding UI until the plan is approved</li>
+        <li><strong>Injects</strong> playbooks/pattern guides at the moment of need</li>
+        <li><strong>Requires</strong> a review after every screen — no stage ends unchecked</li>
+        <li><strong>Runs</strong> final_check + monthly slop signatures before “done”</li>
+      </ul>
+      <p>Below is only a <em>sample brief</em> the demo can export. The PRD product is the MCP that enforces this loop while the agent builds.</p>
       <pre id="brief-text" class="brief-box">${escapeHtml(brief)}</pre>
-      <button type="button" class="btn btn--primary" id="btn-copy">Copy brief</button>
+      <button type="button" class="btn btn--ghost" id="btn-copy">Copy sample brief</button>
       <p id="copy-status" class="copy-status" hidden>Copied ✓</p>
-
-      <h2 class="next-h">2. Paste it into an AI</h2>
-      <ol class="easy-howto">
-        <li>Open <a href="https://chatgpt.com" target="_blank" rel="noreferrer">ChatGPT</a>, <a href="https://claude.ai" target="_blank" rel="noreferrer">Claude</a>, or Cursor</li>
-        <li>Paste the brief</li>
-        <li>Send it — ask the AI to build screen 1 first</li>
-      </ol>
-
-      <p class="muted-note">
-        That’s what this product is: it writes a stricter design brief so your AI
-        doesn’t invent random purple “startup” UI. You are not supposed to build
-        the screens yourself.
-      </p>
+      <p class="next-h"><a class="btn btn--primary" href="./docs.html">See the real product</a>
+      <a class="btn btn--ghost" href="./install.html">Install MCP</a></p>
     `;
 
     $("#btn-copy")?.addEventListener("click", async () => {
