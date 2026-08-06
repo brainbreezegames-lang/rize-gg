@@ -2,13 +2,19 @@ This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-
 
 ## Design Process Engine (MCP)
 
-Phase 1 of the **Design Process Engine** lives in [`design-process-engine/`](./design-process-engine/). It is a stateful MCP + companion skill that forces classify → plan → staged build → review so agents stop shipping UI slop.
+The **Design Process Engine** lives in [`design-process-engine/`](./design-process-engine/) — a full product:
+
+- **Engine (MCP):** `start_task` → `get_playbook` → `submit_plan` → `get_pattern_guide` → `review` → `final_check`
+- **Knowledge:** 10 playbooks, 100 pattern guides, monthly slop catalog
+- **Factory:** capture → draft → curate pipeline
+- **Site:** [`design-process-engine/website/`](./design-process-engine/website/) (landing, pricing, docs, install)
 
 ```bash
-cd design-process-engine && npm install && npm test
+cd design-process-engine && npm install && npm test && npm run factory:status
+npx serve design-process-engine/website
 ```
 
-See that folder’s README for MCP client wiring and [`skill/SKILL.md`](./design-process-engine/skill/SKILL.md) for the agent-facing pipeline rules.
+Companion skill: [`skill/SKILL.md`](./design-process-engine/skill/SKILL.md).
 
 ## Getting Started
 

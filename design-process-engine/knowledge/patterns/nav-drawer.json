@@ -1,0 +1,33 @@
+{
+  "id": "nav-drawer",
+  "title": "Nav Drawer",
+  "category": "navigation",
+  "tier": "free",
+  "structure": [
+    "nav-drawer-root",
+    "nav-drawer-container",
+    "nav-drawer-primary-items",
+    "nav-drawer-overflow",
+    "nav-drawer-active-indicator"
+  ],
+  "requiredStates": [
+    "default",
+    "active",
+    "hover",
+    "collapsed",
+    "open",
+    "disabled"
+  ],
+  "codeExample": "```tsx\nexport function NavDrawerExample() {\n  // Minimal Nav Drawer pattern\n  return (\n    <section aria-label=\"Nav Drawer\" data-pattern=\"nav-drawer\">\n      <header>\n        <h2>Nav Drawer</h2>\n      </header>\n      <div className=\"pattern-body\">\n        {/* Implement required states: default + interactive variants */}\n      </div>\n    </section>\n  );\n}\n```",
+  "mistakes": [
+    "No current-location indicator",
+    "Icons without text labels on primary destinations",
+    "Drawer open state not escapable via keyboard",
+    "Treating Nav Drawer as decoration without active state"
+  ],
+  "relatedPatterns": [
+    "top-nav",
+    "bottom-tabs",
+    "sidebar"
+  ]
+}

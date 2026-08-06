@@ -1,0 +1,33 @@
+{
+  "id": "phone-verify",
+  "title": "Phone Verify",
+  "category": "auth",
+  "tier": "pro",
+  "structure": [
+    "phone-verify-root",
+    "phone-verify-identity-input",
+    "phone-verify-verify",
+    "phone-verify-error",
+    "phone-verify-success"
+  ],
+  "requiredStates": [
+    "default",
+    "pending",
+    "success",
+    "error",
+    "locked",
+    "expired"
+  ],
+  "codeExample": "```tsx\nexport function PhoneVerifyExample() {\n  // Minimal Phone Verify pattern\n  return (\n    <section aria-label=\"Phone Verify\" data-pattern=\"phone-verify\">\n      <header>\n        <h2>Phone Verify</h2>\n      </header>\n      <div className=\"pattern-body\">\n        {/* Implement required states: default + interactive variants */}\n      </div>\n    </section>\n  );\n}\n```",
+  "mistakes": [
+    "No rate-limit messaging on OTP",
+    "Password rules shown only after failure",
+    "Losing deep-link context after verify",
+    "Treating Phone Verify as decoration without pending state"
+  ],
+  "relatedPatterns": [
+    "otp-input",
+    "password-field",
+    "age-gate"
+  ]
+}

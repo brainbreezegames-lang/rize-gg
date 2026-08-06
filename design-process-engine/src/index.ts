@@ -22,7 +22,7 @@ async function main() {
   const server = createServer();
   const transport = new StdioServerTransport();
   await server.connect(transport);
-  console.error("design-process-engine MCP listening on stdio (phase 1: process only)");
+  console.error("design-process-engine MCP v1 listening on stdio");
 }
 
 main().catch((err) => {

@@ -13,7 +13,8 @@ export type SessionPhase =
   | "planning"
   | "plan_approved"
   | "building"
-  | "reviewing";
+  | "reviewing"
+  | "complete";
 
 /** What must be true before designing is allowed, per mode. */
 export interface ModeContract {
@@ -110,6 +111,14 @@ export interface DesignSession {
   /** Stages that have passed review */
   reviewedStages: string[];
   stageReviews: StageReview[];
+  /** Playbook loaded for this session (if any) */
+  playbookId: string | null;
+  /** Pattern guides pulled during build */
+  patternGuideIds: string[];
+  /** final_check cleared */
+  finalCheckPassed: boolean;
+  /** Access tier for this session */
+  tier: "free" | "pro";
   /** Tiny tasks may skip some steps when configured */
   skipConfig: {
     allowSkipPlaybook: boolean;

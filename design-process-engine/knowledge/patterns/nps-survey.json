@@ -1,0 +1,33 @@
+{
+  "id": "nps-survey",
+  "title": "Nps Survey",
+  "category": "feedback",
+  "tier": "pro",
+  "structure": [
+    "nps-survey-root",
+    "nps-survey-trigger",
+    "nps-survey-message",
+    "nps-survey-severity",
+    "nps-survey-dismiss"
+  ],
+  "requiredStates": [
+    "default",
+    "visible",
+    "leaving",
+    "success",
+    "error",
+    "warning"
+  ],
+  "codeExample": "```tsx\nexport function NpsSurveyExample() {\n  // Minimal Nps Survey pattern\n  return (\n    <section aria-label=\"Nps Survey\" data-pattern=\"nps-survey\">\n      <header>\n        <h2>Nps Survey</h2>\n      </header>\n      <div className=\"pattern-body\">\n        {/* Implement required states: default + interactive variants */}\n      </div>\n    </section>\n  );\n}\n```",
+  "mistakes": [
+    "Toast as the only record of a destructive action",
+    "Modal without focus trap",
+    "Spinner with no timeout or cancel",
+    "Treating Nps Survey as decoration without visible state"
+  ],
+  "relatedPatterns": [
+    "empty-state",
+    "modal",
+    "drawer"
+  ]
+}

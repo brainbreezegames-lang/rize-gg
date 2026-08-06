@@ -1,0 +1,33 @@
+{
+  "id": "wizard",
+  "title": "Wizard",
+  "category": "forms",
+  "tier": "pro",
+  "structure": [
+    "wizard-root",
+    "wizard-label",
+    "wizard-input",
+    "wizard-helper",
+    "wizard-validation"
+  ],
+  "requiredStates": [
+    "default",
+    "focus",
+    "filled",
+    "error",
+    "disabled",
+    "submitting"
+  ],
+  "codeExample": "```tsx\nexport function WizardExample() {\n  // Minimal Wizard pattern\n  return (\n    <section aria-label=\"Wizard\" data-pattern=\"wizard\">\n      <header>\n        <h2>Wizard</h2>\n      </header>\n      <div className=\"pattern-body\">\n        {/* Implement required states: default + interactive variants */}\n      </div>\n    </section>\n  );\n}\n```",
+  "mistakes": [
+    "Validate only on submit with no field-level hints",
+    "Placeholder used as the only label",
+    "Destroying user input on validation error",
+    "Treating Wizard as decoration without focus state"
+  ],
+  "relatedPatterns": [
+    "multi-step-form",
+    "file-upload",
+    "date-picker"
+  ]
+}

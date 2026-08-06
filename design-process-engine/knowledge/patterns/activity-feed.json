@@ -1,0 +1,33 @@
+{
+  "id": "activity-feed",
+  "title": "Activity Feed",
+  "category": "content",
+  "tier": "pro",
+  "structure": [
+    "activity-feed-root",
+    "activity-feed-header",
+    "activity-feed-body",
+    "activity-feed-media",
+    "activity-feed-actions"
+  ],
+  "requiredStates": [
+    "default",
+    "loading",
+    "empty",
+    "expanded",
+    "editing",
+    "error"
+  ],
+  "codeExample": "```tsx\nexport function ActivityFeedExample() {\n  // Minimal Activity Feed pattern\n  return (\n    <section aria-label=\"Activity Feed\" data-pattern=\"activity-feed\">\n      <header>\n        <h2>Activity Feed</h2>\n      </header>\n      <div className=\"pattern-body\">\n        {/* Implement required states: default + interactive variants */}\n      </div>\n    </section>\n  );\n}\n```",
+  "mistakes": [
+    "Unbounded nested threads with no collapse",
+    "Media without aspect-ratio reservation",
+    "Timestamps without relative/absolute toggle when needed",
+    "Treating Activity Feed as decoration without loading state"
+  ],
+  "relatedPatterns": [
+    "chat-list",
+    "chat-composer",
+    "comment-thread"
+  ]
+}

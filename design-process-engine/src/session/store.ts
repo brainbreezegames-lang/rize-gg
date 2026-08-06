@@ -13,6 +13,7 @@ import type {
   PlanCritiqueIssue,
   StageReview,
 } from "./types.js";
+import type { AccessTier } from "../tier/access.js";
 
 let active: DesignSession | null = null;
 
@@ -36,6 +37,7 @@ export function startSession(input: {
   mode: DesignSession["mode"];
   modeContract: ModeContract;
   brandRules?: BrandRules;
+  tier?: AccessTier;
 }): DesignSession {
   const now = new Date().toISOString();
   active = {
@@ -53,6 +55,10 @@ export function startSession(input: {
     lastPlanCritique: [],
     reviewedStages: [],
     stageReviews: [],
+    playbookId: null,
+    patternGuideIds: [],
+    finalCheckPassed: false,
+    tier: input.tier ?? "free",
     skipConfig: { allowSkipPlaybook: true },
   };
   return active;
@@ -61,6 +67,21 @@ export function startSession(input: {
 export function setBrandRules(rules: BrandRules): DesignSession {
   const s = requireSession();
   s.brandRules = { ...s.brandRules, ...rules };
+  s.updatedAt = new Date().toISOString();
+  return s;
+}
+
+export function setPlaybookId(id: string): DesignSession {
+  const s = requireSession();
+  s.playbookId = id;
+  s.phase = s.phase === "classified" ? "planning" : s.phase;
+  s.updatedAt = new Date().toISOString();
+  return s;
+}
+
+export function recordPatternGuide(id: string): DesignSession {
+  const s = requireSession();
+  if (!s.patternGuideIds.includes(id)) s.patternGuideIds.push(id);
   s.updatedAt = new Date().toISOString();
   return s;
 }
@@ -87,6 +108,7 @@ export function approvePlan(plan: DesignPlan): DesignSession {
   s.phase = "plan_approved";
   s.reviewedStages = [];
   s.stageReviews = [];
+  s.finalCheckPassed = false;
   s.updatedAt = new Date().toISOString();
   return s;
 }
@@ -108,6 +130,14 @@ export function recordReview(review: StageReview): DesignSession {
     }
     s.phase = "building";
   }
+  s.updatedAt = new Date().toISOString();
+  return s;
+}
+
+export function markFinalCheck(passed: boolean): DesignSession {
+  const s = requireSession();
+  s.finalCheckPassed = passed;
+  if (passed) s.phase = "complete";
   s.updatedAt = new Date().toISOString();
   return s;
 }

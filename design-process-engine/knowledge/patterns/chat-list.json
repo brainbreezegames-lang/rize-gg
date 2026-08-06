@@ -1,0 +1,33 @@
+{
+  "id": "chat-list",
+  "title": "Chat List",
+  "category": "content",
+  "tier": "pro",
+  "structure": [
+    "chat-list-root",
+    "chat-list-header",
+    "chat-list-body",
+    "chat-list-media",
+    "chat-list-actions"
+  ],
+  "requiredStates": [
+    "default",
+    "loading",
+    "empty",
+    "expanded",
+    "editing",
+    "error"
+  ],
+  "codeExample": "```tsx\nexport function ChatListExample() {\n  // Minimal Chat List pattern\n  return (\n    <section aria-label=\"Chat List\" data-pattern=\"chat-list\">\n      <header>\n        <h2>Chat List</h2>\n      </header>\n      <div className=\"pattern-body\">\n        {/* Implement required states: default + interactive variants */}\n      </div>\n    </section>\n  );\n}\n```",
+  "mistakes": [
+    "Unbounded nested threads with no collapse",
+    "Media without aspect-ratio reservation",
+    "Timestamps without relative/absolute toggle when needed",
+    "Treating Chat List as decoration without loading state"
+  ],
+  "relatedPatterns": [
+    "chat-composer",
+    "comment-thread",
+    "notification-center"
+  ]
+}

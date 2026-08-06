@@ -1,0 +1,33 @@
+{
+  "id": "email-verify",
+  "title": "Email Verify",
+  "category": "auth",
+  "tier": "pro",
+  "structure": [
+    "email-verify-root",
+    "email-verify-identity-input",
+    "email-verify-verify",
+    "email-verify-error",
+    "email-verify-success"
+  ],
+  "requiredStates": [
+    "default",
+    "pending",
+    "success",
+    "error",
+    "locked",
+    "expired"
+  ],
+  "codeExample": "```tsx\nexport function EmailVerifyExample() {\n  // Minimal Email Verify pattern\n  return (\n    <section aria-label=\"Email Verify\" data-pattern=\"email-verify\">\n      <header>\n        <h2>Email Verify</h2>\n      </header>\n      <div className=\"pattern-body\">\n        {/* Implement required states: default + interactive variants */}\n      </div>\n    </section>\n  );\n}\n```",
+  "mistakes": [
+    "No rate-limit messaging on OTP",
+    "Password rules shown only after failure",
+    "Losing deep-link context after verify",
+    "Treating Email Verify as decoration without pending state"
+  ],
+  "relatedPatterns": [
+    "otp-input",
+    "password-field",
+    "age-gate"
+  ]
+}

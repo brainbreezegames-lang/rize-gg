@@ -1,14 +1,25 @@
 # Design Process Engine
 
-**A strict senior design lead, rented into whatever AI coding agent you already run.**
+**A strict senior design lead inside whatever AI coding agent you already run.**
 
-This is **Product B — the Engine** (Phase 1): a stateful MCP + companion skill that enforces classify → plan → staged build → review. Knowledge playbooks come later; **enforcement alone** is the thesis to prove.
+Stateful MCP + companion skill. Tools are the steps of the process. Knowledge (playbooks + pattern guides) is injected at the moment of need. A Factory produces that knowledge; this Engine serves it.
 
-> Working name TBD · Phase 1 (process only) · August 2026
+## Pipeline
 
-## Why this exists
+```
+start_task → get_playbook → submit_plan → get_pattern_guide*
+→ (build → review)* → final_check
+```
 
-Agents produce slop not because they lack references, but because nothing disciplines them. `design.md` is knowledge without enforcement. This MCP makes the **tools the steps of the process**, and **holds state** so the approved plan is a contract.
+| Tool | Job |
+|------|-----|
+| `start_task` | Classify Create / Edit / Recreate; return mode contract |
+| `get_playbook` | Flow intelligence before planning |
+| `submit_plan` | Critique + approve → **session contract** |
+| `get_pattern_guide` | On-demand pattern prescription while building |
+| `review` | After every stage: defects, drift, slop |
+| `final_check` | Whole-deliverable audit + finishing commands |
+| `register_brand_rules` / `get_session` / `list_knowledge` | Helpers |
 
 ## Install
 
@@ -16,83 +27,78 @@ Agents produce slop not because they lack references, but because nothing discip
 cd design-process-engine
 npm install
 npm run build
+npm test
 ```
 
-### Cursor / Claude Code MCP config
+### MCP config (Cursor / Claude Code)
 
 ```json
 {
   "mcpServers": {
     "design-process-engine": {
       "command": "npx",
-      "args": ["tsx", "/absolute/path/to/design-process-engine/src/index.ts"]
+      "args": ["tsx", "/absolute/path/to/design-process-engine/src/index.ts"],
+      "env": {
+        "DESIGN_ENGINE_API_KEY": "dpe_free_local"
+      }
     }
   }
 }
 ```
 
-Or after build:
+Pro: set `DESIGN_ENGINE_API_KEY=dpe_pro_<your-key>` or `DESIGN_ENGINE_TIER=pro`.
 
-```json
-{
-  "mcpServers": {
-    "design-process-engine": {
-      "command": "node",
-      "args": ["/absolute/path/to/design-process-engine/dist/index.js"]
-    }
-  }
-}
+Companion skill: [`skill/SKILL.md`](./skill/SKILL.md)
+
+## Tiers
+
+| | Free | Pro (~$19/mo) |
+|--|------|----------------|
+| Process pipeline | ✓ | ✓ |
+| Starter playbooks (2) + patterns (20) | ✓ | ✓ |
+| Full playbooks (10) + patterns (100) | | ✓ |
+| Monthly slop catalog in `final_check` | | ✓ |
+
+## Knowledge
+
+```bash
+npm run knowledge:generate   # regenerate playbooks/patterns/slop JSON
 ```
 
-### Companion skill
+Library lives in `knowledge/` (10 playbooks, 100 patterns, monthly slop).
 
-Copy or point your agent at [`skill/SKILL.md`](./skill/SKILL.md). That file makes the pipeline **default behavior**. The server refuses later steps without earlier ones; the skill tells the agent not to fight that.
+## Factory (Product A)
 
-## Tools (Phase 1)
+Semi-automated capture → draft → human curate pipeline:
 
-| Tool | Job |
-|------|-----|
-| `start_task` | Classify Create / Edit / Recreate; return mode contract |
-| `register_brand_rules` | Merge brand bans/palette/type into the session |
-| `submit_plan` | Critique + approve plan → **session contract** |
-| `review` | After every stage: defects, drift, slop signatures |
-| `get_session` | Inspect contract and remaining stages |
-
-Phase 2 will add `get_playbook` + `get_pattern_guide`. Phase 3 adds `final_check` + Factory-fed slop updates.
-
-## Pipeline
-
-```
-start_task → submit_plan → build one stage → review → … → done
+```bash
+npm run factory:capture
+npm run factory:draft
+npm run factory:status
 ```
 
-**Rules the server enforces:**
+See [`factory/README.md`](./factory/README.md).
 
-1. No session → no plan / review  
-2. No approved plan → no review  
-3. Stage must map to the approved screen list  
-4. Full defect checklist required every review  
-5. Blockers (defects, drift, brand bans, slop) fail the stage  
+## Public site
 
-## Modes
+```bash
+npx serve website
+# or open website/index.html
+```
 
-| Mode | Priority |
-|------|----------|
-| **create** | Intentional, distinctive |
-| **edit** | Invisibility — match the existing product; unused DS pieces banned |
-| **recreate** | Fidelity — zero creative deviation |
+Landing, pricing, docs, install — [`website/`](./website/).
 
 ## Develop
 
 ```bash
-npm test          # vitest
-npm run dev       # stdio server via tsx
-npm run build     # emit dist/
+npm run dev       # stdio MCP
+npm test
+npm run build
 ```
 
-## Thesis to verify
+## Thesis
 
-In blind comparisons, designers prefer Engine output over the same agent with a `design.md` **≥ 80%** of the time. Phase 1 ships enough to run that test with hand-written rules only.
+Enforcement + right-time knowledge beats `design.md`. Blind designer preference target: ≥ 80%.
 
 ## License
 

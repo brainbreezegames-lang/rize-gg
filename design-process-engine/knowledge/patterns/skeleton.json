@@ -1,0 +1,33 @@
+{
+  "id": "skeleton",
+  "title": "Skeleton",
+  "category": "feedback",
+  "tier": "free",
+  "structure": [
+    "skeleton-root",
+    "skeleton-trigger",
+    "skeleton-message",
+    "skeleton-severity",
+    "skeleton-dismiss"
+  ],
+  "requiredStates": [
+    "default",
+    "visible",
+    "leaving",
+    "success",
+    "error",
+    "warning"
+  ],
+  "codeExample": "```tsx\nexport function SkeletonExample() {\n  // Minimal Skeleton pattern\n  return (\n    <section aria-label=\"Skeleton\" data-pattern=\"skeleton\">\n      <header>\n        <h2>Skeleton</h2>\n      </header>\n      <div className=\"pattern-body\">\n        {/* Implement required states: default + interactive variants */}\n      </div>\n    </section>\n  );\n}\n```",
+  "mistakes": [
+    "Toast as the only record of a destructive action",
+    "Modal without focus trap",
+    "Spinner with no timeout or cancel",
+    "Treating Skeleton as decoration without visible state"
+  ],
+  "relatedPatterns": [
+    "empty-state",
+    "modal",
+    "drawer"
+  ]
+}

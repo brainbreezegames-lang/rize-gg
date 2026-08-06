@@ -1,0 +1,33 @@
+{
+  "id": "product-card",
+  "title": "Product Card",
+  "category": "commerce",
+  "tier": "pro",
+  "structure": [
+    "product-card-root",
+    "product-card-offer-summary",
+    "product-card-price",
+    "product-card-cta",
+    "product-card-trust-signals"
+  ],
+  "requiredStates": [
+    "default",
+    "selected",
+    "loading",
+    "sold-out",
+    "discounted",
+    "error"
+  ],
+  "codeExample": "```tsx\nexport function ProductCardExample() {\n  // Minimal Product Card pattern\n  return (\n    <section aria-label=\"Product Card\" data-pattern=\"product-card\">\n      <header>\n        <h2>Product Card</h2>\n      </header>\n      <div className=\"pattern-body\">\n        {/* Implement required states: default + interactive variants */}\n      </div>\n    </section>\n  );\n}\n```",
+  "mistakes": [
+    "Price without currency or tax clarity",
+    "CTA that does not restate the commitment",
+    "Hiding fees until the last step",
+    "Treating Product Card as decoration without selected state"
+  ],
+  "relatedPatterns": [
+    "paywall",
+    "pricing-table",
+    "checkout-summary"
+  ]
+}

@@ -1,0 +1,60 @@
+{
+  "id": "marketplace-listing",
+  "title": "Marketplace Listing",
+  "productType": "marketplace",
+  "flow": "listing",
+  "tier": "pro",
+  "summary": "Help sellers publish trustworthy listings and buyers evaluate them with enough signal to transact.",
+  "structure": [
+    "category-select",
+    "media-upload",
+    "title-description",
+    "pricing-inventory",
+    "shipping-or-fulfillment",
+    "preview-listing",
+    "publish-moderation",
+    "buyer-detail-view"
+  ],
+  "strategies": [
+    {
+      "name": "Photo-first listing wizard",
+      "prevalence": "32 of 39",
+      "tradeoffs": "Quality signal; slow for text-only services.",
+      "when": "Goods and visual services marketplaces."
+    },
+    {
+      "name": "Structured attribute schemas by category",
+      "prevalence": "27 of 39",
+      "tradeoffs": "Better search filters; painful for edge categories.",
+      "when": "Vertical markets with comparable SKUs."
+    },
+    {
+      "name": "Draft autosave + publish review",
+      "prevalence": "30 of 39",
+      "tradeoffs": "Fewer lost listings; delayed seller gratification.",
+      "when": "Marketplaces with trust & safety review queues."
+    },
+    {
+      "name": "AI description assist from photos",
+      "prevalence": "13 of 39",
+      "tradeoffs": "Speed; hallucinated specs hurt trust.",
+      "when": "Mobile seller apps with camera-led capture."
+    }
+  ],
+  "forgottenStates": [
+    "Moderation rejected with editable reasons",
+    "Duplicate listing detection",
+    "Sold-out while still discoverable",
+    "Currency mismatch for cross-border",
+    "Image virus/scan failure",
+    "Buyer view of paused listing"
+  ],
+  "neverDo": [
+    "Allow publish with zero images in visual categories",
+    "Hide seller fees until after listing is live",
+    "Show fake scarcity timers on organic listings",
+    "Let contact exchange skip platform checkout unprotected",
+    "Use stock photos as the default listing media"
+  ],
+  "evidenceNotes": "Compiled from captured app journeys + curated designer wisdom."
+}

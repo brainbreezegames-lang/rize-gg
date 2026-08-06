@@ -1,0 +1,33 @@
+{
+  "id": "avatar-menu",
+  "title": "Avatar Menu",
+  "category": "navigation",
+  "tier": "pro",
+  "structure": [
+    "avatar-menu-root",
+    "avatar-menu-container",
+    "avatar-menu-primary-items",
+    "avatar-menu-overflow",
+    "avatar-menu-active-indicator"
+  ],
+  "requiredStates": [
+    "default",
+    "active",
+    "hover",
+    "collapsed",
+    "open",
+    "disabled"
+  ],
+  "codeExample": "```tsx\nexport function AvatarMenuExample() {\n  // Minimal Avatar Menu pattern\n  return (\n    <section aria-label=\"Avatar Menu\" data-pattern=\"avatar-menu\">\n      <header>\n        <h2>Avatar Menu</h2>\n      </header>\n      <div className=\"pattern-body\">\n        {/* Implement required states: default + interactive variants */}\n      </div>\n    </section>\n  );\n}\n```",
+  "mistakes": [
+    "No current-location indicator",
+    "Icons without text labels on primary destinations",
+    "Drawer open state not escapable via keyboard",
+    "Treating Avatar Menu as decoration without active state"
+  ],
+  "relatedPatterns": [
+    "nav-drawer",
+    "top-nav",
+    "bottom-tabs"
+  ]
+}

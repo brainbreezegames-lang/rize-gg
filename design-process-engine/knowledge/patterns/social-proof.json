@@ -1,0 +1,32 @@
+{
+  "id": "social-proof",
+  "title": "Social Proof",
+  "category": "marketing",
+  "tier": "pro",
+  "structure": [
+    "social-proof-root",
+    "social-proof-headline",
+    "social-proof-support",
+    "social-proof-proof",
+    "social-proof-cta"
+  ],
+  "requiredStates": [
+    "default",
+    "hover",
+    "dismissed",
+    "localized",
+    "reduced-motion"
+  ],
+  "codeExample": "```tsx\nexport function SocialProofExample() {\n  // Minimal Social Proof pattern\n  return (\n    <section aria-label=\"Social Proof\" data-pattern=\"social-proof\">\n      <header>\n        <h2>Social Proof</h2>\n      </header>\n      <div className=\"pattern-body\">\n        {/* Implement required states: default + interactive variants */}\n      </div>\n    </section>\n  );\n}\n```",
+  "mistakes": [
+    "Hero with multiple competing CTAs",
+    "Social proof logos with no context",
+    "FAQ accordion with all panels open by default",
+    "Treating Social Proof as decoration without hover state"
+  ],
+  "relatedPatterns": [
+    "onboarding-carousel",
+    "faq",
+    "footer"
+  ]
+}

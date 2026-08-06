@@ -1,0 +1,60 @@
+{
+  "id": "settings-account-security",
+  "title": "Settings Account Security",
+  "productType": "platform",
+  "flow": "settings-security",
+  "tier": "pro",
+  "summary": "Give users clear control over credentials, sessions, and recovery without burying critical protections.",
+  "structure": [
+    "account-profile",
+    "email-phone-change",
+    "password-or-passkey",
+    "two-factor-setup",
+    "active-sessions",
+    "recovery-codes",
+    "connected-apps",
+    "danger-zone-delete"
+  ],
+  "strategies": [
+    {
+      "name": "Security checkup checklist",
+      "prevalence": "24 of 40",
+      "tradeoffs": "Improves hygiene; can alarm low-risk users.",
+      "when": "Consumer apps after breach waves or high-value accounts."
+    },
+    {
+      "name": "Passkey-primary with password fallback",
+      "prevalence": "18 of 40",
+      "tradeoffs": "Phishing resistance; device recovery education needed.",
+      "when": "Modern auth stacks with WebAuthn support."
+    },
+    {
+      "name": "Session list with remote revoke",
+      "prevalence": "31 of 40",
+      "tradeoffs": "Transparency; support load from confused revokes.",
+      "when": "Multi-device products and shared computer risk."
+    },
+    {
+      "name": "Step-up auth for sensitive changes",
+      "prevalence": "27 of 40",
+      "tradeoffs": "Security win; friction on email/phone updates.",
+      "when": "Any product where account takeover has real cost."
+    }
+  ],
+  "forgottenStates": [
+    "2FA device lost recovery",
+    "Passkey only on one device",
+    "SSO-managed fields read-only",
+    "Pending email change confirmation",
+    "OAuth app token leak revoke",
+    "Account delete cool-off period"
+  ],
+  "neverDo": [
+    "Store recovery codes only as a transient toast",
+    "Allow password change without re-auth",
+    "Mix billing settings into security without labels",
+    "Use scary red everywhere so danger zone loses meaning",
+    "Hide logout-all-devices behind obscure menus"
+  ],
+  "evidenceNotes": "Compiled from captured app journeys + curated designer wisdom."
+}

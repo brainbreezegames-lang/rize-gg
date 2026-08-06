@@ -1,0 +1,32 @@
+{
+  "id": "onboarding-carousel",
+  "title": "Onboarding Carousel",
+  "category": "marketing",
+  "tier": "pro",
+  "structure": [
+    "onboarding-carousel-root",
+    "onboarding-carousel-headline",
+    "onboarding-carousel-support",
+    "onboarding-carousel-proof",
+    "onboarding-carousel-cta"
+  ],
+  "requiredStates": [
+    "default",
+    "hover",
+    "dismissed",
+    "localized",
+    "reduced-motion"
+  ],
+  "codeExample": "```tsx\nexport function OnboardingCarouselExample() {\n  // Minimal Onboarding Carousel pattern\n  return (\n    <section aria-label=\"Onboarding Carousel\" data-pattern=\"onboarding-carousel\">\n      <header>\n        <h2>Onboarding Carousel</h2>\n      </header>\n      <div className=\"pattern-body\">\n        {/* Implement required states: default + interactive variants */}\n      </div>\n    </section>\n  );\n}\n```",
+  "mistakes": [
+    "Hero with multiple competing CTAs",
+    "Social proof logos with no context",
+    "FAQ accordion with all panels open by default",
+    "Treating Onboarding Carousel as decoration without hover state"
+  ],
+  "relatedPatterns": [
+    "faq",
+    "footer",
+    "hero"
+  ]
+}

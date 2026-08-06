@@ -1,128 +1,89 @@
 # Design Process Engine — Companion Skill
 
-You are paired with the **design-process-engine** MCP. It is a senior design lead living in your tool loop. Its tools are the steps of the process. **Follow the pipeline by default on every UI / visual design task.** Skipping steps is a failure mode, not an optimization.
+You are paired with the **design-process-engine** MCP — a senior design lead in your tool loop. **Follow the full pipeline on every UI / visual design task.** Skipping steps is a failure mode.
 
 ---
 
-## When this skill applies
+## Pipeline (mandatory)
 
-Any time you are asked to:
-
-- create, edit, or recreate UI / pages / components / landing surfaces
-- improve visual design, layout, branding, or polish
-- implement a screen from a reference (Figma, screenshot, URL)
-
-If the task is purely backend, data, or non-visual, you may skip this pipeline.
+```
+start_task
+  → get_playbook
+  → submit_plan          # wait for approved: true
+  → build one stage
+      ↳ get_pattern_guide when you hit a concrete pattern
+      ↳ review           # no stage ends unreviewed
+  → … next stage …
+  → final_check          # before you claim done
+```
 
 ---
 
-## The pipeline (mandatory)
+## When this applies
 
-```
-start_task → submit_plan → (build one stage) → review → … → done
-```
+Creating, editing, or recreating UI / pages / components / landing surfaces / visual polish / Figma-to-code.  
+Skip only for pure backend / non-visual work.
+
+---
+
+## Tool cheat sheet
 
 ### 1. `start_task` — always first
+Pass `task`, `context`, optional `mode` (`create`|`edit`|`recreate`), optional `brand_rules`, optional `api_key` (`dpe_pro_…` for Pro).
 
-Call **before** writing design plans or UI code.
+Resolve every `mustResolveBeforeDesign` item. Obey `forbidden`.
 
-Pass:
+### 2. `get_playbook` — before planning
+Load flow intelligence (structure, strategies with prevalence, forgotten states, never-do).  
+Use `suggestedPlaybook.id` from start_task, or `list: true`.  
+Free tier: starter playbooks. Pro: full library.
 
-- `task` — what you are building
-- `context` — framework, existing patterns, audience, references
-- `mode` — optional: `create` | `edit` | `recreate` (server can classify)
-- `brand_rules` — optional product bans / palette / type
+### 3. `submit_plan` — plan is a contract
+Submit `layoutPrinciple` (ONE), `screens`, `paletteStrategy`, `density`, `typeDirection`, `valueVocabulary` (≥3), `notes`.  
+If `approved: false`, fix blockers and resubmit. **No UI code until approved.**
 
-Read the returned **mode contract**. Resolve every `mustResolveBeforeDesign` item before planning. Obey `forbidden`.
+### 4. `get_pattern_guide` — at the moment of need
+When you hit nav, forms, paywall, empty state, pricing table, settings, etc. — pull that guide. Implement `requiredStates`. Avoid `mistakes[]`.
 
-### 2. `submit_plan` — plan is a contract
+### 5. `review` — after every stage
+Screenshot / visually inspect. Fill every `defectChecks` id honestly.  
+`passed: false` → fix → review same `stageId`. Do not advance.
 
-Submit:
+### 6. `final_check` — whole deliverable
+When `remainingStages` is empty, call with `deliverable_text` (copy + snippets).  
+Optional `finish_command`: `distill` | `quieter` | `bolder`.  
+Do not claim done until `passed: true`.
 
-- `layoutPrinciple` — **one** principle you will hold
-- `screens` — ordered sections/screens (include error/empty states when relevant)
-- `paletteStrategy`, `density`, `typeDirection`
-- `valueVocabulary` — committed tokens/values (min 3)
-- `notes` — brand test, out-of-scope, acknowledgements
-
-If the server returns `approved: false`, fix every **blocker** and resubmit.  
-**Do not write UI until `approved: true`.**
-
-The approved plan is the contract for the rest of the session.
-
-### 3. Build one stage at a time
-
-Build only the next item in `buildOrder`. Stay inside the vocabulary and layout principle.
-
-### 4. `review` — no stage ends unreviewed
-
-After each stage:
-
-1. Screenshot or visually inspect the result (use your environment’s screenshot tools when available).
-2. Honestly fill `defectChecks` for every id (see list below).
-3. Call `review` with `stageId`, `summary`, optional `artifactSnippet`, and `defectChecks`.
-
-If `passed: false`, fix blockers and review the **same** stage again. Do not advance.
-
-If `passed: true`, build the next remaining stage.
-
-### 5. Finish
-
-When `remainingStages` is empty, stop building. Deliver. (A fuller `final_check` tool ships in a later phase — still re-read the plan contract yourself before claiming done.)
+### Helpers
+- `get_session` — re-align mid-build  
+- `register_brand_rules` — merge bans/palette  
+- `list_knowledge` — see playbooks/patterns for your tier  
 
 ---
 
-## Defect checklist ids (required on every `review`)
+## Defect checklist ids (every `review`)
 
-Set each to `true` only if you verified it is clean:
+`clipped_text` · `overlapping` · `grid_misalignment` · `same_role_sizes` · `escaping_containers` · `spacing_violations` · `contrast` · `hit_targets` · `missing_states` · `one_job`
 
-| id | meaning |
-|----|---------|
-| `clipped_text` | No clipped/overflowing text |
-| `overlapping` | No unintentional overlaps |
-| `grid_misalignment` | Columns/edges align |
-| `same_role_sizes` | Same-role elements share size |
-| `escaping_containers` | Nothing bleeds out of containers |
-| `spacing_violations` | Spacing matches the plan scale |
-| `contrast` | Text is legible |
-| `hit_targets` | Controls are usable |
-| `missing_states` | Required states exist |
-| `one_job` | This section has one job |
-
-Lying on the checklist defeats the product. If you see a defect, mark `false`.
+Mark `false` if you still see the defect. Lying defeats the product.
 
 ---
 
-## Mode cheatsheet
+## Modes
 
-| Mode | Priority | Golden rule |
-|------|----------|-------------|
-| **create** | Intentional, distinctive | First viewport must fail the "another brand" test |
-| **edit** | Invisibility | Study how the project already does it; unused DS pieces are banned for this change |
-| **recreate** | Fidelity | Zero creative deviation without permission |
+| Mode | Priority |
+|------|----------|
+| **create** | Distinctive — first viewport fails the "another brand" test |
+| **edit** | Invisible — match existing system; unused DS pieces banned |
+| **recreate** | Fidelity — zero creative deviation without permission |
 
 ---
 
 ## Hard rules
 
-1. **No UI code before plan approval.**
-2. **No stage ends unreviewed.**
-3. **Server refusals are correct** — if a tool errors because you skipped a step, go back and do the step.
-4. **Do not invent parallel patterns** in edit mode.
-5. **Do not "improve" a reference** in recreate mode.
-6. **Use `get_session`** if you lose the thread mid-build.
-7. Prefer small, honest summaries over vague claims ("looks good").
-
----
-
-## Tiny tasks
-
-If the user asks for a one-line CSS tweak, you may still call `start_task` with mode `edit` and a one-screen plan — the process stays light when the plan is light. Do not skip the pipeline entirely for visual work.
-
----
-
-## What this is not
-
-- Not a design-system encyclopedia (that’s Phase 2 pattern guides).
-- Not a post-hoc cleanup skill. Process runs **before and during** building.
-- Not optional flavor text. The MCP holds state; your job is to walk the tools.
+1. No UI before plan approval.  
+2. No stage ends unreviewed.  
+3. No "done" before `final_check` passes.  
+4. Server refusals are correct — go back a step.  
+5. Prefer small honest summaries over "looks good."  
+6. Knowledge is on-demand — never dump the whole library into context.
